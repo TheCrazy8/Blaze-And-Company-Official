@@ -16,6 +16,9 @@ from contextlib import redirect_stdout, redirect_stderr
 import io
 import sv_ttk
 
+# Configuration constants
+ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
+
 def safe_listdir(path):
   try:
     return os.listdir(path)
@@ -113,7 +116,7 @@ def ChooseScript(plugins, scripts):
     ip_entry.pack(padx=10, pady=(0, 10))
     
     # Pre-fill with environment variable if available
-    env_ip = os.environ.get("ARDUINO_IP_ADDRESS", "")
+    env_ip = os.environ.get(ARDUINO_IP_ENV_VAR, "")
     if env_ip:
       ip_entry.insert(0, env_ip)
     
@@ -134,7 +137,7 @@ def ChooseScript(plugins, scripts):
         if plugins["telemetrix"]:
           try:
             plugins["telemetrix"].shutdown()
-          except:
+          except Exception:
             pass
 
         # Create new connection

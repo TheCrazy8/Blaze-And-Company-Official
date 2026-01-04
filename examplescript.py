@@ -1,6 +1,9 @@
 import time
 import os
 
+# Configuration constants
+ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
+
 try:
   from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import telemetrix_uno_r4_wifi as telemetrix_wifi
   TelemetrixUnoR4WiFi = telemetrix_wifi.TelemetrixUnoR4WiFi
@@ -16,13 +19,12 @@ def main(plugins):
   _created_locally = False
 
   if _board is None and TelemetrixUnoR4WiFi:
-    arduino_ip = os.environ.get("ARDUINO_IP_ADDRESS")
+    arduino_ip = os.environ.get(ARDUINO_IP_ENV_VAR)
     if arduino_ip:
       _board = TelemetrixUnoR4WiFi(transport_address=arduino_ip)
       _created_locally = True
     else:
-      print("Cannot create Telemetrix board: ARDUINO_IP_ADDRESS environment variable not set.")
-
+      print(f"Cannot create Telemetrix board: {ARDUINO_IP_ENV_VAR} environment variable not set.")
 
   if not _board:
     print("Telemetrix board unavailable.")
