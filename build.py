@@ -32,7 +32,7 @@ def build():
         print(f"Executable location: {os.path.join(script_dir, 'dist', 'BrightOS.exe')}")
         return 0
     except Exception as e:
-        print(f"\n✗ Build failed: {e}")
+        print(f"\n Build failed: {e}")
         return 1
 
 if __name__ == "__main__":
