@@ -33,6 +33,8 @@ def load_scripts(script_dir):
   Load Python scripts as modules from the specified directory.
   Returns a dictionary with module names as keys and module objects as values.
   Only loads .py files that are not __init__.py.
+  
+  Note: Only load scripts from trusted directories as they will be executed.
   """
   scripts = {}
   
@@ -58,8 +60,10 @@ def load_scripts(script_dir):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         scripts[module_name] = module
-    except Exception as e:
+    except (ImportError, ModuleNotFoundError, SyntaxError) as e:
       print(f"Warning: Failed to load script '{filename}': {e}")
+    except Exception as e:
+      print(f"Warning: Unexpected error loading script '{filename}': {e}")
   
   return scripts
 
