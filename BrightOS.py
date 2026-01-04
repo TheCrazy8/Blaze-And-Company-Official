@@ -83,6 +83,9 @@ def discover_arduino_board(timeout=DISCOVERY_TIMEOUT):
     sock.settimeout(1.0)  # 1 second timeout for receive
     
     # Bind to discovery port
+    # Note: We bind to all interfaces ('') to receive UDP broadcasts from Arduino boards
+    # on the local network. This is required for auto-discovery and is only active during
+    # the discovery phase (max 10 seconds). The socket is closed immediately after.
     try:
       sock.bind(('', DISCOVERY_PORT))
     except OSError as e:
