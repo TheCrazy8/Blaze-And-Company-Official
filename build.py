@@ -19,7 +19,6 @@ def build():
         '--name=BrightOS',
         '--onefile',
         '--windowed',
-        '--icon=NONE',
         '--clean',
         '--noconfirm',
     ]
