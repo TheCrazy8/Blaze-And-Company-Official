@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import ttk
 import threading
 import queue
+import sys
+import importlib.util
 try:
   from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import telemetrix_uno_r4_wifi as telemetrix_wifi
   TelemetrixUnoR4WiFi = telemetrix_wifi.TelemetrixUnoR4WiFi
@@ -26,19 +28,58 @@ def safe_listdir(path):
     return []
 
 
+def load_scripts(script_dir):
+  """
+  Load Python scripts as modules from the specified directory.
+  Returns a dictionary with module names as keys and module objects as values.
+  Only loads .py files that are not __init__.py.
+  
+  Note: Only load scripts from trusted directories as they will be executed.
+  """
+  scripts = {}
+  
+  if not os.path.exists(script_dir):
+    return scripts
+  
+  # Get list of Python files
+  try:
+    files = [f for f in os.listdir(script_dir) 
+             if f.endswith('.py') and f != '__init__.py']
+  except (OSError, FileNotFoundError):
+    return scripts
+  
+  # Import each script as a module
+  for filename in files:
+    filepath = os.path.join(script_dir, filename)
+    module_name = filename[:-3]  # Remove .py extension
+    
+    try:
+      # Load the module from file
+      spec = importlib.util.spec_from_file_location(module_name, filepath)
+      if spec and spec.loader:
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        scripts[module_name] = module
+    except (ImportError, ModuleNotFoundError, SyntaxError) as e:
+      print(f"Warning: Failed to load script '{filename}': {e}")
+    except Exception as e:
+      print(f"Warning: Unexpected error loading script '{filename}': {e}")
+  
+  return scripts
+
+
 plugin_dir = os.path.expandvars("C:\\Users\\%USER%\\AppData\\Local\\BrightOS\\Plugins")
 print(plugin_dir)
 script_dir = os.path.expandvars("C:\\Users\\%USER%\\AppData\\Local\\BrightOS\\Scripts")
 print(script_dir)
 
-pluginlist = safe_listdir(plugin_dir)
-scriptlist = safe_listdir(script_dir)
 # initialize the loader
 loader = Loader()
 
 # load your plugins
-plugins = loader.load_plugins(plugin_dir, pluginlist)
-scripts = loader.load_plugins(script_dir, scriptlist)
+plugins = loader.load_plugins(plugin_dir)
+# load scripts as modules (not using simple_plugin_loader since scripts are modules, not classes)
+scripts = load_scripts(script_dir)
 telemetrix_board = None
 # Don't create the board at startup - let the user configure it through the GUI
 plugins["telemetrix"] = telemetrix_board
