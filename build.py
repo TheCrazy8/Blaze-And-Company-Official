@@ -28,7 +28,7 @@ def build():
     
     try:
         PyInstaller.__main__.run(pyinstaller_args)
-        print("\n✓ Build completed successfully!")
+        print("\n Build completed successfully!")
         print(f"Executable location: {os.path.join(script_dir, 'dist', 'BrightOS.exe')}")
         return 0
     except Exception as e:
