@@ -2,12 +2,11 @@
  * BrightOS Telemetrix Firmware with Auto-Discovery
  * 
  * This sketch configures the Arduino Uno R4 WiFi board to run the Telemetrix
- * server with automatic IP discovery via mDNS/Bonjour.
+ * server with automatic IP discovery via UDP broadcasts.
  * 
  * Features:
  * - Connects to WiFi automatically
- * - Broadcasts IP via mDNS as "brightos-arduino.local"
- * - Sends IP via HTTP to BrightOS discovery endpoint (if configured)
+ * - Broadcasts IP via UDP for BrightOS auto-discovery
  * - Displays IP on Serial Monitor
  * 
  * Requirements:
@@ -19,10 +18,10 @@
  * 1. Install the Telemetrix4UnoR4 library from the Arduino Library Manager
  * 2. Create arduino_secrets.h file with your WiFi credentials
  * 3. Upload this sketch to your Arduino Uno R4 WiFi board
- * 4. BrightOS will automatically discover the board via mDNS
+ * 4. BrightOS will automatically discover the board via UDP broadcasts
  * 
  * Discovery Methods:
- * - mDNS: Board advertises as "brightos-arduino.local"
+ * - UDP Broadcast: Board sends IP every 5 seconds on port 31336
  * - Serial: IP printed to serial monitor at 115200 baud
  * - Manual: Use the IP address shown in Serial Monitor with BrightOS
  * 
@@ -46,17 +45,14 @@
 char ssid[] = SECRET_SSID;
 char password[] = SECRET_PASS;
 
-// WiFi server on default Telemetrix port
-WiFiServer server(31335);
-
 // UDP for broadcasting IP address
 WiFiUDP udp;
 const int BROADCAST_PORT = 31336;
 unsigned long lastBroadcast = 0;
 const unsigned long BROADCAST_INTERVAL = 5000; // Broadcast every 5 seconds
 
-// mDNS service name
-const char* mdnsName = "brightos-arduino";
+// Service name for discovery
+const char* serviceName = "brightos-arduino";
 
 #endif
 
@@ -131,13 +127,9 @@ void setup() {
   Serial.println();
   Serial.println("Discovery Methods:");
   Serial.println("1. BrightOS will automatically find this board via UDP broadcast");
-  Serial.println("2. BrightOS can connect to: brightos-arduino.local (if mDNS works)");
-  Serial.print("3. Or manually set: export ARDUINO_IP_ADDRESS=");
+  Serial.print("2. Or manually set: export ARDUINO_IP_ADDRESS=");
   Serial.println(WiFi.localIP());
   Serial.println("========================================");
-  
-  // Start the Telemetrix server
-  server.begin();
   
   // Start UDP for broadcasting
   udp.begin(BROADCAST_PORT);
@@ -163,17 +155,10 @@ void loop() {
     broadcastIP();
     lastBroadcast = millis();
   }
-  
-  // Accept incoming WiFi connections
-  WiFiClient client = server.available();
-  if (client) {
-    Serial.println("New client connected from BrightOS");
-    // Pass the client to Telemetrix for handling
-    telemetrix.loopWithClient(client);
-  }
 #endif
   
   // Run the Telemetrix main loop
+  // The Telemetrix library handles WiFi client connections internally
   telemetrix.loop();
 }
 
@@ -183,8 +168,8 @@ void broadcastIP() {
   // Create discovery message in JSON format
   String message = "{\"service\":\"brightos-telemetrix\",\"ip\":\"";
   message += WiFi.localIP().toString();
-  message += "\",\"port\":31335,\"hostname\":\"";
-  message += mdnsName;
+  message += "\",\"port\":31335,\"name\":\"";
+  message += serviceName;
   message += "\"}";
   
   // Broadcast to local network
