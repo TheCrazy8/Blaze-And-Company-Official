@@ -5,8 +5,8 @@ import os
 ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
 
 try:
-  from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import TelemetrixUnoR4Wifi
-  TelemetrixUnoR4WiFi = TelemetrixUnoR4Wifi
+  from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import telemetrix_uno_r4_wifi as telemetrix_wifi
+  TelemetrixUnoR4WiFi = telemetrix_wifi.TelemetrixUnoR4WiFi
 except ImportError:
   TelemetrixUnoR4WiFi = None
 
