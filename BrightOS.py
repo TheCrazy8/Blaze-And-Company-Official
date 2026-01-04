@@ -27,7 +27,9 @@ def safe_listdir(path):
 
 
 plugin_dir = os.path.expandvars("C:\\Users\\%USER%\\AppData\\Local\\BrightOS\\Plugins")
+print(plugin_dir)
 script_dir = os.path.expandvars("C:\\Users\\%USER%\\AppData\\Local\\BrightOS\\Scripts")
+print(script_dir)
 
 pluginlist = safe_listdir(plugin_dir)
 scriptlist = safe_listdir(script_dir)
