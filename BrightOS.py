@@ -8,9 +8,11 @@ import threading
 import queue
 import sys
 import importlib.util
+import socket
+import json
 try:
-  from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import telemetrix_uno_r4_wifi as telemetrix_wifi
-  TelemetrixUnoR4WiFi = telemetrix_wifi.TelemetrixUnoR4WiFi
+  from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import TelemetrixUnoR4Wifi
+  TelemetrixUnoR4WiFi = TelemetrixUnoR4Wifi
 except ImportError:
   TelemetrixUnoR4WiFi = None
 from simple_plugin_loader import Loader
@@ -20,6 +22,8 @@ import sv_ttk
 
 # Configuration constants
 ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
+DISCOVERY_PORT = 31336
+DISCOVERY_TIMEOUT = 10  # seconds to wait for discovery
 
 def safe_listdir(path):
   try:
@@ -67,6 +71,59 @@ def load_scripts(script_dir):
   
   return scripts
 
+def discover_arduino_board(timeout=DISCOVERY_TIMEOUT):
+  """
+  Discover Arduino boards on the local network via UDP broadcast.
+  Returns the IP address of the first discovered board, or None if not found.
+  """
+  try:
+    # Create UDP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.settimeout(1.0)  # 1 second timeout for receive
+    
+    # Bind to discovery port
+    try:
+      sock.bind(('', DISCOVERY_PORT))
+    except OSError as e:
+      print(f"Could not bind to discovery port {DISCOVERY_PORT}: {e}")
+      return None
+    
+    print(f"Listening for Arduino board broadcasts for {timeout} seconds...")
+    start_time = datetime.datetime.now()
+    
+    while (datetime.datetime.now() - start_time).total_seconds() < timeout:
+      try:
+        data, addr = sock.recvfrom(1024)
+        message = data.decode('utf-8')
+        
+        # Try to parse JSON message
+        try:
+          board_info = json.loads(message)
+          if board_info.get('service') == 'brightos-telemetrix':
+            ip = board_info.get('ip')
+            print(f"Discovered Arduino board at {ip}")
+            sock.close()
+            return ip
+        except json.JSONDecodeError:
+          # Not a valid JSON message, ignore
+          pass
+          
+      except socket.timeout:
+        # No message received in this interval, continue waiting
+        continue
+      except Exception as e:
+        print(f"Error during discovery: {e}")
+        break
+    
+    sock.close()
+    print("No Arduino board discovered via UDP broadcast")
+    return None
+    
+  except Exception as e:
+    print(f"Discovery failed: {e}")
+    return None
+
 userdir = home_dir = os.path.expanduser("~")
 print(userdir)
 plugin_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Plugins"
@@ -81,8 +138,35 @@ loader = Loader()
 plugins = loader.load_plugins(plugin_dir)
 # load scripts as modules (not using simple_plugin_loader since scripts are modules, not classes)
 scripts = load_scripts(script_dir)
+
+# Automatically create and connect to Telemetrix board
 telemetrix_board = None
-# Don't create the board at startup - let the user configure it through the GUI
+if TelemetrixUnoR4WiFi:
+  arduino_ip = os.environ.get(ARDUINO_IP_ENV_VAR)
+  
+  # If no environment variable, try auto-discovery
+  if not arduino_ip:
+    print(f"No {ARDUINO_IP_ENV_VAR} environment variable found.")
+    print("Attempting to auto-discover Arduino board on the network...")
+    arduino_ip = discover_arduino_board()
+  
+  if arduino_ip:
+    try:
+      print(f"Attempting to connect to Arduino board at {arduino_ip}...")
+      telemetrix_board = TelemetrixUnoR4WiFi(transport_address=arduino_ip)
+      print(f"Successfully connected to Arduino board at {arduino_ip}")
+    except Exception as e:
+      print(f"Failed to connect to Arduino board at {arduino_ip}: {e}")
+      print("You can use the 'Configure Telemetrix' button to manually connect.")
+  else:
+    print("No Arduino board found.")
+    print("Options:")
+    print(f"1. Set {ARDUINO_IP_ENV_VAR} environment variable")
+    print("2. Ensure Arduino is running BrightOS_Telemetrix firmware")
+    print("3. Use 'Configure Telemetrix' button to manually connect")
+else:
+  print("Telemetrix library not available. Install telemetrix-uno-r4 package.")
+
 plugins["telemetrix"] = telemetrix_board
 
 def get_imports(path):
