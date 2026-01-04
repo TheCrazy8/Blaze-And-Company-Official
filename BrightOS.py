@@ -68,7 +68,7 @@ def load_scripts(script_dir):
   return scripts
 
 userdir = home_dir = os.path.expanduser("~")
-
+print(userdir)
 plugin_dir = os.path.expandvars(f"{userdir}\\AppData\\Local\\BrightOS\\Plugins")
 print(plugin_dir)
 script_dir = os.path.expandvars(f"{userdir}\\AppData\\Local\\BrightOS\\Scripts")
