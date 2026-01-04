@@ -35,11 +35,7 @@ loader = Loader()
 plugins = loader.load_plugins(plugin_dir, pluginlist)
 scripts = loader.load_plugins(script_dir, scriptlist)
 telemetrix_board = None
-if TelemetrixUnoR4WiFi:
-  try:
-    telemetrix_board = TelemetrixUnoR4WiFi()
-  except Exception as exc:
-    print(f"Telemetrix setup failed: {exc}")
+# Don't create the board at startup - let the user configure it through the GUI
 plugins["telemetrix"] = telemetrix_board
 
 def get_imports(path):
@@ -99,6 +95,77 @@ def ChooseScript(plugins, scripts):
       pass
     root.after(100, poll_output)
 
+  def configure_telemetrix():
+    if not TelemetrixUnoR4WiFi:
+      append_output("Telemetrix library not available. Install telemetrix-uno-r4-wifi package.")
+      return
+
+    # Create a dialog window for Telemetrix configuration
+    dialog = tk.Toplevel(root)
+    dialog.title("Configure Telemetrix Connection")
+    dialog.geometry("400x200")
+    dialog.transient(root)
+    dialog.grab_set()
+
+    ttk.Label(dialog, text="Arduino Board IP Address:").pack(padx=10, pady=(20, 5))
+    
+    ip_entry = ttk.Entry(dialog, width=30)
+    ip_entry.pack(padx=10, pady=(0, 10))
+    
+    # Pre-fill with environment variable if available
+    env_ip = os.environ.get("ARDUINO_IP_ADDRESS", "")
+    if env_ip:
+      ip_entry.insert(0, env_ip)
+    
+    status_label = ttk.Label(dialog, text="")
+    status_label.pack(padx=10, pady=(10, 10))
+
+    def connect():
+      ip_address = ip_entry.get().strip()
+      if not ip_address:
+        status_label.config(text="Please enter an IP address")
+        return
+
+      status_label.config(text="Connecting...")
+      dialog.update()
+
+      try:
+        # Shutdown existing connection if any
+        if plugins["telemetrix"]:
+          try:
+            plugins["telemetrix"].shutdown()
+          except:
+            pass
+
+        # Create new connection
+        new_board = TelemetrixUnoR4WiFi(transport_address=ip_address)
+        plugins["telemetrix"] = new_board
+        append_output(f"Telemetrix connected to {ip_address}")
+        dialog.destroy()
+      except Exception as exc:
+        status_label.config(text=f"Connection failed: {exc}")
+        append_output(f"Telemetrix connection failed: {exc}")
+
+    def cancel():
+      dialog.destroy()
+
+    button_frame = ttk.Frame(dialog)
+    button_frame.pack(padx=10, pady=(10, 20))
+    
+    ttk.Button(button_frame, text="Connect", command=connect).pack(side=tk.LEFT, padx=5)
+    ttk.Button(button_frame, text="Cancel", command=cancel).pack(side=tk.LEFT, padx=5)
+
+  def disconnect_telemetrix():
+    if plugins["telemetrix"]:
+      try:
+        plugins["telemetrix"].shutdown()
+        plugins["telemetrix"] = None
+        append_output("Telemetrix disconnected")
+      except Exception as exc:
+        append_output(f"Error disconnecting Telemetrix: {exc}")
+    else:
+      append_output("Telemetrix not connected")
+
   def run_selected():
     if running_thread["thread"] and running_thread["thread"].is_alive():
       append_output("A script is already running.")
@@ -150,6 +217,13 @@ def ChooseScript(plugins, scripts):
         append_output("Stop not supported for this script; ensure your script implements stop().")
     else:
       append_output("No running script to stop.")
+
+  # Telemetrix configuration buttons
+  telemetrix_frame = ttk.Frame(root)
+  telemetrix_frame.pack(padx=10, pady=(0, 10))
+  
+  ttk.Button(telemetrix_frame, text="Configure Telemetrix", command=configure_telemetrix).pack(side=tk.LEFT, padx=5)
+  ttk.Button(telemetrix_frame, text="Disconnect Telemetrix", command=disconnect_telemetrix).pack(side=tk.LEFT, padx=5)
 
   ttk.Button(root, text="Run", command=run_selected, state=tk.NORMAL if has_scripts else tk.DISABLED).pack(padx=10, pady=(0, 5))
   ttk.Button(root, text="Stop", command=stop_running).pack(padx=10, pady=(0, 10))
