@@ -19,6 +19,7 @@ export default defineConfig({
     nav: [
       { text: 'Key', link: '/key' },
       { text: 'Products', link: '/products'},
+      { text: 'FLARE', link: '/FLARE-Competition'},
     ],
     sidebar: [],
     lastUpdated: {
