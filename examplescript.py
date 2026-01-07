@@ -1,5 +1,6 @@
 import time
 import os
+import pygame
 
 # Configuration constants
 ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
@@ -12,6 +13,20 @@ except ImportError:
 
 _board = None
 _created_locally = False
+
+userdir = home_dir = os.path.expanduser("~")
+
+file_path = f"{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt"
+content_to_append = "\nPygame"
+
+try:
+    with open(file_path, "a") as file:
+        file.write(content_to_append)
+    print(f"Text appended to {file_path} successfully.")
+except FileNotFoundError:
+    print(f"Error: The file '{file_path}' was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
 
 def main(plugins):
   global _board, _created_locally
