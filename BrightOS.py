@@ -69,10 +69,39 @@ def load_scripts(script_dir):
 
 userdir = home_dir = os.path.expanduser("~")
 print(userdir)
+
+try:
+    os.mkdir(f"{userdir}\\AppData\\Local\\BrightOS\\Plugins")
+    print("Directory 'Plugins' created.")
+except FileExistsError:
+    print("Directory 'Plugins' already exists.")
+except FileNotFoundError:
+    print("Parent directory does not exist.")
+
+try:
+    os.mkdir(f"{userdir}\\AppData\\Local\\BrightOS\\Scripts")
+    print("Directory 'Scripts' created.")
+except FileExistsError:
+    print("Directory 'Scripts' already exists.")
+except FileNotFoundError:
+    print("Parent directory does not exist.")
+
+try:
+  with open(f'{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt', 'x') as file:
+    print("Created Importlist.txt")
+except FileExistsError:
+  print("Importlist.txt already exists.")
+except FileNotFoundError:
+  print("Parent directory does not exist.")
+
 plugin_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Plugins"
 print(plugin_dir)
 script_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Scripts"
 print(script_dir)
+try:
+  import f"{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt"
+except ImportError:
+  pass
 
 # initialize the loader
 loader = Loader()
