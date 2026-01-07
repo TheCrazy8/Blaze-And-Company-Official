@@ -279,8 +279,6 @@ The Discussion Board can be edited directly by anyone, and discussions take plac
 | Outcome | T/F |  |  |  |  |  |  |
 
 **TRIVIA**:  
-The Magellan module, IQBASE, BASE, SNAP, and Minibot integrations are the only non-acronym modules/integrations. All other modules/integrations are referred to using acronyms.  
-Not all motorized modules need special scripts. The ROCAT module can use driver control, and the IQBASE integration is designed to run driver control.  
 The MDPT can produce modules for other teams. People generally don’t use this. You can place an order on any green production status[^16] module or you can apply[^17] for a purple production status module[^18].
 
 [^8]:  Note that any module/integration/submodule/motorized modules can be produced no matter the production status, but some can only be owned by authorized personnel, any other than an Easily Built module must be made by a member of the Production Team.
