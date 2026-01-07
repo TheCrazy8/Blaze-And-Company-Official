@@ -12,7 +12,8 @@ title: Products
 
 ## Integrations:
 
-### BASE Integration:  
+### ARTISAN Integration:  
+Acronym: modul**A**r **R**obo**TI**cs **S**ystem b**A**se i**N**tegration	
 The base of any bot  
 Age: Unborn  
 Visual Appeal: TBD  
