@@ -3,6 +3,10 @@
 ## BrightOS
 Arduino modular program for managing and running scripts with hardware control capabilities.
 
+### HOW TO USE:
+1. Download and run BrightOS.py
+2. Follow telemetrix configuration
+
 ### Features
 - Plugin and script loader system
 - Telemetrix support for Arduino Uno R4 WiFi board control
