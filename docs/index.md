@@ -29,7 +29,7 @@ features:
 ## Quick Links
 - [Key](/key)
 - [Products](/products)
-- [FLARE](/FLARE-Competition)
+- [FLARE](/FLARE%20Competition)
 
 ## Getting Started
 1. Use the navigation on the left to browse docs.
