@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { analytics, reviews } from '../config/supabase. js'
+import { analytics, reviews } from '../config/supabase.js'
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')
