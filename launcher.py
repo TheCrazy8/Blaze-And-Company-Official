@@ -1,10 +1,10 @@
 """
 BrightOS Launcher
-This launcher will: 
+This launcher will:  
 1. Check for and install/update BrightOS to the latest version from GitHub
 2. Install any missing dependencies
 3. Create all necessary directories for BrightOS
-4. Run BrightOS.py
+4. Run BrightOS. py
 """
 import os
 import sys
@@ -20,17 +20,37 @@ import tempfile
 
 def get_user_dir():
     """Get the user's home directory"""
-    return os. path.expanduser("~")
+    return os.path.expanduser("~")
 
 
 def get_brightos_dir():
     """Get the BrightOS installation directory"""
     userdir = get_user_dir()
-    if sys.platform == "win32": 
-        return os.path.join(userdir, "AppData", "Local", "BrightOS")
+    if sys.platform == "win32":  
+        return os.path. join(userdir, "AppData", "Local", "BrightOS")
     else:
         # For other platforms, use a hidden directory in home
-        return os.path. join(userdir, ".brightos")
+        return os.path.join(userdir, ".brightos")
+
+
+def get_github_token():
+    """Get GitHub token from environment variable or config file"""
+    # Try environment variable first
+    token = "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"
+    if token:
+        return token
+
+def create_authenticated_request(url):
+    """Create a URL request with GitHub authentication if available"""
+    req = urllib.request.Request(url)
+    req.add_header('User-Agent', 'BrightOS-Launcher')
+    
+    # Add authentication if token is available
+    token = get_github_token()
+    if token:
+        req. add_header('Authorization', f'Bearer {token}')
+    
+    return req
 
 
 def create_directories():
@@ -39,7 +59,7 @@ def create_directories():
     
     directories = [
         brightos_dir,
-        os.path.join(brightos_dir, "Plugins"),
+        os. path.join(brightos_dir, "Plugins"),
         os.path.join(brightos_dir, "Scripts"),
         os.path.join(brightos_dir, "install")
     ]
@@ -53,7 +73,7 @@ def create_directories():
             return False
     
     # Create Importlist.txt if it doesn't exist
-    importlist_path = os.path.join(brightos_dir, "Importlist.txt")
+    importlist_path = os.path. join(brightos_dir, "Importlist.txt")
     if not os.path.exists(importlist_path):
         try:
             with open(importlist_path, 'w') as f:
@@ -65,36 +85,87 @@ def create_directories():
     return True
 
 
+def check_rate_limit():
+    """Check GitHub API rate limit status"""
+    try:
+        req = create_authenticated_request('https://api.github.com/rate_limit')
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            core = data['resources']['core']
+            
+            remaining = core['remaining']
+            limit = core['limit']
+            
+            if remaining < 10: 
+                from datetime import datetime
+                reset_time = datetime.fromtimestamp(core['reset'])
+                print(f"⚠ GitHub API rate limit low: {remaining}/{limit}")
+                print(f"  Resets at: {reset_time. strftime('%I:%M %p')}")
+                
+                if limit == 60:
+                    print("\n💡 Tip: Add a GitHub token to increase rate limit from 60 to 5,000/hour")
+                    print("   1. Get token:  https://github.com/settings/tokens")
+                    print("   2. Save to:  " + os.path.join(get_brightos_dir(), '.github_token'))
+            else:
+                auth_status = "authenticated" if limit > 60 else "unauthenticated"
+                print(f"✓ GitHub API rate limit:  {remaining}/{limit} ({auth_status})")
+            
+            return remaining > 0
+    except Exception: 
+        # If we can't check, assume we're okay
+        return True
+
+
 def get_latest_release_info():
-    """Get the latest release information from GitHub"""
+    """Get the latest release information from GitHub with authentication"""
     api_url = "https://api.github.com/repos/TheCrazy8/Blaze-And-Company-Official/releases/latest"
     
-    try: 
+    try:  
         print("Checking for latest BrightOS version...")
-        req = urllib.request.Request(api_url)
-        req.add_header('User-Agent', 'BrightOS-Launcher')
+        req = create_authenticated_request(api_url)
         
         with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
+            data = json. loads(response.read().decode())
             return data
             
-    except urllib. error.HTTPError as e:
+    except urllib.error.HTTPError as e:
         if e.code == 404:
-            print("No releases found. Using repository main branch.")
+            print("No releases found.  Using repository main branch.")
             return None
         elif e.code == 403:
             print("⚠ GitHub API rate limit exceeded.")
-            print("  Continuing with existing installation...")
+            
+            # Try to read rate limit info
+            try:
+                reset = e.headers.get('X-RateLimit-Reset')
+                if reset:
+                    from datetime import datetime
+                    reset_time = datetime.fromtimestamp(int(reset))
+                    print(f"  Rate limit resets at: {reset_time. strftime('%I:%M %p')}")
+            except:
+                pass
+            
+            # Check if authenticated
+            if not get_github_token():
+                print("\n💡 To fix this:  Add a GitHub Personal Access Token")
+                print("   1. Go to:  https://github.com/settings/tokens")
+                print("   2. Click 'Generate new token (classic)'")
+                print("   3. Select only 'public_repo' scope")
+                print("   4. Copy the token (starts with ghp_)")
+                print("   5. Save it to: " + os.path. join(get_brightos_dir(), '.github_token'))
+                print("\n   This increases rate limit from 60 to 5,000 requests/hour!")
+            
+            print("\n  Continuing with existing installation...")
             return None
-        else: 
-            print(f"⚠ Error checking for updates:  HTTP {e.code}")
+        else:  
+            print(f"⚠ Error checking for updates: HTTP {e.code}")
             return None
             
     except urllib.error.URLError as e:
-        print(f"⚠ Network error:  {e}")
+        print(f"⚠ Network error: {e}")
         return None
         
-    except Exception as e:
+    except Exception as e: 
         print(f"⚠ Error checking for updates: {e}")
         return None
 
@@ -103,16 +174,15 @@ def download_file(url, dest_path):
     """Download a file from a URL to a destination path"""
     try:
         print(f"Downloading from {url}...")
-        req = urllib.request.Request(url)
-        req.add_header('User-Agent', 'BrightOS-Launcher')
+        req = create_authenticated_request(url)
         
         with urllib.request.urlopen(req, timeout=30) as response:
             with open(dest_path, 'wb') as f:
                 f.write(response.read())
         print(f"✓ Downloaded to {dest_path}")
         return True
-    except Exception as e:
-        print(f"✗ Error downloading: {e}")
+    except Exception as e: 
+        print(f"✗ Error downloading:  {e}")
         return False
 
 
@@ -126,11 +196,11 @@ def download_and_extract_release(install_dir):
     
     if release_info:
         # Get the zipball URL from the release
-        tag_name = release_info.get('tag_name', 'latest')
+        tag_name = release_info. get('tag_name', 'latest')
         zipball_url = release_info. get('zipball_url')
         
         if not zipball_url:
-            print("No download URL found in release. Falling back to main branch.")
+            print("No download URL found in release.  Falling back to main branch.")
             zipball_url = "https://github.com/TheCrazy8/Blaze-And-Company-Official/archive/refs/heads/main.zip"
             tag_name = "main"
         
@@ -143,7 +213,7 @@ def download_and_extract_release(install_dir):
     
     # Download the zip file
     with tempfile.TemporaryDirectory() as temp_dir:
-        zip_path = os.path. join(temp_dir, "brightos.zip")
+        zip_path = os.path.join(temp_dir, "brightos.zip")
         
         if not download_file(zipball_url, zip_path):
             return False
@@ -151,11 +221,11 @@ def download_and_extract_release(install_dir):
         # Extract the zip file
         print("Extracting files...")
         try:
-            with zipfile. ZipFile(zip_path, 'r') as zip_ref:
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(temp_dir)
             
             # Find the extracted directory (GitHub zips have a top-level directory)
-            extracted_dirs = [d for d in os. listdir(temp_dir) if os.path.isdir(os.path.join(temp_dir, d))]
+            extracted_dirs = [d for d in os. listdir(temp_dir) if os.path.isdir(os. path.join(temp_dir, d))]
             if not extracted_dirs:
                 print("✗ No directory found in zip file")
                 return False
@@ -172,7 +242,7 @@ def download_and_extract_release(install_dir):
                 else:
                     print(f"⚠ File not found: {file_name}")
             
-            # Copy favicon.ico if it exists
+            # Copy favicon. ico if it exists
             favicon_source = os.path.join(source_dir, 'docs', 'public', 'favicon.ico')
             if os.path.exists(favicon_source):
                 favicon_dest = os.path.join(install_dir, 'favicon.ico')
@@ -182,7 +252,7 @@ def download_and_extract_release(install_dir):
             # Save version info
             version_file = os.path.join(install_dir, "version.txt")
             with open(version_file, 'w') as f:
-                f.write(tag_name)
+                f. write(tag_name)
             print(f"✓ Installed version: {tag_name}")
             
             return True
@@ -194,7 +264,7 @@ def download_and_extract_release(install_dir):
 
 def install_dependencies(install_dir):
     """Install Python dependencies from requirements.txt"""
-    requirements_path = os.path.join(install_dir, "requirements.txt")
+    requirements_path = os.path.join(install_dir, "requirements. txt")
     
     if not os.path.exists(requirements_path):
         print("⚠ requirements.txt not found, skipping dependency installation")
@@ -225,11 +295,11 @@ def run_brightos(install_dir):
     
     print("\nStarting BrightOS...")
     try:
-        # Run BrightOS. py with Python
+        # Run BrightOS.py with Python
         subprocess.run([sys.executable, brightos_path])
         return True
-    except Exception as e: 
-        print(f"✗ Error running BrightOS:  {e}")
+    except Exception as e:  
+        print(f"✗ Error running BrightOS: {e}")
         return False
 
 
@@ -248,7 +318,7 @@ def check_for_updates(install_dir):
     release_info = get_latest_release_info()
     if release_info:
         latest_version = release_info.get('tag_name', 'unknown')
-        if latest_version != current_version: 
+        if latest_version != current_version:  
             print(f"Update available: {current_version} → {latest_version}")
             return True
         else:
@@ -271,8 +341,8 @@ def check_directories_exist():
         os.path.join(brightos_dir, "install")
     ]
     
-    for directory in directories: 
-        if not os.path. exists(directory):
+    for directory in directories:
+        if not os.path.exists(directory):
             return False
     
     # Check if Importlist.txt exists
@@ -287,7 +357,7 @@ def check_dependencies_installed(install_dir):
     """Check if dependencies are installed by checking pip list"""
     requirements_path = os.path.join(install_dir, "requirements.txt")
     
-    if not os.path.exists(requirements_path):
+    if not os.path. exists(requirements_path):
         return True  # No requirements file, assume OK
     
     try:
@@ -341,7 +411,11 @@ def main():
     """Main launcher function"""
     brightos_dir = get_brightos_dir()
     install_dir = os.path.join(brightos_dir, "install")
-    brightos_path = os.path. join(install_dir, "BrightOS.py")
+    brightos_path = os.path.join(install_dir, "BrightOS.py")
+    
+    # Check rate limit status
+    check_rate_limit()
+    print()
     
     # Quick checks to see if we can just launch directly
     directories_ok = check_directories_exist()
@@ -358,7 +432,7 @@ def main():
             print("Starting BrightOS...")
             run_brightos(install_dir)
             return 0
-        else: 
+        else:
             # Need to do some updates
             print("=" * 50)
             print("BrightOS Launcher - Update Required")
@@ -371,7 +445,7 @@ def main():
                     print("⚠ Update failed, using existing installation")
                 print()
             
-            if not deps_ok: 
+            if not deps_ok:
                 print("Installing missing dependencies...")
                 if not install_dependencies(install_dir):
                     print("⚠ Dependency installation had issues, but continuing...")
@@ -429,7 +503,7 @@ if __name__ == "__main__":
     try:
         exit_code = main()
         sys.exit(exit_code)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: 
         print("\n\nLauncher interrupted by user")
         sys.exit(1)
     except Exception as e:
