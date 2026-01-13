@@ -12,6 +12,15 @@ def build():
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
     brightos_path = os.path.join(script_dir, 'BrightOS.py')
+    icon_path = os.path.join(script_dir, 'docs', 'public', 'favicon.ico')
+    
+    # Check if icon exists
+    if not os.path.exists(icon_path):
+        print(f"Warning: favicon.ico not found at {icon_path}, building without icon")
+        icon_arg = []
+    else:
+        icon_arg = [f'--icon={icon_path}']
+        print(f"Using icon: {icon_path}")
     
     # PyInstaller arguments
     pyinstaller_args = [
@@ -21,7 +30,7 @@ def build():
         '--windowed',
         '--clean',
         '--noconfirm',
-    ]
+    ] + icon_arg
     
     print("Building BrightOS.exe with PyInstaller...")
     print(f"Arguments: {' '.join(pyinstaller_args)}")

@@ -1,4 +1,4 @@
-name: Build and Release BrightOS
+name: Release BrightOS
 
 on:
   push:
@@ -10,25 +10,12 @@ permissions:
   contents: write  # Required for creating releases and uploading assets
 
 jobs:
-  build:
-    runs-on: windows-latest  # Use Windows to build .exe
+  release:
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      
-      - name: Build executable with PyInstaller
-        run: python build.py
       
       - name: Get version
         id: get_version
@@ -50,20 +37,31 @@ jobs:
           draft: false
           prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
           files: |
-            dist/BrightOS.exe
+            BrightOS.py
+            requirements.txt
+            build.py
           body: |
             ## BrightOS Release ${{ steps.get_version.outputs.version }}
             
             ### Download
-            Download `BrightOS.exe` from the assets below.
+            This release contains the Python files for BrightOS. Use the **BrightOS-Launcher.exe** to automatically download and run this version.
+            
+            ### For Launcher Users
+            Simply run `BrightOS-Launcher.exe` and it will automatically download this version.
+            
+            ### Manual Installation
+            If you want to run BrightOS manually without the launcher:
+            1. Download `BrightOS.py` and `requirements.txt`
+            2. Install dependencies: `pip install -r requirements.txt`
+            3. Run: `python BrightOS.py`
             
             ### What's Included
-            - Standalone Windows executable
-            - No Python installation required
+            - `BrightOS.py` - Main application file
+            - `requirements.txt` - Python dependencies
+            - `build.py` - Build script for creating standalone executable
             
             ### Requirements
-            - Windows 10 or later
-            - No additional dependencies
+            - Python 3.11 or later (not needed if using the launcher)
           make_latest: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
