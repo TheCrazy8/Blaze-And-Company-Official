@@ -1,20 +1,20 @@
 import footnote from 'markdown-it-footnote'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
-import { generateFeeds } from './theme/rss. js'
+import { generateFeeds } from './theme/rss.js'  // ✅ FIXED:  Removed space
 
 export default defineConfig({
   ignoreDeadLinks: [
     /\/blog\/feed\.(xml|atom)$/
   ],
   markdown: {
-    lineNumbers: true, // Show line numbers in code blocks
+    lineNumbers: true,
     config(md) {
       md.use(footnote)
     }
   },
   title: "B&C Official",
-  description:   "The Blaze & Company official site.",
+  description: "The Blaze & Company official site.",
   base: "/Blaze-And-Company-Official/",
   themeConfig: {
     editLink: {
@@ -23,8 +23,8 @@ export default defineConfig({
     },
 
     docFooter: {
-      prev:   '← Previous',
-      next:   'Next →'
+      prev:  '← Previous',
+      next: 'Next →'
     },
 
     externalLinkIcon: false,
@@ -34,21 +34,21 @@ export default defineConfig({
       copyright: "Copyright © 2025-present TheCrazy8",
     },
     
-    // UPDATED NAV WITH DROPDOWNS (matching sidebar structure, existing pages only)
+    // NAV WITH DROPDOWNS
     nav: [
       { 
         text: '🏠 Getting Started',
         items: [
           { text: '🏡 Home', link: '/' },
           { text: '🔑 Key Resources', link: '/key' },
-          { text: '📦 Products', link: '/products' },
+          { text: '���� Products', link: '/products' },
         ]
       },
       { 
         text: '🔥 BrightOS',
         items:  [
           { text: '🌐 Web Interface', link: '/brightos-web' },
-          { text: '📚 Script Examples', link: '/examples' },
+          { text:  '📚 Script Examples', link: '/examples' },
           { text: '📥 Downloads', link: '/downloads' },
           { text: '🏗️ Build Guide', link: '/BUILD' },
         ]
@@ -57,11 +57,11 @@ export default defineConfig({
         text:  '👨‍💻 Development',
         items: [
           { text: '📖 Development Guide', link: '/development-guide' },
-          { text: '📜 Changelog', link: '/changelog' },
+          { text:  '📜 Changelog', link: '/changelog' },
         ]
       },
       { 
-        text:  '🌟 Community',
+        text: '🌟 Community',
         items:  [
           { text: '📝 Blog', link: '/blog/' },
           { text: '💬 GitHub Discussions', link: 'https://github.com/TheCrazy8/Blaze-And-Company-Official/discussions' },
@@ -77,7 +77,6 @@ export default defineConfig({
       },
     ],
     
-    // SIDEBAR (existing structure)
     sidebar: [
       {
         text: 'Getting Started',
@@ -130,7 +129,7 @@ export default defineConfig({
     lastUpdated: {
       text: 'Updated',
       formatOptions: {
-        dateStyle:  'full',
+        dateStyle: 'full',
         timeStyle: 'medium',
         forceLocale: true,
       }
@@ -155,7 +154,7 @@ export default defineConfig({
     },
     
     socialLinks: [
-      { icon:  'github', link: 'https://github.com/TheCrazy8/Blaze-And-Company-Official' }
+      { icon: 'github', link: 'https://github.com/TheCrazy8/Blaze-And-Company-Official' }
     ],
   },
   
@@ -166,7 +165,7 @@ export default defineConfig({
     ['link', { rel: 'alternate', type: 'application/atom+xml', title: 'BrightOS Blog Atom', href: '/Blaze-And-Company-Official/blog/feed.atom' }],
     ['meta', { name: 'theme-color', content: '#ff4500' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
-    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
+    ['meta', { name:  'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'Blaze & Company' }],
     ['meta', { property: 'og:image', content: '/Blaze-And-Company-Official/og-image.png' }],
@@ -290,21 +289,21 @@ export default defineConfig({
                 cacheName: 'google-fonts-cache',
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                  maxAgeSeconds: 60 * 60 * 24 * 365
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
+                  statuses:  [0, 200]
                 }
               }
             },
             {
-              urlPattern: /^https:\/\/fonts\.gstatic\.com\/. */i,
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'gstatic-fonts-cache',
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                  maxAgeSeconds: 60 * 60 * 24 * 365
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
@@ -318,10 +317,10 @@ export default defineConfig({
                 cacheName: 'github-api-cache',
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 // 1 hour
+                  maxAgeSeconds: 60 * 60
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
+                  statuses:  [0, 200]
                 }
               }
             }
@@ -348,10 +347,8 @@ export default defineConfig({
       ]
     },
     css: {
-      preprocessorOptions: {
-        scss:  {
-          // Ensure scss is processed correctly
-        }
+      preprocessorOptions:  {
+        scss: {}
       }
     }
   }
