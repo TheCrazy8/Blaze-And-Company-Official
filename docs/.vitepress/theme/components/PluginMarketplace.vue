@@ -32,49 +32,6 @@ const plugins = ref([
       { version: '1.2.0', date: '2025-01-10', changes: 'Added stepper motor support' },
       { version: '1.1.0', date: '2025-01-05', changes: 'Fixed servo angle bug' }
     ]
-  },
-  {
-    id: 2,
-    name: 'LEDController',
-    version: '1.0.0',
-    author: 'CommunityUser',
-    description: 'Control individual LEDs, strips, and matrices',
-    longDescription: 'Simple yet powerful LED control with support for patterns, fading, and animations.',
-    downloads: 156,
-    rating: 4.2,
-    reviews: 8,
-    category: 'Display',
-    difficulty: 'Beginner',
-    tags: ['led', 'light', 'display'],
-    hardware: ['Arduino Uno', 'Arduino Nano'],
-    dependencies: [],
-    lastUpdated: '2025-01-12',
-    downloadUrl: '#',
-    changelog: [
-      { version: '1.0.0', date: '2025-01-12', changes: 'Initial release' }
-    ]
-  },
-  {
-    id: 3,
-    name:  'SensorHub',
-    version: '2.1.0',
-    author: 'SensorPro',
-    description: 'Unified interface for temperature, humidity, distance sensors',
-    longDescription: 'Read from DHT11/22, HC-SR04, BMP280, and more with a consistent API.',
-    downloads: 289,
-    rating: 4.8,
-    reviews: 24,
-    category: 'Sensors',
-    difficulty: 'Intermediate',
-    tags: ['sensor', 'temperature', 'humidity', 'ultrasonic'],
-    hardware: ['Arduino Uno R4 WiFi'],
-    dependencies: ['telemetrix-uno-r4-wifi'],
-    lastUpdated: '2025-01-08',
-    downloadUrl: '#',
-    changelog: [
-      { version: '2.1.0', date: '2025-01-08', changes: 'Added BMP280 support' },
-      { version: '2.0.0', date: '2024-12-20', changes: 'Rewrote core API' }
-    ]
   }
 ])
 
@@ -83,10 +40,10 @@ const selectedPlugin = ref(null)
 const filteredPlugins = computed(() => {
   return plugins.value
     .filter(p => {
-      const matchesSearch = p. name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                           p.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                           p.tags.some(tag => tag.includes(searchQuery.value.toLowerCase()))
-      const matchesCategory = selectedCategory.value === 'all' || p. category === selectedCategory.value
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                           p.description. toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                           p.tags.some(tag => tag.includes(searchQuery.value. toLowerCase()))
+      const matchesCategory = selectedCategory.value === 'all' || p.category === selectedCategory.value
       const matchesDifficulty = selectedDifficulty.value === 'all' || p.difficulty === selectedDifficulty.value
       return matchesSearch && matchesCategory && matchesDifficulty
     })
@@ -106,14 +63,25 @@ const copyCode = async (plugin) => {
     const response = await fetch(plugin.downloadUrl)
     const code = await response.text()
     await navigator.clipboard.writeText(code)
-    alert('✅ Plugin code copied to clipboard!')
+    if (window.$toast) {
+      window.$toast. success('✨ Plugin code copied to clipboard!')
+    } else {
+      alert('✅ Plugin code copied to clipboard!')
+    }
   } catch (err) {
-    alert('❌ Failed to copy code')
+    if (window.$toast) {
+      window.$toast.error('❌ Failed to copy code. Please try again.')
+    } else {
+      alert('❌ Failed to copy code')
+    }
   }
 }
 
 const downloadPlugin = (plugin) => {
-  window.open(plugin.downloadUrl, '_blank')
+  window. open(plugin.downloadUrl, '_blank')
+  if (window.$toast) {
+    window.$toast.success(`📥 Downloaded ${plugin.name}! `)
+  }
 }
 
 const viewPlugin = (plugin) => {
@@ -201,7 +169,7 @@ const getTimeSince = (date) => {
       <div 
         v-for="plugin in filteredPlugins" 
         :key="plugin.id"
-        :class="plugin-card"
+        class="plugin-card"
       >
         <div class="plugin-header">
           <div class="plugin-title">
@@ -350,7 +318,7 @@ const getTimeSince = (date) => {
 }
 
 .stat strong {
-  font-size:  32px;
+  font-size: 32px;
   color: var(--vp-c-brand-1);
 }
 
@@ -370,14 +338,14 @@ const getTimeSince = (date) => {
 .search-input {
   width: 100%;
   padding: 16px 20px;
-  font-size: 18px;
+  font-size:  18px;
   border: 2px solid var(--vp-c-border);
   border-radius: 12px;
   background: var(--vp-c-bg);
   color: var(--vp-c-text-1);
 }
 
-.search-input: focus {
+.search-input:focus {
   outline: none;
   border-color: var(--vp-c-brand-1);
   box-shadow: 0 0 0 3px var(--vp-c-brand-soft);
@@ -396,7 +364,7 @@ const getTimeSince = (date) => {
   background: var(--vp-c-bg);
   color: var(--vp-c-text-1);
   cursor: pointer;
-  flex:  1;
+  flex: 1;
   min-width: 150px;
 }
 
@@ -485,7 +453,7 @@ const getTimeSince = (date) => {
 
 .plugin-description {
   margin:  12px 0;
-  color: var(--vp-c-text-2);
+  color:  var(--vp-c-text-2);
   line-height: 1.6;
 }
 
@@ -501,7 +469,7 @@ const getTimeSince = (date) => {
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
   border-radius: 4px;
-  font-size:  12px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -514,7 +482,7 @@ const getTimeSince = (date) => {
 .badge {
   padding: 6px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size:  12px;
   font-weight: 600;
 }
 
@@ -566,6 +534,11 @@ const getTimeSince = (date) => {
   transform: translateY(-2px);
 }
 
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
   background: var(--vp-c-bg);
   color: var(--vp-c-text-1);
@@ -594,8 +567,8 @@ const getTimeSince = (date) => {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background:  rgba(0, 0, 0, 0.7);
+  bottom:  0;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -614,8 +587,8 @@ const getTimeSince = (date) => {
   position: relative;
 }
 
-.modal-close {
-  position: absolute;
+. modal-close {
+  position:  absolute;
   top: 16px;
   right: 16px;
   background: none;
