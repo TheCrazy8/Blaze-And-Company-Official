@@ -8,7 +8,7 @@ onMounted(() => {
   canvas = document.createElement('canvas')
   canvas.style.position = 'fixed'
   canvas.style.top = '0'
-  canvas.style. left = '0'
+  canvas.style.left = '0'
   canvas.style.pointerEvents = 'none'
   canvas.style.zIndex = '9999'
   canvas.width = window.innerWidth
@@ -45,7 +45,7 @@ function resizeCanvas() {
 }
 
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas. height)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i]
@@ -53,19 +53,19 @@ function animate() {
     p.y += p.speedY
     p.life -= 0.02
     
-    if (p. life <= 0) {
+    if (p.life <= 0) {
       particles.splice(i, 1)
       continue
     }
     
-    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p. y, p.size)
+    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size)
     gradient.addColorStop(0, `rgba(255, 69, 0, ${p.life})`)
     gradient.addColorStop(0.5, `rgba(255, 167, 38, ${p.life * 0.5})`)
     gradient.addColorStop(1, `rgba(255, 200, 0, 0)`)
     
     ctx.fillStyle = gradient
     ctx.beginPath()
-    ctx.arc(p.x, p. y, p.size, 0, Math.PI * 2)
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
     ctx.fill()
   }
   

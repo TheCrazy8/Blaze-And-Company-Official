@@ -14,17 +14,17 @@ const pageTitle = computed(() => {
 })
 
 const shareTwitter = () => {
-  const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl. value)}&text=${encodeURIComponent(pageTitle.value)}`
+  const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl.value)}&text=${encodeURIComponent(pageTitle.value)}`
   window.open(url, '_blank')
 }
 
 const shareLinkedIn = () => {
-  const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl. value)}`
+  const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl.value)}`
   window.open(url, '_blank')
 }
 
 const copyLink = () => {
-  navigator.clipboard.writeText(currentUrl. value)
+  navigator.clipboard.writeText(currentUrl.value)
   alert('Link copied to clipboard!')
 }
 </script>

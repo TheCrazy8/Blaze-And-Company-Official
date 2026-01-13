@@ -19,7 +19,7 @@ const actions = [
         v-show="isOpen"
         :key="action.label"
         class="fab-action"
-        : style="{ transitionDelay: `${index * 50}ms` }"
+        :style="{ transitionDelay: `${index * 50}ms` }"
         @click="() => window.location.href = action.link"
       >
         <span class="fab-icon">{{ action.icon }}</span>

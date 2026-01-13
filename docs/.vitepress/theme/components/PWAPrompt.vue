@@ -6,7 +6,7 @@ let registration = null
 
 onMounted(async () => {
   if ('serviceWorker' in navigator) {
-    registration = await navigator. serviceWorker.getRegistration()
+    registration = await navigator.serviceWorker.getRegistration()
     
     // Listen for updates
     navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -17,7 +17,7 @@ onMounted(async () => {
 
 const updateApp = () => {
   if (registration && registration.waiting) {
-    registration.waiting. postMessage({ type: 'SKIP_WAITING' })
+    registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     window.location.reload()
   }
 }

@@ -7,14 +7,14 @@ const route = useRoute()
 
 const breadcrumbs = computed(() => {
   const path = route.path
-  const parts = path.split('/').filter(p => p && p !== 'index. html')
+  const parts = path.split('/').filter(p => p && p !== 'index.html')
   
   const crumbs = [{ text: 'Home', link: '/' }]
   
   let currentPath = ''
   parts.forEach((part, index) => {
     currentPath += '/' + part
-    const text = part. replace('. html', '').replace(/-/g, ' ')
+    const text = part.replace('.html', '').replace(/-/g, ' ')
     crumbs.push({
       text: text.charAt(0).toUpperCase() + text.slice(1),
       link: currentPath,
@@ -27,9 +27,9 @@ const breadcrumbs = computed(() => {
 </script>
 
 <template>
-  <nav class="breadcrumbs" v-if="breadcrumbs. length > 1">
+  <nav class="breadcrumbs" v-if="breadcrumbs.length > 1">
     <span v-for="(crumb, index) in breadcrumbs" :key="crumb.link">
-      <a v-if="! crumb.isLast" : href="crumb.link">{{ crumb.text }}</a>
+      <a v-if="!crumb.isLast" :href="crumb.link">{{ crumb.text }}</a>
       <span v-else class="current">{{ crumb.text }}</span>
       <span v-if="index < breadcrumbs.length - 1" class="separator">→</span>
     </span>

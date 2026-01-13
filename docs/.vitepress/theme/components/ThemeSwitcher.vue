@@ -18,9 +18,9 @@ onMounted(() => {
 
 function applyTheme() {
   const theme = themes[currentTheme.value]
-  document. documentElement.style.setProperty('--vp-c-brand-1', theme.colors.primary)
-  document.documentElement.style.setProperty('--vp-c-brand-2', theme. colors.secondary)
-  localStorage.setItem('color-theme', currentTheme.value. toString())
+  document.documentElement.style.setProperty('--vp-c-brand-1', theme.colors.primary)
+  document.documentElement.style.setProperty('--vp-c-brand-2', theme.colors.secondary)
+  localStorage.setItem('color-theme', currentTheme.value.toString())
 }
 
 function cycleTheme() {
@@ -30,7 +30,7 @@ function cycleTheme() {
 </script>
 
 <template>
-  <button class="theme-switcher" @click="cycleTheme" : title="`Theme: ${themes[currentTheme]. name}`">
+  <button class="theme-switcher" @click="cycleTheme" :title="`Theme: ${themes[currentTheme].name}`">
     🎨
   </button>
 </template>
