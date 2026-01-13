@@ -80,9 +80,12 @@ function togglePreview() {
 }
 
 function copyCode() {
-  const code = props.plugin.code || props.plugin.downloadUrl || ''
+  const code = props.plugin.code
   
-  if (!code) return
+  if (!code) {
+    console.warn('No code available to copy')
+    return
+  }
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(code)

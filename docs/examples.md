@@ -34,6 +34,8 @@ function main(plugins) {
   
   console.log("Starting LED blink on pin " + LED_PIN);
   
+  // Note: arduino.write is a simplified example for demonstration
+  // In actual implementation, use the board plugin methods
   // Toggle LED every second
   setInterval(() => {
     if (arduino.write) {
@@ -215,6 +217,8 @@ function main(plugins) {
   console.log("Press button on pin " + BUTTON_PIN);
   console.log("LED on pin " + LED_PIN + " will respond");
   
+  // Note: arduino.read and arduino.write are simplified for demonstration
+  // In actual implementation, use board plugin callback methods
   // Poll button state
   const checkInterval = setInterval(() => {
     if (arduino.read) {
@@ -453,8 +457,8 @@ function main(plugins) {
   }
   
   // Pin configuration
-  const TEMP_PIN = A0;
-  const LIGHT_PIN = A1;
+  const TEMP_PIN = 0;  // Analog pin A0
+  const LIGHT_PIN = 1; // Analog pin A1
   const DISTANCE_TRIGGER = 7;
   const DISTANCE_ECHO = 8;
   

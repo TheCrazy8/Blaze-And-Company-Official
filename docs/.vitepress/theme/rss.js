@@ -3,10 +3,12 @@ import { writeFileSync, mkdirSync, readdirSync, readFileSync } from 'fs'
 import { Feed } from 'feed'
 import matter from 'gray-matter'
 
-const siteUrl = 'https://thecrazy8.github.io/Blaze-And-Company-Official'
-const blogUrl = `${siteUrl}/blog`
-
 export async function generateFeeds(config) {
+  // Use the site config for base URL
+  const baseUrl = config.site?.base || '/Blaze-And-Company-Official/'
+  const siteUrl = 'https://thecrazy8.github.io' + baseUrl.replace(/\/$/, '')
+  const blogUrl = `${siteUrl}/blog`
+
   const feed = new Feed({
     title: 'BrightOS Blog',
     description: 'Official blog for BrightOS - Arduino modular programming platform',

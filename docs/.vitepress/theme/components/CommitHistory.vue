@@ -151,6 +151,9 @@ async function fetchCommits() {
     )
 
     if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('GitHub API rate limit exceeded. Please try again later.')
+      }
       throw new Error(`GitHub API error: ${response.status}`)
     }
 
