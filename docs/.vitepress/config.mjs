@@ -25,7 +25,7 @@ export default defineConfig({
       next:  'Next →'
     },
 
-    externalLinkIcon: true,
+    externalLinkIcon: false,
     siteTitle: "Blaze & Company",
     footer: {
       message: "Released under the CC BY-NC-ND 4.0 License.",
