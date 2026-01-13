@@ -9,9 +9,9 @@ export default defineConfig({
     }
   },
   title: "B&C Official",
-  description: "The Blaze & Company official site.",
+  description:  "The Blaze & Company official site.",
   base: "/Blaze-And-Company-Official/",
-  themeConfig:  {
+  themeConfig: {
     siteTitle: "Blaze & Company",
     footer: {
       message: "Released under the CC BY-NC-ND 4.0 License.",
@@ -37,9 +37,9 @@ export default defineConfig({
       },
       {
         text: 'BrightOS',
-        collapsed:  false,
+        collapsed: false,
         items: [
-          { text: 'Web Interface', link: '/brightos-web' },
+          { text:  'Web Interface', link: '/brightos-web' },
           { text: 'Downloads', link: '/downloads' },
           { text: 'Build Guide', link: '/BUILD' },
         ]
@@ -78,18 +78,18 @@ export default defineConfig({
   },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/Blaze-And-Company-Official/favicon.ico' }],
-    ['link', { rel: 'apple-touch-icon', href: '/Blaze-And-Company-Official/apple-touch-icon. png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/Blaze-And-Company-Official/icon-192x192.png' }],
     ['meta', { name: 'theme-color', content: '#ff4500' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
-    ['meta', { name:  'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
+    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
   ],
   vite: {
     plugins: [
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets:  ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        includeAssets: ['favicon.ico', '*.png'],
         manifest: {
-          name:  'Blaze & Company Official',
+          name: 'Blaze & Company Official',
           short_name: 'B&C',
           description: 'Arduino modular program - Official documentation and resources',
           theme_color: '#ff4500',
@@ -99,17 +99,57 @@ export default defineConfig({
           start_url:  '/Blaze-And-Company-Official/',
           icons: [
             {
-              src: '/Blaze-And-Company-Official/pwa-192x192.png',
+              src: '/Blaze-And-Company-Official/icon-48x48.png',
+              sizes: '48x48',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-72x72.png',
+              sizes: '72x72',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-96x96.png',
+              sizes: '96x96',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-128x128.png',
+              sizes: '128x128',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-144x144.png',
+              sizes: '144x144',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-152x152.png',
+              sizes: '152x152',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/pwa-512x512.png',
+              src: '/Blaze-And-Company-Official/icon-256x256.png',
+              sizes: '256x256',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-384x384.png',
+              sizes: '384x384',
+              type: 'image/png'
+            },
+            {
+              src: '/Blaze-And-Company-Official/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/pwa-512x512.png',
+              src: '/Blaze-And-Company-Official/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
@@ -120,7 +160,7 @@ export default defineConfig({
           globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff2}'],
           runtimeCaching: [
             {
-              urlPattern:  /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'google-fonts-cache',
