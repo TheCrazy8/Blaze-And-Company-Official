@@ -76,9 +76,6 @@ def get_brightos_dir():
         # For Linux/macOS, use a hidden directory in home
         return os.path.join(userdir, ".brightos")
 
-userdir = home_dir = os.path.expanduser("~")
-print(userdir)
-
 brightos_dir = get_brightos_dir()
 print(f"BrightOS directory: {brightos_dir}")
 
