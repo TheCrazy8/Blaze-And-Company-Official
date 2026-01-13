@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   markdown: {
+    // Add to markdown section
+    lineNumbers: true, // Show line numbers in code blocks
     config(md) {
       md.use(footnote)
     }
@@ -12,6 +14,18 @@ export default defineConfig({
   description:  "The Blaze & Company official site.",
   base: "/Blaze-And-Company-Official/",
   themeConfig: {
+    // Add to themeConfig
+    editLink: {
+      pattern: 'https://github.com/TheCrazy8/Blaze-And-Company-Official/edit/main/docs/: path',
+      text: '✏️ Edit this page'
+    },
+
+    docFooter: {
+      prev:  '← Previous',
+      next:  'Next →'
+    },
+
+    externalLinkIcon: true,
     siteTitle: "Blaze & Company",
     footer: {
       message: "Released under the CC BY-NC-ND 4.0 License.",
