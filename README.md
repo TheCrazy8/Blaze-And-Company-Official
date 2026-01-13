@@ -3,6 +3,8 @@
 ## BrightOS
 Arduino modular program for managing and running scripts with hardware control capabilities.
 
+INSTALL SCRIPT: https://github.com/TheCrazy8/Blaze-And-Company-Official/releases/tag/launcher-dev-20260113-175555
+
 ### Quick Start
 
 **Option 1: Use the Web Interface (Cross-Platform)**
