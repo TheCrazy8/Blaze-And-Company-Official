@@ -18,7 +18,7 @@ const plugins = ref([
     author: 'TheCrazy8',
     description: 'Control servos, DC motors, and steppers with ease',
     longDescription: 'A comprehensive motor control plugin supporting multiple motor types with advanced features like ramping, sweeping, and position tracking.',
-    downloads: 342,
+    downloads: 1,
     rating: 4.5,
     reviews: 12,
     category: 'Motor Control',
