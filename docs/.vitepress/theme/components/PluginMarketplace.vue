@@ -33,7 +33,7 @@ const REPO_NAME = 'Blaze-And-Company-Official'
 const PLUGINS_PATH = 'community%20made%20plugins'
 
 // GitHub Token - Replace with your token or use environment variable
-// Get token from:   https://github.com/settings/tokens
+// Get token from: https://github.com/settings/tokens
 // Only needs 'public_repo' scope
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN || ''
 
@@ -61,7 +61,7 @@ const checkRateLimit = async () => {
       const data = await response.json()
       const core = data.resources.core
       
-      console.log(`GitHub API Rate Limit: ${core. remaining}/${core.limit}`)
+      console.log(`GitHub API Rate Limit: ${core.remaining}/${core.limit}`)
       
       if (core.remaining < 10) {
         const resetDate = new Date(core.reset * 1000)
@@ -88,7 +88,7 @@ const fetchRepoStats = async () => {
       const data = await response.json()
       repoStats.value = {
         stars: data.stargazers_count,
-        forks: data. forks_count,
+        forks: data.forks_count,
         watchers: data.watchers_count,
         openIssues: data.open_issues_count,
         size: data.size,
@@ -123,8 +123,8 @@ const fetchRealStats = async () => {
 const fetchFileCommits = async (filepath) => {
   try {
     const response = await fetch(
-      `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${filepath}&per_page=100`,
-      createGitHubRequest(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${filepath}&per_page=100`)
+      `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits? path=${filepath}&per_page=100`,
+      createGitHubRequest(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/commits? path=${filepath}&per_page=100`)
     )
     
     if (response.ok) {
@@ -144,7 +144,7 @@ const fetchFileCommits = async (filepath) => {
 // Fetch plugins from GitHub with authentication
 const fetchPlugins = async () => {
   isLoading.value = true
-  error. value = null
+  error.value = null
   
   try {
     // Check rate limit first
@@ -159,7 +159,7 @@ const fetchPlugins = async () => {
       createGitHubRequest(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PLUGINS_PATH}`)
     )
     
-    if (!response. ok) {
+    if (! response.ok) {
       if (response.status === 403) {
         const remaining = response.headers.get('X-RateLimit-Remaining')
         const reset = response.headers.get('X-RateLimit-Reset')
@@ -168,7 +168,7 @@ const fetchPlugins = async () => {
         
         if (reset) {
           const resetDate = new Date(parseInt(reset) * 1000)
-          errorMsg += `Rate limit resets at ${resetDate.toLocaleTimeString()}. `
+          errorMsg += `Rate limit resets at ${resetDate. toLocaleTimeString()}. `
         }
         
         if (! GITHUB_TOKEN) {
@@ -182,13 +182,13 @@ const fetchPlugins = async () => {
     
     const files = await response.json()
     
-    // Filter only . py files
+    // Filter only .py files
     const pluginFiles = files.filter(file => 
       file.name.endsWith('.py') && file.type === 'file'
     )
     
     // Fetch content and analytics for each plugin
-    const pluginPromises = pluginFiles.map(async (file) => {
+    const pluginPromises = pluginFiles. map(async (file) => {
       try {
         // Fetch file content
         const contentResponse = await fetch(file.download_url)
@@ -203,14 +203,14 @@ const fetchPlugins = async () => {
         // Merge REAL stats from Supabase
         const stats = pluginStats.value[metadata.id]
         if (stats) {
-          metadata.downloads = stats.downloads || 0
+          metadata. downloads = stats.downloads || 0
           metadata.rating = stats.averageRating || metadata.rating
           metadata.reviews = stats.reviewCount || 0
         }
         
         return metadata
       } catch (err) {
-        console.error(`Error loading ${file.name}: `, err)
+        console.error(`Error loading ${file.name}:`, err)
         return null
       }
     })
@@ -234,7 +234,7 @@ const fetchPlugins = async () => {
 const parsePluginMetadata = (filename, content, githubFile, commitData) => {
   // Extract class name
   const classMatch = content.match(/class\s+(\w+)\s*\(/i)
-  const className = classMatch ? classMatch[1] : filename. replace('.py', '')
+  const className = classMatch ? classMatch[1] :  filename.replace('. py', '')
   
   // Extract docstring
   const docstringMatch = content.match(/"""([\s\S]*?)"""/m)
@@ -248,7 +248,7 @@ const parsePluginMetadata = (filename, content, githubFile, commitData) => {
   const functions = []
   const functionRegex = /def\s+(\w+)\s*\([^)]*\):/g
   let match
-  while ((match = functionRegex. exec(content)) !== null) {
+  while ((match = functionRegex.exec(content)) !== null) {
     if (! match[1]. startsWith('_')) {
       functions.push(match[1])
     }
@@ -288,7 +288,7 @@ const parsePluginMetadata = (filename, content, githubFile, commitData) => {
   // Hardware requirements
   const hardware = []
   if (content.includes('TelemetrixUnoR4WiFi')) hardware.push('Arduino Uno R4 WiFi')
-  if (content.includes('Uno') && !hardware.includes('Arduino Uno R4 WiFi')) hardware.push('Arduino Uno')
+  if (content.includes('Uno') && ! hardware.includes('Arduino Uno R4 WiFi')) hardware.push('Arduino Uno')
   if (content.includes('Mega')) hardware.push('Arduino Mega')
   if (hardware.length === 0) hardware.push('Any Arduino')
   
@@ -298,8 +298,8 @@ const parsePluginMetadata = (filename, content, githubFile, commitData) => {
   if (content.includes('simple_plugin_loader')) dependencies.push('simple-plugin-loader')
   
   // Calculate REAL quality-based rating (no random)
-  const qualityScore = calculateQualityScore(content, commitData, functions.length)
-  const rating = (3.5 + (qualityScore / 100) * 1.5).toFixed(1)
+  const qualityScore = calculateQualityScore(content, commitData, functions. length)
+  const rating = (3. 5 + (qualityScore / 100) * 1.5).toFixed(1)
   
   // Extract version from code or use commit count
   const versionMatch = content.match(/version\s*=\s*['"]([^'"]+)['"]/i) ||
@@ -308,7 +308,7 @@ const parsePluginMetadata = (filename, content, githubFile, commitData) => {
   const version = versionMatch ?  versionMatch[1] : `1.${commitData.commitCount}. 0`
   
   // Get last update date from actual commit
-  const lastUpdated = commitData. lastCommit?.commit?. author?.date 
+  const lastUpdated = commitData.lastCommit?.commit?.author?.date 
     ? new Date(commitData.lastCommit.commit.author.date).toISOString().split('T')[0]
     : new Date().toISOString().split('T')[0]
   
@@ -318,7 +318,7 @@ const parsePluginMetadata = (filename, content, githubFile, commitData) => {
     filename,
     version,
     author: commitData.contributors[0] || REPO_OWNER,
-    contributors:  commitData.contributors,
+    contributors: commitData.contributors,
     description: shortDescription,
     longDescription: docstring,
     downloads: 0,  // Will be populated from Supabase real data
@@ -326,15 +326,15 @@ const parsePluginMetadata = (filename, content, githubFile, commitData) => {
     reviews: 0,  // Will be populated from Supabase real data
     category,
     difficulty,
-    tags:  tags.slice(0, 5),
+    tags:  tags. slice(0, 5),
     hardware,
     dependencies,
     functions,
     lastUpdated,
-    downloadUrl:  githubFile.download_url,
+    downloadUrl: githubFile.download_url,
     githubUrl: githubFile.html_url,
     size: githubFile.size,
-    commitCount: commitData. commitCount,
+    commitCount: commitData.commitCount,
     lineCount,
     changelog: generateChangelog(commitData)
   }
@@ -379,7 +379,7 @@ const generateChangelog = (commitData) => {
   
   changelog.push({
     version: `1.${commitData.commitCount}.0`,
-    date: new Date(lastCommit.commit.author.date).toISOString().split('T')[0],
+    date: new Date(lastCommit.commit. author.date).toISOString().split('T')[0],
     changes: lastCommit.commit.message,
     author: lastCommit. commit.author.name
   })
@@ -413,21 +413,21 @@ const filteredPlugins = computed(() => {
   return plugins.value
     .filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                           p.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                           p.description. toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                            p.tags.some(tag => tag.includes(searchQuery.value. toLowerCase()))
-      const matchesCategory = selectedCategory.value === 'all' || p.category === selectedCategory.value
-      const matchesDifficulty = selectedDifficulty.value === 'all' || p. difficulty === selectedDifficulty. value
+      const matchesCategory = selectedCategory.value === 'all' || p. category === selectedCategory.value
+      const matchesDifficulty = selectedDifficulty.value === 'all' || p.difficulty === selectedDifficulty.value
       return matchesSearch && matchesCategory && matchesDifficulty
     })
     .sort((a, b) => {
       switch(sortBy.value) {
         case 'downloads':  {
-          const aDownloads = pluginStats.value[a. id]?.downloads || 0
-          const bDownloads = pluginStats.value[b.id]?.downloads || 0
+          const aDownloads = pluginStats.value[a.id]?. downloads || 0
+          const bDownloads = pluginStats. value[b.id]?.downloads || 0
           return bDownloads - aDownloads
         }
         case 'rating': {
-          const aRating = pluginStats. value[a.id]?.averageRating || 0
+          const aRating = pluginStats.value[a.id]?.averageRating || 0
           const bRating = pluginStats.value[b.id]?. averageRating || 0
           return bRating - aRating
         }
@@ -441,10 +441,10 @@ const filteredPlugins = computed(() => {
 // Track download with Supabase
 const trackDownload = async (plugin) => {
   try {
-    await analytics.trackDownload(plugin.id, plugin.name)
+    await analytics.trackDownload(plugin. id, plugin.name)
     
     if (! pluginStats.value[plugin.id]) {
-      pluginStats. value[plugin.id] = { downloads: 0, reviewCount:  0, averageRating: 0 }
+      pluginStats. value[plugin.id] = { downloads: 0, reviewCount:  0, averageRating:  0 }
     }
     pluginStats.value[plugin.id].downloads++
   } catch (err) {
@@ -511,7 +511,7 @@ const loadPluginReviews = async (pluginId) => {
     
     const stats = await reviews.getReviewStats(pluginId)
     if (pluginStats.value[pluginId]) {
-      pluginStats. value[pluginId].reviewCount = stats.count
+      pluginStats.value[pluginId].reviewCount = stats.count
       pluginStats.value[pluginId].averageRating = parseFloat(stats.average)
       pluginStats.value[pluginId].distribution = stats.distribution
     } else {
@@ -546,14 +546,14 @@ const submitReview = async () => {
     const result = await reviews.submitReview(
       reviewPluginId.value. id,
       reviewPluginId.value.name,
-      reviewForm.value.userName,
+      reviewForm.value. userName,
       reviewForm.value.rating,
-      reviewForm.value. comment
+      reviewForm. value.comment
     )
     
     if (result.success) {
       if (window.$toast) {
-        window.$toast.success('✅ Review submitted!')
+        window.$toast. success('✅ Review submitted!')
       }
       
       await loadPluginReviews(reviewPluginId.value.id)
@@ -753,7 +753,7 @@ onMounted(async () => {
       </div>
 
       <!-- Empty State -->
-      <div v-if="filteredPlugins.length === 0" class="empty-state">
+      <div v-if="filteredPlugins. length === 0" class="empty-state">
         <p>😕 No plugins match your search</p>
         <button @click="searchQuery = ''; selectedCategory = 'all'; selectedDifficulty = 'all'" class="btn">
           Clear Filters
@@ -802,7 +802,7 @@ onMounted(async () => {
 
           <div class="modal-section">
             <h3>Dependencies</h3>
-            <div v-if="selectedPlugin.dependencies. length === 0">
+            <div v-if="selectedPlugin.dependencies.length === 0">
               <p>✅ No dependencies required</p>
             </div>
             <ul v-else>
@@ -867,7 +867,7 @@ onMounted(async () => {
               </div>
               
               <div class="rating-distribution" v-if="pluginStats[reviewPluginId.id].distribution">
-                <div v-for="rating in [5, 4, 3, 2, 1]" :key="rating" class="distribution-bar">
+                <div v-for="rating in [5, 4, 3, 2, 1]" : key="rating" class="distribution-bar">
                   <span class="rating-label">{{ rating }}⭐</span>
                   <div class="bar-container">
                     <div class="bar" :style="{ width:  (pluginStats[reviewPluginId.id].distribution[rating] / pluginStats[reviewPluginId. id].reviewCount * 100) + '%' }"></div>
@@ -884,7 +884,7 @@ onMounted(async () => {
             <form @submit.prevent="submitReview">
               <div class="form-group">
                 <label>Your Name</label>
-                <input v-model="reviewForm.userName" type="text" placeholder="Enter your name" required />
+                <input v-model="reviewForm. userName" type="text" placeholder="Enter your name" required />
               </div>
 
               <div class="form-group">
@@ -980,11 +980,11 @@ onMounted(async () => {
 }
 
 .error-state p {
-  color: var(--vp-c-text-2);
+  color:  var(--vp-c-text-2);
   margin-bottom: 20px;
 }
 
-.plugin-marketplace {
+. plugin-marketplace {
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -1163,7 +1163,7 @@ onMounted(async () => {
   line-height: 1.6;
 }
 
-.plugin-tags {
+. plugin-tags {
   display: flex;
   gap: 6px;
   flex-wrap:  wrap;
@@ -1192,7 +1192,7 @@ onMounted(async () => {
   font-weight: 600;
 }
 
-.badge.category {
+.badge. category {
   background: #3b82f6;
   color: white;
 }
@@ -1201,7 +1201,7 @@ onMounted(async () => {
   color: white;
 }
 
-.badge.difficulty.beginner {
+.badge.difficulty. beginner {
   background: #10b981;
 }
 
@@ -1227,7 +1227,7 @@ onMounted(async () => {
   border: none;
   border-radius: 8px;
   font-weight: 600;
-  cursor: pointer;
+  cursor:  pointer;
   transition: all 0.2s;
   font-size: 14px;
   text-decoration: none;
@@ -1264,7 +1264,7 @@ onMounted(async () => {
 
 .empty-state p {
   font-size: 20px;
-  margin-bottom: 20px;
+  margin-bottom:  20px;
 }
 
 /* Modal Styles */
@@ -1288,12 +1288,12 @@ onMounted(async () => {
   max-width: 800px;
   width: 100%;
   max-height: 90vh;
-  overflow-y:  auto;
+  overflow-y: auto;
   padding: 32px;
   position: relative;
 }
 
-. review-modal {
+.review-modal {
   max-width: 900px;
 }
 
@@ -1405,7 +1405,7 @@ onMounted(async () => {
 .review-stats {
   background: var(--vp-c-bg-soft);
   padding: 24px;
-  border-radius:  12px;
+  border-radius: 12px;
   margin-bottom: 24px;
 }
 
@@ -1488,7 +1488,7 @@ onMounted(async () => {
 }
 
 .write-review h3 {
-  margin-bottom:  16px;
+  margin-bottom: 16px;
 }
 
 .form-group {
@@ -1498,7 +1498,7 @@ onMounted(async () => {
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  font-weight: 600;
+  font-weight:  600;
   color: var(--vp-c-text-1);
 }
 
@@ -1515,8 +1515,8 @@ onMounted(async () => {
 
 .form-group input:focus,
 .form-group textarea:focus {
-  outline: none;
-  border-color: var(--vp-c-brand-1);
+  outline:  none;
+  border-color:  var(--vp-c-brand-1);
 }
 
 .rating-input {
@@ -1541,7 +1541,7 @@ onMounted(async () => {
 
 .btn-block {
   width: 100%;
-  padding: 14px;
+  padding:  14px;
 }
 
 /* Reviews List */
@@ -1551,7 +1551,7 @@ onMounted(async () => {
 }
 
 .reviews-list h3 {
-  margin-bottom:  20px;
+  margin-bottom: 20px;
 }
 
 .no-reviews {
@@ -1592,7 +1592,7 @@ onMounted(async () => {
 
 .review-actions {
   display: flex;
-  gap: 12px;
+  gap:  12px;
 }
 
 .helpful-btn {
