@@ -1,4 +1,4 @@
-.VPSocialLinks.VPNavBarSocialLinks.social-links {
+. VPSocialLinks. VPNavBarSocialLinks. social-links {
   margin-right: 0;
 }
 
@@ -10,4 +10,508 @@
 
 .dark .go-to-top:hover {
   background-color: var(--vp-c-bg-mute) !important;
+}
+
+/* ===== BLAZE & COMPANY THEME - Based on Favicon ===== */
+
+/* Brand Colors - Fire/Blaze Theme */
+: root {
+  /* Primary brand colors - Fiery orange/red palette */
+  --vp-c-brand-1: #ff4500;  /* Vibrant orange-red (main) */
+  --vp-c-brand-2: #ff6b35;  /* Bright orange */
+  --vp-c-brand-3: #ff8c5a;  /* Light orange */
+  --vp-c-brand-soft: rgba(255, 69, 0, 0.14);
+  
+  /* Secondary/Accent colors - Complementary warm tones */
+  --vp-c-accent-1: #ffa726;  /* Amber */
+  --vp-c-accent-2: #ffb74d;  /* Light amber */
+  --vp-c-accent-3: #ffcc80;  /* Lighter amber */
+  
+  /* Background colors - Light mode */
+  --vp-c-bg:  #ffffff;
+  --vp-c-bg-soft: #fff8f5;  /* Slight warm tint */
+  --vp-c-bg-mute: #fff0e6;  /* Warmer mute */
+  --vp-c-bg-alt: #fff8f5;
+  
+  /* Text colors - Light mode */
+  --vp-c-text-1: #2d1810;  /* Warm dark brown */
+  --vp-c-text-2: #5c3a2e;  /* Medium warm brown */
+  --vp-c-text-3: #8b6f5c;  /* Light warm brown */
+  
+  /* Border colors */
+  --vp-c-border: #e0c4b8;
+  --vp-c-divider: #f0d9cc;
+  --vp-c-gutter: #f0d9cc;
+}
+
+/* Dark mode colors - Ember/Fire theme */
+. dark {
+  --vp-c-brand-1: #ff6b35;  /* Brighter in dark mode */
+  --vp-c-brand-2: #ff8c5a;
+  --vp-c-brand-3: #ffad7f;
+  --vp-c-brand-soft: rgba(255, 107, 53, 0.16);
+  
+  /* Background colors - Dark mode with warm undertones */
+  --vp-c-bg: #1a0f0a;  /* Deep warm black */
+  --vp-c-bg-soft: #251812;  /* Warm dark gray */
+  --vp-c-bg-mute: #2f1f17;  /* Warmer mute */
+  --vp-c-bg-alt: #1a0f0a;
+  
+  /* Text colors - Dark mode */
+  --vp-c-text-1: #ffeee6;  /* Warm white */
+  --vp-c-text-2: #d4b5a8;  /* Warm gray */
+  --vp-c-text-3: #a68977;  /* Muted warm */
+  
+  /* Border colors - Dark mode */
+  --vp-c-border: #4a3228;
+  --vp-c-divider: #382419;
+  --vp-c-gutter: #382419;
+}
+
+/* ===== HERO SECTION - BLAZE THEME ===== */
+
+/* Hero gradient background with fire effect */
+.VPHome .VPHero {
+  background: linear-gradient(135deg, 
+    rgba(255, 69, 0, 0.08) 0%, 
+    rgba(255, 140, 0, 0.08) 50%,
+    rgba(255, 165, 0, 0.08) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated fire glow effect */
+.VPHome .VPHero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.1) 0%, transparent 70%);
+  animation: fireGlow 8s ease-in-out infinite;
+}
+
+@keyframes fireGlow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(10px, 10px) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+. dark .VPHome .VPHero {
+  background: linear-gradient(135deg, 
+    rgba(255, 107, 53, 0.12) 0%, 
+    rgba(255, 140, 90, 0.12) 50%,
+    rgba(255, 173, 127, 0.12) 100%);
+}
+
+/* Hero title with fire gradient */
+.VPHome .name {
+  background: linear-gradient(120deg, 
+    #ff4500 0%, 
+    #ff6b35 25%,
+    #ffa726 50%,
+    #ff6b35 75%,
+    #ff4500 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fireShimmer 3s linear infinite;
+  font-weight: 800;
+  text-shadow: 0 0 30px rgba(255, 69, 0, 0.3);
+}
+
+@keyframes fireShimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Hero tagline */
+.VPHome .tagline {
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+}
+
+/* Hero buttons with fire effect */
+.VPHome .VPButton. brand {
+  background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.VPHome .VPButton.brand:: before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left:  50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.VPHome .VPButton.brand:hover:: before {
+  width: 300px;
+  height: 300px;
+}
+
+.VPHome .VPButton.brand:hover {
+  background: linear-gradient(135deg, #ff6b35 0%, #ffa726 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 69, 0, 0.4);
+}
+
+.VPHome .VPButton.alt {
+  background-color: transparent;
+  border:  2px solid var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
+
+.VPHome .VPButton.alt:hover {
+  background-color: var(--vp-c-brand-soft);
+  border-color: var(--vp-c-brand-2);
+  transform: translateY(-2px);
+}
+
+/* ===== NAVBAR - BLAZE THEME ===== */
+
+/* Navbar with warm glow */
+.VPNav {
+  backdrop-filter: blur(12px);
+  background-color:  rgba(255, 248, 245, 0.95) !important;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.dark .VPNav {
+  background-color: rgba(26, 15, 10, 0.95) !important;
+  box-shadow: 0 2px 8px rgba(255, 69, 0, 0.1);
+}
+
+/* Navbar title with fire gradient */
+.VPNavBarTitle .title {
+  font-weight: 800;
+  background: linear-gradient(120deg, #ff4500, #ffa726);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+/* Active nav link */
+.VPNavBarMenuLink.active {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+  position: relative;
+}
+
+.VPNavBarMenuLink.active::after {
+  content: '';
+  position: absolute;
+  bottom:  -4px;
+  left: 0;
+  right: 0;
+  height:  2px;
+  background:  linear-gradient(90deg, #ff4500, #ffa726);
+  border-radius: 2px;
+}
+
+/* ===== SIDEBAR - BLAZE THEME ===== */
+
+/* Sidebar background */
+.VPSidebar {
+  background-color: var(--vp-c-bg-soft);
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+/* Active sidebar link with fire accent */
+.VPSidebarItem.is-active > .item . link {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--vp-c-brand-soft) 0%, transparent 100%);
+}
+
+. VPSidebarItem.is-active > .item .link:: before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #ff4500, #ffa726);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255, 69, 0, 0.5);
+}
+
+/* Sidebar link hover */
+.VPSidebarItem . link:hover {
+  color:  var(--vp-c-brand-1);
+  background: linear-gradient(90deg, var(--vp-c-brand-soft) 0%, transparent 100%);
+}
+
+/* ===== CODE BLOCKS ===== */
+
+/* Code block with warm tones */
+div[class*='language-'] {
+  background-color: var(--vp-c-bg-mute);
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-divider);
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(255, 69, 0, 0.05);
+}
+
+/* Inline code with fire accent */
+.vp-doc : not(pre) > code {
+  background:  linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 165, 0, 0.1));
+  color: var(--vp-c-brand-1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  border: 1px solid var(--vp-c-brand-soft);
+}
+
+/* Copy code button */
+.vp-code-group .copy {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.vp-code-group: hover .copy {
+  opacity: 1;
+}
+
+/* ===== CUSTOM CONTAINERS ===== */
+
+/* Tip container - fire themed */
+.vp-doc .custom-block.tip {
+  border-left:  4px solid var(--vp-c-brand-1);
+  background: linear-gradient(90deg, var(--vp-c-brand-soft), transparent);
+}
+
+. vp-doc .custom-block.tip .custom-block-title {
+  color: var(--vp-c-brand-1);
+  font-weight: 700;
+}
+
+/* Warning container */
+.vp-doc .custom-block.warning {
+  border-left: 4px solid #ffa726;
+  background: linear-gradient(90deg, rgba(255, 167, 38, 0.1), transparent);
+}
+
+.vp-doc .custom-block. warning .custom-block-title {
+  color: #ff8c00;
+}
+
+/* Danger container */
+.vp-doc .custom-block.danger {
+  border-left: 4px solid #d32f2f;
+  background: linear-gradient(90deg, rgba(211, 47, 47, 0.1), transparent);
+}
+
+/* ===== LINKS ===== */
+
+/* Links with fire color */
+.vp-doc a {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.vp-doc a:: after {
+  content: '';
+  position: absolute;
+  bottom:  -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff4500, #ffa726);
+  transition: width 0.3s;
+}
+
+.vp-doc a:hover::after {
+  width: 100%;
+}
+
+. vp-doc a:hover {
+  color: var(--vp-c-brand-2);
+}
+
+/* ===== TABLES ===== */
+
+. vp-doc table {
+  border-collapse: collapse;
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(255, 69, 0, 0.08);
+}
+
+.vp-doc th {
+  background:  linear-gradient(135deg, rgba(255, 69, 0, 0.15), rgba(255, 165, 0, 0.15));
+  color: var(--vp-c-brand-1);
+  font-weight: 700;
+  border-bottom: 2px solid var(--vp-c-brand-1);
+}
+
+.vp-doc tr: hover {
+  background-color:  var(--vp-c-brand-soft);
+}
+
+/* ===== SCROLLBAR - FIRE THEMED ===== */
+
+: :-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff4500, #ffa726);
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(255, 69, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff6b35, #ffb74d);
+}
+
+/* ===== SEARCH ===== */
+
+.VPNavBarSearch . DocSearch-Button {
+  background-color:  var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  transition: all 0.3s;
+}
+
+.VPNavBarSearch .DocSearch-Button:hover {
+  background-color: var(--vp-c-brand-soft);
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 12px rgba(255, 69, 0, 0.2);
+}
+
+/* ===== FEATURES SECTION ===== */
+
+.VPFeature {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.4s ease;
+  background:  var(--vp-c-bg);
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+  background: linear-gradient(135deg, var(--vp-c-brand-soft), transparent);
+  box-shadow: 0 12px 32px rgba(255, 69, 0, 0.2);
+  transform: translateY(-6px);
+}
+
+.VPFeature .icon {
+  color: var(--vp-c-brand-1);
+  filter: drop-shadow(0 0 8px rgba(255, 69, 0, 0.3));
+}
+
+.VPFeature .title {
+  color: var(--vp-c-brand-1);
+  font-weight: 700;
+}
+
+/* ===== FOOTER ===== */
+
+.VPFooter {
+  border-top: 1px solid var(--vp-c-divider);
+  padding: 32px;
+  text-align: center;
+  background: linear-gradient(180deg, transparent, var(--vp-c-bg-soft));
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vp-doc > div {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Pulse animation for important elements */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity:  0.8;
+  }
+}
+
+/* ===== BADGES/TAGS ===== */
+
+.vp-doc .badge {
+  background: linear-gradient(135deg, #ff4500, #ffa726);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size:  12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .VPHome .name {
+    font-size: 2.5rem;
+  }
+  
+  .VPFeature {
+    margin-bottom: 16px;
+  }
+  
+  .VPHome .VPHero:: before {
+    animation-duration: 10s;
+  }
+}
+
+/* ===== LOADING STATES ===== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.loading {
+  background: linear-gradient(90deg, var(--vp-c-bg-soft) 0%, var(--vp-c-bg-mute) 50%, var(--vp-c-bg-soft) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
 }
