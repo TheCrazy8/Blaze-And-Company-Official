@@ -1,10 +1,16 @@
 """
 BrightOS Launcher
-This launcher will:
+This launcher will: 
 1. Check for and install/update BrightOS to the latest version from GitHub
 2. Install any missing dependencies
 3. Create all necessary directories for BrightOS
 4. Run BrightOS.py
+
+Rate limit improvements:
+- Caches release info locally to reduce API calls
+- Uses conditional requests with ETags
+- Checks for updates only once per 6 hours
+- Graceful fallback when rate limited
 """
 import os
 import sys
@@ -16,21 +22,71 @@ import zipfile
 import shutil
 from pathlib import Path
 import tempfile
+import time
+from datetime import datetime, timedelta
 
 
 def get_user_dir():
     """Get the user's home directory"""
-    return os.path.expanduser("~")
+    return os. path.expanduser("~")
 
 
 def get_brightos_dir():
     """Get the BrightOS installation directory"""
     userdir = get_user_dir()
-    if sys.platform == "win32":
+    if sys.platform == "win32": 
         return os.path.join(userdir, "AppData", "Local", "BrightOS")
     else:
         # For other platforms, use a hidden directory in home
         return os.path.join(userdir, ".brightos")
+
+
+def get_cache_file():
+    """Get the path to the cache file"""
+    return os.path.join(get_brightos_dir(), ".update_cache. json")
+
+
+def load_cache():
+    """Load cached update information"""
+    cache_file = get_cache_file()
+    try:
+        if os.path.exists(cache_file):
+            with open(cache_file, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"Warning: Could not load cache: {e}")
+    return {}
+
+
+def save_cache(data):
+    """Save update information to cache"""
+    cache_file = get_cache_file()
+    try:
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+        with open(cache_file, 'w') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        print(f"Warning: Could not save cache: {e}")
+
+
+def should_check_for_updates():
+    """Check if we should check for updates based on cache"""
+    cache = load_cache()
+    last_check = cache.get('last_check')
+    
+    if not last_check:
+        return True
+    
+    try:
+        last_check_time = datetime.fromisoformat(last_check)
+        # Check for updates every 6 hours
+        if datetime.now() - last_check_time > timedelta(hours=6):
+            return True
+    except Exception:
+        return True
+    
+    return False
 
 
 def create_directories():
@@ -58,7 +114,7 @@ def create_directories():
         try:
             with open(importlist_path, 'w') as f:
                 f.write("# BrightOS Import List\n")
-            print(f"✓ Created: {importlist_path}")
+            print(f"✓ Created:  {importlist_path}")
         except Exception as e:
             print(f"✗ Error creating Importlist.txt: {e}")
     
@@ -66,23 +122,94 @@ def create_directories():
 
 
 def get_latest_release_info():
-    """Get the latest release information from GitHub"""
+    """Get the latest release information from GitHub with caching and rate limit handling"""
     api_url = "https://api.github.com/repos/TheCrazy8/Blaze-And-Company-Official/releases/latest"
+    
+    # Load cache
+    cache = load_cache()
+    etag = cache.get('etag')
+    cached_data = cache.get('release_data')
     
     try:
         print("Checking for latest BrightOS version...")
-        with urllib.request.urlopen(api_url, timeout=10) as response:
-            data = json.loads(response.read().decode())
-            return data
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            print("No releases found. Using repository main branch.")
-            return None
-        else:
-            print(f"Error checking for updates: {e}")
-            return None
+        
+        # Create request with conditional headers
+        req = urllib.request.Request(api_url)
+        req.add_header('User-Agent', 'BrightOS-Launcher')
+        
+        # Add ETag for conditional request
+        if etag:
+            req.add_header('If-None-Match', etag)
+        
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                # Get new ETag
+                new_etag = response.headers.get('ETag')
+                
+                # Read and parse response
+                data = json.loads(response.read().decode())
+                
+                # Update cache
+                cache['release_data'] = data
+                cache['etag'] = new_etag
+                cache['last_check'] = datetime. now().isoformat()
+                save_cache(cache)
+                
+                return data
+        except urllib.error. HTTPError as e:
+            if e.code == 304:
+                # Not modified - use cached data
+                print("✓ No updates available (cached)")
+                cache['last_check'] = datetime. now().isoformat()
+                save_cache(cache)
+                return cached_data
+            elif e.code == 403:
+                # Rate limit exceeded
+                print("⚠ GitHub API rate limit exceeded")
+                print("  Using cached data if available...")
+                
+                # Check rate limit details
+                rate_limit_remaining = e.headers.get('X-RateLimit-Remaining', 'unknown')
+                rate_limit_reset = e.headers.get('X-RateLimit-Reset')
+                
+                if rate_limit_reset:
+                    try:
+                        reset_time = datetime.fromtimestamp(int(rate_limit_reset))
+                        print(f"  Rate limit resets at: {reset_time. strftime('%I:%M %p')}")
+                    except:
+                        pass
+                
+                # Use cached data if available
+                if cached_data: 
+                    print("  ✓ Using cached release information")
+                    return cached_data
+                else:
+                    print("  ✗ No cached data available, will use fallback")
+                    return None
+            elif e.code == 404:
+                print("No releases found.  Using repository main branch.")
+                return None
+            else:
+                print(f"Error checking for updates: HTTP {e.code}")
+                # Try to use cached data
+                if cached_data:
+                    print("Using cached release information...")
+                    return cached_data
+                return None
+                
+    except urllib.error.URLError as e:
+        print(f"Network error checking for updates: {e}")
+        # Try to use cached data
+        if cached_data:
+            print("Using cached release information...")
+            return cached_data
+        return None
     except Exception as e:
         print(f"Error checking for updates: {e}")
+        # Try to use cached data
+        if cached_data:
+            print("Using cached release information...")
+            return cached_data
         return None
 
 
@@ -90,13 +217,16 @@ def download_file(url, dest_path):
     """Download a file from a URL to a destination path"""
     try:
         print(f"Downloading from {url}...")
-        with urllib.request.urlopen(url, timeout=30) as response:
+        req = urllib.request.Request(url)
+        req.add_header('User-Agent', 'BrightOS-Launcher')
+        
+        with urllib.request.urlopen(req, timeout=30) as response:
             with open(dest_path, 'wb') as f:
                 f.write(response.read())
         print(f"✓ Downloaded to {dest_path}")
         return True
     except Exception as e:
-        print(f"✗ Error downloading: {e}")
+        print(f"✗ Error downloading:  {e}")
         return False
 
 
@@ -135,11 +265,11 @@ def download_and_extract_release(install_dir):
         # Extract the zip file
         print("Extracting files...")
         try:
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            with zipfile. ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(temp_dir)
             
             # Find the extracted directory (GitHub zips have a top-level directory)
-            extracted_dirs = [d for d in os.listdir(temp_dir) if os.path.isdir(os.path.join(temp_dir, d))]
+            extracted_dirs = [d for d in os.listdir(temp_dir) if os.path.isdir(os.path. join(temp_dir, d))]
             if not extracted_dirs:
                 print("✗ No directory found in zip file")
                 return False
@@ -150,21 +280,21 @@ def download_and_extract_release(install_dir):
             for file_name in FILES_TO_COPY:
                 source_file = os.path.join(source_dir, file_name)
                 if os.path.exists(source_file):
-                    dest_file = os.path.join(install_dir, file_name)
-                    shutil.copy2(source_file, dest_file)
-                    print(f"✓ Copied: {file_name}")
+                    dest_file = os.path. join(install_dir, file_name)
+                    shutil. copy2(source_file, dest_file)
+                    print(f"✓ Copied:  {file_name}")
                 else:
-                    print(f"⚠ File not found: {file_name}")
+                    print(f"⚠ File not found:  {file_name}")
             
-            # Copy favicon.ico if it exists
-            favicon_source = os.path.join(source_dir, 'docs', 'public', 'favicon.ico')
+            # Copy favicon. ico if it exists
+            favicon_source = os.path.join(source_dir, 'docs', 'public', 'favicon. ico')
             if os.path.exists(favicon_source):
                 favicon_dest = os.path.join(install_dir, 'favicon.ico')
-                shutil.copy2(favicon_source, favicon_dest)
+                shutil. copy2(favicon_source, favicon_dest)
                 print(f"✓ Copied: favicon.ico")
             
             # Save version info
-            version_file = os.path.join(install_dir, "version.txt")
+            version_file = os. path.join(install_dir, "version.txt")
             with open(version_file, 'w') as f:
                 f.write(tag_name)
             print(f"✓ Installed version: {tag_name}")
@@ -180,7 +310,7 @@ def install_dependencies(install_dir):
     """Install Python dependencies from requirements.txt"""
     requirements_path = os.path.join(install_dir, "requirements.txt")
     
-    if not os.path.exists(requirements_path):
+    if not os. path.exists(requirements_path):
         print("⚠ requirements.txt not found, skipping dependency installation")
         return True
     
@@ -201,9 +331,9 @@ def install_dependencies(install_dir):
 
 def run_brightos(install_dir):
     """Run BrightOS.py"""
-    brightos_path = os.path.join(install_dir, "BrightOS.py")
+    brightos_path = os.path. join(install_dir, "BrightOS.py")
     
-    if not os.path.exists(brightos_path):
+    if not os.path. exists(brightos_path):
         print(f"✗ BrightOS.py not found at {brightos_path}")
         return False
     
@@ -212,27 +342,32 @@ def run_brightos(install_dir):
         # Run BrightOS.py with Python
         subprocess.run([sys.executable, brightos_path])
         return True
-    except Exception as e:
-        print(f"✗ Error running BrightOS: {e}")
+    except Exception as e: 
+        print(f"✗ Error running BrightOS:  {e}")
         return False
 
 
 def check_for_updates(install_dir):
-    """Check if an update is available"""
-    version_file = os.path.join(install_dir, "version.txt")
+    """Check if an update is available (respects cache to avoid rate limits)"""
+    version_file = os.path.join(install_dir, "version. txt")
     
     if not os.path.exists(version_file):
         return True  # No version file means we should install
+    
+    # Check if we should check for updates (rate limit friendly)
+    if not should_check_for_updates():
+        print("✓ Skipping update check (checked recently)")
+        return False
     
     # Read current version
     with open(version_file, 'r') as f:
         current_version = f.read().strip()
     
-    # Get latest version
+    # Get latest version (with caching)
     release_info = get_latest_release_info()
     if release_info:
         latest_version = release_info.get('tag_name', 'unknown')
-        if latest_version != current_version:
+        if latest_version != current_version: 
             print(f"Update available: {current_version} → {latest_version}")
             return True
         else:
@@ -240,6 +375,7 @@ def check_for_updates(install_dir):
             return False
     
     # If we can't check, assume no update needed
+    print("Could not check for updates, continuing with existing installation")
     return False
 
 
@@ -270,7 +406,7 @@ def check_dependencies_installed(install_dir):
     """Check if dependencies are installed by checking pip list"""
     requirements_path = os.path.join(install_dir, "requirements.txt")
     
-    if not os.path.exists(requirements_path):
+    if not os.path. exists(requirements_path):
         return True  # No requirements file, assume OK
     
     try:
@@ -301,7 +437,7 @@ def check_dependencies_installed(install_dir):
         for req in requirements:
             # Extract package name (before any version specifier)
             # Simple extraction - split on common operators
-            package_name = req.split('==')[0].split('>=')[0].split('<=')[0].split('>')[0].split('<')[0].strip().lower()
+            package_name = req.split('==')[0].split('>=')[0].split('<=')[0].split('>')[0].split('<')[0]. strip().lower()
             
             # Skip build-only dependencies
             if package_name in BUILD_ONLY_PACKAGES:
@@ -326,7 +462,7 @@ def main():
     """Main launcher function"""
     brightos_dir = get_brightos_dir()
     install_dir = os.path.join(brightos_dir, "install")
-    brightos_path = os.path.join(install_dir, "BrightOS.py")
+    brightos_path = os.path. join(install_dir, "BrightOS.py")
     
     # Quick checks to see if we can just launch directly
     directories_ok = check_directories_exist()
@@ -356,7 +492,7 @@ def main():
                     print("⚠ Update failed, using existing installation")
                 print()
             
-            if not deps_ok:
+            if not deps_ok: 
                 print("Installing missing dependencies...")
                 if not install_dependencies(install_dir):
                     print("⚠ Dependency installation had issues, but continuing...")
