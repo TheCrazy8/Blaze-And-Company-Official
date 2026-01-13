@@ -1,8 +1,12 @@
 import footnote from 'markdown-it-footnote'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
+import { generateFeeds } from './theme/rss.js'
 
 export default defineConfig({
+  ignoreDeadLinks: [
+    /\/blog\/feed\.(xml|atom)$/
+  ],
   markdown: {
     // Add to markdown section
     lineNumbers: true, // Show line numbers in code blocks
@@ -38,6 +42,7 @@ export default defineConfig({
       { text: 'BrightOS Web', link: '/brightos-web'},
       { text: 'Examples', link: '/examples'},
       { text: 'Downloads', link: '/downloads'},
+      { text: 'Blog', link: '/blog/'},
       { text: 'Changelog', link: '/changelog'},
       { text: 'Dev Guide', link: '/development-guide'},
     ],
@@ -97,10 +102,15 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/Blaze-And-Company-Official/favicon.ico' }],
     ['link', { rel: 'apple-touch-icon', href: '/Blaze-And-Company-Official/icon-192x192.png' }],
+    ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'BrightOS Blog RSS', href: '/Blaze-And-Company-Official/blog/feed.xml' }],
+    ['link', { rel: 'alternate', type: 'application/atom+xml', title: 'BrightOS Blog Atom', href: '/Blaze-And-Company-Official/blog/feed.atom' }],
     ['meta', { name: 'theme-color', content: '#ff4500' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
   ],
+  buildEnd: async (config) => {
+    await generateFeeds(config)
+  },
   vite: {
     plugins: [
       VitePWA({
