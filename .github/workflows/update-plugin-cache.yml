@@ -4,7 +4,7 @@ on:
   push:
     paths: 
       - 'community made plugins/**'
-      - '. github/workflows/update-plugin-cache.yml'
+      - '.github/workflows/update-plugin-cache.yml'
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:  # Manual trigger
@@ -47,8 +47,8 @@ jobs:
               const options = {
                 headers: {
                   'User-Agent': 'BrightOS-Cache-Generator',
-                  'Authorization': 'Bearer ' + process.env. GITHUB_TOKEN,
-                  'Accept': 'application/vnd.github. v3+json'
+                  'Authorization': 'Bearer ' + process.env.GITHUB_TOKEN,
+                  'Accept': 'application/vnd.github.v3+json'
                 }
               };
               
@@ -102,13 +102,13 @@ jobs:
               
               console.log('Files received:', files.length);
               
-              const pluginFiles = files.filter(f => f.name.endsWith('. py') && f.type === 'file');
-              console.log('Found ' + pluginFiles. length + ' plugin files');
+              const pluginFiles = files.filter(f => f.name.endsWith('.py') && f.type === 'file');
+              console.log('Found ' + pluginFiles.length + ' plugin files');
               
               const plugins = [];
               
               for (const file of pluginFiles) {
-                console. log('Processing ' + file.name + '...');
+                console.log('Processing ' + file.name + '...');
                 
                 try {
                   const content = await httpsGetRaw(file.download_url);
@@ -117,13 +117,13 @@ jobs:
                     'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/commits?path=' + encodeURIComponent(PLUGINS_PATH + '/' + file.name) + '&per_page=100'
                   );
                   
-                  const contributors = Array.from(new Set(commits. map(c => c.author && c.author.login).filter(Boolean)));
+                  const contributors = Array.from(new Set(commits.map(c => c.author && c.author.login).filter(Boolean)));
                   
-                  const classMatch = content. match(/class\s+(\w+)\s*\(/i);
+                  const classMatch = content.match(/class\s+(\w+)\s*\(/i);
                   const className = classMatch ? classMatch[1] : file.name.replace('.py', '');
                   
                   const docstringMatch = content.match(/"""([\s\S]*?)"""/m);
-                  const docstring = docstringMatch ? docstringMatch[1]. trim() : '';
+                  const docstring = docstringMatch ? docstringMatch[1].trim() : '';
                   
                   const descriptionLines = docstring.split('\n').filter(line => line.trim());
                   const shortDescription = descriptionLines[0] || 'No description available';
@@ -143,7 +143,7 @@ jobs:
                     category = 'Motor Control';
                   } else if (contentLower.includes('sensor')) {
                     category = 'Sensors';
-                  } else if (contentLower. includes('display') || contentLower.includes('led')) {
+                  } else if (contentLower.includes('display') || contentLower.includes('led')) {
                     category = 'Display';
                   } else if (contentLower.includes('serial') || contentLower.includes('communication')) {
                     category = 'Communication';
@@ -160,7 +160,7 @@ jobs:
                   const tags = [];
                   if (contentLower.includes('servo')) tags.push('servo');
                   if (contentLower.includes('motor')) tags.push('motor');
-                  if (contentLower. includes('dc motor') || contentLower.includes('dc-motor')) tags.push('dc-motor');
+                  if (contentLower.includes('dc motor') || contentLower.includes('dc-motor')) tags.push('dc-motor');
                   if (contentLower.includes('stepper')) tags.push('stepper');
                   if (contentLower.includes('sensor')) tags.push('sensor');
                   if (contentLower.includes('pwm')) tags.push('pwm');
@@ -206,11 +206,11 @@ jobs:
                     : new Date().toISOString().split('T')[0];
                   
                   const changelog = [];
-                  if (commits.length > 0 && commits[0]. commit) {
-                    changelog. push({
-                      version:  '1.' + commits.length + '. 0',
-                      date: new Date(commits[0].commit. author.date).toISOString().split('T')[0],
-                      changes: commits[0]. commit.message,
+                  if (commits.length > 0 && commits[0].commit) {
+                    changelog.push({
+                      version:  '1.' + commits.length + '.0',
+                      date: new Date(commits[0].commit.author.date).toISOString().split('T')[0],
+                      changes: commits[0].commit.message,
                       author: commits[0].commit.author.name
                     });
                   } else {
@@ -233,7 +233,7 @@ jobs:
                     rating: parseFloat(rating),
                     category:  category,
                     difficulty: difficulty,
-                    tags: tags. slice(0, 5),
+                    tags: tags.slice(0, 5),
                     hardware: hardware,
                     dependencies: dependencies,
                     functions: functions,
@@ -248,7 +248,7 @@ jobs:
                   
                   console.log('✓ Processed ' + className);
                 } catch (err) {
-                  console.error('✗ Error processing ' + file. name + ':', err.message);
+                  console.error('✗ Error processing ' + file.name + ':', err.message);
                 }
               }
               
@@ -268,13 +268,13 @@ jobs:
               };
               
               fs.writeFileSync('docs/public/plugins-cache.json', JSON.stringify(cache, null, 2));
-              console. log('\n✓ Cache generated with ' + plugins.length + ' plugins');
+              console.log('\n✓ Cache generated with ' + plugins.length + ' plugins');
               console.log('✓ Saved to docs/public/plugins-cache.json');
               
             } catch (err) {
               console.error('Fatal error:', err);
               console.error('Stack:', err.stack);
-              process. exit(1);
+              process.exit(1);
             }
           }
           
