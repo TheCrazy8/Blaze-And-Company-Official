@@ -38,6 +38,6 @@ Open Serial Monitor (115200 baud) to see the Arduino's IP address:
 Code
 WiFi connected successfully!
 ========================================
-SSID: YourNetworkName
-IP Address: 192.168.1.100
+SSID: YourNetworkName  
+IP Address: Whatever the Arduino returns
 ========================================
