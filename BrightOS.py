@@ -140,10 +140,15 @@ def ChooseScript(plugins, scripts):
   try:
     # Try to find the favicon in various locations
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Possible icon locations:
+    # 1. When run from repository: docs/public/favicon.ico
+    # 2. When run from launcher install: same directory as BrightOS.py
+    # 3. When run from launcher install: ../../favicon.ico (up from install dir)
     possible_icon_paths = [
-      os.path.join(script_dir, "docs", "public", "favicon.ico"),  # When run from repo
-      os.path.join(script_dir, "..", "..", "favicon.ico"),  # When run from launcher install dir
-      os.path.join(script_dir, "favicon.ico"),  # Same directory
+      os.path.join(script_dir, "docs", "public", "favicon.ico"),
+      os.path.join(script_dir, "favicon.ico"),
+      os.path.abspath(os.path.join(script_dir, "..", "..", "favicon.ico")),
     ]
     
     for icon_path in possible_icon_paths:

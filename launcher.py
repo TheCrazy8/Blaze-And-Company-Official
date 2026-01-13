@@ -102,6 +102,9 @@ def download_file(url, dest_path):
 
 def download_and_extract_release(install_dir):
     """Download and extract the latest BrightOS release"""
+    # Files to copy from the repository
+    FILES_TO_COPY = ['BrightOS.py', 'requirements.txt', 'build.py']
+    
     # Try to get the latest release
     release_info = get_latest_release_info()
     
@@ -144,9 +147,7 @@ def download_and_extract_release(install_dir):
             source_dir = os.path.join(temp_dir, extracted_dirs[0])
             
             # Copy necessary files to install directory
-            files_to_copy = ['BrightOS.py', 'requirements.txt', 'build.py']
-            
-            for file_name in files_to_copy:
+            for file_name in FILES_TO_COPY:
                 source_file = os.path.join(source_dir, file_name)
                 if os.path.exists(source_file):
                     dest_file = os.path.join(install_dir, file_name)
@@ -285,7 +286,7 @@ def check_dependencies_installed(install_dir):
             [sys.executable, "-m", "pip", "list", "--format=freeze"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=30  # Increased timeout for slower systems
         )
         
         if result.returncode != 0:
@@ -293,13 +294,17 @@ def check_dependencies_installed(install_dir):
         
         installed_packages = result.stdout.lower()
         
+        # Packages to skip (build-only dependencies)
+        BUILD_ONLY_PACKAGES = {'pyinstaller'}
+        
         # Check each requirement
         for req in requirements:
             # Extract package name (before any version specifier)
+            # Simple extraction - split on common operators
             package_name = req.split('==')[0].split('>=')[0].split('<=')[0].split('>')[0].split('<')[0].strip().lower()
             
-            # Skip pyinstaller check as it's only needed for building
-            if package_name == 'pyinstaller':
+            # Skip build-only dependencies
+            if package_name in BUILD_ONLY_PACKAGES:
                 continue
             
             # Normalize package name (pip list may use underscores or dashes)
