@@ -18,6 +18,12 @@ hero:
     - theme: brand
       text: Run BrightOS in Browser
       link: /brightos-web
+    - theme: brand
+      text: Download Plugins & Scripts
+      link: /downloads
+    - theme: brand
+      text: Create Your Own
+      link: /development-guide
     - theme: alt
       text: GitHub Repo
       link: https://github.com/TheCrazy8/Blaze-And-Company-Official
@@ -37,6 +43,8 @@ features:
 - [Products](/products)
 - [FLARE](/FLARE%20Competition)
 - [BrightOS Web Interface](/brightos-web) - Run BrightOS in your browser
+- [Downloads](/downloads) - Community plugins and scripts
+- [Development Guide](/development-guide) - Create your own plugins and scripts
 
 ## Getting Started
 1. Use the navigation on the left to browse docs.
