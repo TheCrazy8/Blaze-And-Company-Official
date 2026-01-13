@@ -10,6 +10,7 @@ import '@nolebase/vitepress-plugin-enhanced-readabilities/client/style.css';
 import { 
   NolebaseEnhancedReadabilitiesMenu,
   NolebaseEnhancedReadabilitiesScreenMenu,
+  InjectionKey as NolebaseEnhancedReadabilitiesInjectionKey,
 } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
 import { NolebaseEnhancedReadabilitiesPlugin } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
 
@@ -66,14 +67,70 @@ export default {
     });
   },
 
-  enhanceApp(ctx) {
-    ctx.app.use(NolebaseEnhancedReadabilitiesPlugin);
+  enhanceApp({ app }) {
+    // Configure enhanced readabilities plugin with proper options
+    app.use(NolebaseEnhancedReadabilitiesPlugin, {
+      spotlight: {
+        defaultToggle: false,
+        hoverBlockColor: 'rgb(240 197 52 / 10%)',
+      },
+      layoutSwitch: {
+        defaultMode: 2, // Original mode
+        contentLayoutMaxWidth: {
+          defaultMaxWidth: 100,
+        },
+        pageLayoutMaxWidth: {
+          defaultMaxWidth: 100,
+        },
+      },
+    });
+    
+    // Provide the injection key with configuration
+    app.provide(NolebaseEnhancedReadabilitiesInjectionKey, {
+      locales: {
+        'en': {
+          title: {
+            title: 'Reading Mode',
+            titleAriaLabel: 'Reading Mode',
+          },
+          spotlight: {
+            title: 'Spotlight',
+            titleAriaLabel: 'Spotlight',
+            optionOn: 'On',
+            optionOff: 'Off',
+          },
+          layoutSwitch: {
+            title: 'Layout',
+            titleAriaLabel: 'Layout',
+            titleHelpMessage: 'Choose your preferred page layout',
+            optionFullWidth: 'Full Width',
+            optionSidebarWidthAdjustableOnly: 'Sidebar Adjustable',
+            optionBothWidthAdjustable: 'Both Adjustable',
+            optionOriginalWidth: 'Original',
+            contentLayoutMaxWidth: {
+              title: 'Content Max Width',
+              titleAriaLabel: 'Content Max Width',
+              slider: {
+                ariaLabel: 'Content max width slider',
+              },
+            },
+            pageLayoutMaxWidth: {
+              title: 'Page Max Width',
+              titleAriaLabel: 'Page Max Width',
+              slider: {
+                ariaLabel: 'Page max width slider',
+              },
+            },
+          },
+        },
+      },
+    });
     
     if (VPLTheme.enhanceApp) {
-      VPLTheme.enhanceApp(ctx);
+      VPLTheme.enhanceApp({ app });
     }
     
-    ctx.app.component('vImageViewer', vImageViewer);
+    app.component('vImageViewer', vImageViewer);
     vitepressBackToTop({ threshold: 300 });
   },
 

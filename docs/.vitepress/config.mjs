@@ -222,6 +222,13 @@ export default defineConfig({
         '@nolebase/vitepress-plugin-enhanced-readabilities', 
         '@nolebase/ui',
       ]
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Ensure scss is processed correctly
+        }
+      }
     }
   }
 })
