@@ -57,7 +57,7 @@ const trackDownload = async (pluginId, pluginName) => {
   try {
     const result = await analyticsAPI.trackDownload(pluginId, pluginName)
     if (result.success) {
-      // Update local stats
+      // Update local stats (note: single API call for all stats is efficient)
       await fetchRealStats()
     }
   } catch (error) {

@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuration
+// Note: The anon key is safe to expose publicly - it's designed for client-side use
+// Row Level Security (RLS) policies protect the database
 const SUPABASE_URL = 'https://rshigflhanzjrqeoynpa.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaGlnZmxoYW56anJxZW95bnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNDIxOTcsImV4cCI6MjA4MzkxODE5N30.49JJ_nlcby45UlkpcRFJQETTM4ocbmGX2OYGN6z7z5g'
 

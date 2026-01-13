@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/Blaze-And-Company-Official/dev-sw.js?dev-sw', { scope: '/Blaze-And-Company-Official/', type: 'classic' })
