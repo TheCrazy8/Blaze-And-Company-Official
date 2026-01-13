@@ -105,7 +105,7 @@ const getIcon = (type) => {
       <div 
         v-for="toast in toasts" 
         :key="toast.id"
-        : class="['toast', `toast-${toast.type}`]"
+        :class="['toast', `toast-${toast.type}`]"
         @click="removeToast(toast.id)"
         @mouseenter="pauseToast(toast)"
         @mouseleave="resumeToast(toast)"
