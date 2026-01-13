@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { withBase } from 'vitepress'
 import { analytics, reviews } from '../config/supabase.js'
 import PluginCard from './PluginCard.vue'
 
@@ -53,7 +54,7 @@ const fetchPlugins = async () => {
   try {
     // Try to load from cache first
     console.log('Loading plugins from cache...')
-    const cacheResponse = await fetch('/Blaze-And-Company-Official/plugins-cache.json')
+    const cacheResponse = await fetch(withBase('/plugins-cache.json'))
     
     if (cacheResponse.ok) {
       const cache = await cacheResponse.json()
