@@ -20,6 +20,7 @@ export default defineConfig({
       { text: 'Key', link: '/key' },
       { text: 'Products', link: '/products'},
       { text: 'FLARE', link: '/FLARE Competition'},
+      { text: 'BrightOS Web', link: '/brightos-web'},
     ],
     sidebar: [],
     lastUpdated: {
