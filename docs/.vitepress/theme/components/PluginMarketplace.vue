@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { analytics, reviews } from '../config/supabase.js'
+import PluginCard from './PluginCard.vue'
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')
@@ -52,7 +53,7 @@ const fetchPlugins = async () => {
   try {
     // Try to load from cache first
     console.log('Loading plugins from cache...')
-    const cacheResponse = await fetch('public/plugins-cache.json')
+    const cacheResponse = await fetch('/Blaze-And-Company-Official/plugins-cache.json')
     
     if (cacheResponse.ok) {
       const cache = await cacheResponse.json()
@@ -343,15 +344,170 @@ onMounted(async () => {
           <span>📦 Data cached {{ cacheAge }} ago</span>
         </div>
         
-        <!-- Keep all your existing stats, controls, grid, etc. -->
-        <!-- ... (copy from previous version) ... -->
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value">{{ totalPlugins }}</div>
+            <div class="stat-label">Total Plugins</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⬇️</div>
+            <div class="stat-value">{{ totalDownloads }}</div>
+            <div class="stat-label">Downloads</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ totalContributors }}</div>
+            <div class="stat-label">Contributors</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value">{{ averageRating }}</div>
+            <div class="stat-label">Avg Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters and Search -->
+      <div class="controls">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="🔍 Search plugins..." 
+          class="search-input"
+        />
+        
+        <div class="filters">
+          <select v-model="selectedCategory" class="filter-select">
+            <option v-for="cat in categories" :key="cat" :value="cat">
+              {{ cat === 'all' ? 'All Categories' : cat }}
+            </option>
+          </select>
+          
+          <select v-model="selectedDifficulty" class="filter-select">
+            <option v-for="diff in difficulties" :key="diff" :value="diff">
+              {{ diff === 'all' ? 'All Difficulties' : diff }}
+            </option>
+          </select>
+          
+          <select v-model="sortBy" class="filter-select">
+            <option value="downloads">Most Downloaded</option>
+            <option value="rating">Highest Rated</option>
+            <option value="date">Recently Updated</option>
+            <option value="name">Name (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="results-info">
+        <p>{{ filteredPlugins.length }} plugin{{ filteredPlugins.length !== 1 ? 's' : '' }} found</p>
+      </div>
+
+      <!-- Plugin Grid using PluginCard -->
+      <div v-if="filteredPlugins.length > 0" class="plugin-grid">
+        <PluginCard
+          v-for="plugin in filteredPlugins"
+          :key="plugin.id"
+          :plugin="{
+            ...plugin,
+            downloads: getPluginStats(plugin.id).downloads,
+            rating: getPluginStats(plugin.id).averageRating || plugin.rating
+          }"
+          @try-in-web="viewPlugin(plugin)"
+        />
+      </div>
+
+      <!-- No Results -->
+      <div v-else class="no-results">
+        <div class="no-results-icon">🔍</div>
+        <h3>No plugins found</h3>
+        <p>Try adjusting your search or filters</p>
       </div>
     </template>
   </div>
 </template>
 
 <style scoped>
-/* Add this new style */
+.plugin-marketplace {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Loading & Error States */
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  font-size: 48px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.error-state h3 {
+  margin-bottom: 12px;
+  color: var(--vp-c-text-1);
+}
+
+.error-state p {
+  color: var(--vp-c-text-2);
+  margin-bottom: 8px;
+}
+
+.help-text {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--vp-c-text-3);
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background: var(--vp-c-brand-1);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--vp-c-brand-2);
+}
+
+/* Header */
+.marketplace-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.marketplace-header h1 {
+  margin-bottom: 12px;
+  color: var(--vp-c-text-1);
+}
+
+.marketplace-header p {
+  color: var(--vp-c-text-2);
+  font-size: 16px;
+}
+
 .cache-info {
   margin-top: 8px;
   font-size: 12px;
@@ -359,12 +515,157 @@ onMounted(async () => {
   font-style: italic;
 }
 
-. help-text {
-  margin-top: 12px;
-  font-size:  14px;
-  color: var(--vp-c-text-3);
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
 }
 
-/* Keep all your existing styles */
-/* ... */
+.stat-card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--vp-c-brand-1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--vp-c-brand-1);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Controls */
+.controls {
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-size: 14px;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px rgba(var(--vp-c-brand-rgb), 0.1);
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-select:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px rgba(var(--vp-c-brand-rgb), 0.1);
+}
+
+/* Results Info */
+.results-info {
+  margin-bottom: 20px;
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+}
+
+/* Plugin Grid */
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-results-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.no-results h3 {
+  margin-bottom: 8px;
+  color: var(--vp-c-text-1);
+}
+
+.no-results p {
+  color: var(--vp-c-text-2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .plugin-marketplace {
+    padding: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .plugin-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
 </style>
