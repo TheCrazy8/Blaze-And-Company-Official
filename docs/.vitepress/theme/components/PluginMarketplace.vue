@@ -201,7 +201,7 @@ const getTimeSince = (date) => {
       <div 
         v-for="plugin in filteredPlugins" 
         :key="plugin.id"
-        class="plugin-card"
+        :class="plugin-card"
       >
         <div class="plugin-header">
           <div class="plugin-title">
