@@ -103,7 +103,7 @@ body::before {
 /* ===== HERO SECTION - BLAZE THEME ===== */
 
 /* Hero gradient background with fire effect */
-.VPHome.VPHero {
+.VPHome .VPHero {
   background: linear-gradient(135deg, 
     rgba(255, 69, 0, 0.08) 0%, 
     rgba(255, 140, 0, 0.08) 50%,
@@ -195,7 +195,7 @@ body::before {
   transition: width 0.6s, height 0.6s;
 }
 
-.VPHome.VPButton.brand:hover::before {
+.VPHome .VPButton.brand:hover::before {
   width: 300px;
   height: 300px;
 }
@@ -234,7 +234,7 @@ body::before {
 }
 
 /* Navbar title with fire gradient */
-.VPNavBarTitle.title {
+.VPNavBarTitle .title {
   font-weight: 800;
   background: linear-gradient(120deg, #ff4500, #ffa726);
   background-clip: text;
@@ -270,7 +270,7 @@ body::before {
 }
 
 /* Active sidebar link with fire accent */
-.VPSidebarItem.is-active > .item.link {
+.VPSidebarItem.is-active > .item .link {
   color: var(--vp-c-brand-1);
   font-weight: 600;
   background: linear-gradient(90deg, var(--vp-c-brand-soft) 0%, transparent 100%);
@@ -298,7 +298,7 @@ body::before {
 }
 
 /* Sidebar link hover */
-.VPSidebarItem.link:hover {
+.VPSidebarItem .link:hover {
   color: var(--vp-c-brand-1);
   background: linear-gradient(90deg, var(--vp-c-brand-soft) 0%, transparent 100%);
 }
@@ -325,8 +325,8 @@ div[class*='language-'] {
 }
 
 /* Copy code button - always visible */
-.vp-code-group.copy,
-div[class*='language-'].copy {
+.vp-code-group .copy,
+div[class*='language-'] .copy {
   opacity: 0.6 !important;
   transition: opacity 0.3s;
 }
@@ -440,7 +440,7 @@ div[class*='language-']:hover .copy {
 
 /* ===== SEARCH ===== */
 
-.VPNavBarSearch.DocSearch-Button {
+.VPNavBarSearch .DocSearch-Button {
   background-color: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-border);
   transition: all 0.3s;
@@ -469,7 +469,7 @@ div[class*='language-']:hover .copy {
   transform: translateY(-6px);
 }
 
-.VPFeature.icon {
+.VPFeature .icon {
   color: var(--vp-c-brand-1);
   filter: drop-shadow(0 0 8px rgba(255, 69, 0, 0.3));
 }
