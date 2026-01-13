@@ -3,7 +3,7 @@
 ## BrightOS
 Arduino modular program for managing and running scripts with hardware control capabilities.
 
-INSTALL SCRIPT: https://github.com/TheCrazy8/Blaze-And-Company-Official/releases/tag/launcher-dev-20260113-175555
+[Launcher Download](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases/tag/launcher-dev-20260113-175555)
 
 ### Quick Start
 
@@ -14,7 +14,7 @@ INSTALL SCRIPT: https://github.com/TheCrazy8/Blaze-And-Company-Official/releases
 4. No installation required!
 
 **Option 2: Use the Desktop Launcher (Windows/Linux)**
-1. **Windows**: Download `BrightOS-Launcher.exe` from the [latest launcher release](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases)
+1. **Windows**: Download `BrightOS-Launcher.exe` from the [latest launcher release](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases/tag/launcher-dev-20260113-175555)
 2. **Linux**: Download `launcher.py` and run with `python3 launcher.py`
 3. The launcher will automatically:
    - Download the latest BrightOS Python files
