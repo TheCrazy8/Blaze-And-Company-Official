@@ -36,7 +36,9 @@ export default defineConfig({
       { text: 'Products', link: '/products'},
       { text: 'FLARE', link: '/FLARE Competition'},
       { text: 'BrightOS Web', link: '/brightos-web'},
+      { text: 'Examples', link: '/examples'},
       { text: 'Downloads', link: '/downloads'},
+      { text: 'Changelog', link: '/changelog'},
       { text: 'Dev Guide', link: '/development-guide'},
     ],
     sidebar: [
@@ -54,6 +56,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text:  'Web Interface', link: '/brightos-web' },
+          { text: 'Script Examples', link: '/examples' },
           { text: 'Downloads', link: '/downloads' },
           { text: 'Build Guide', link: '/BUILD' },
         ]
@@ -63,6 +66,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'Development Guide', link: '/development-guide' },
+          { text: 'Changelog', link: '/changelog' },
         ]
       },
       {

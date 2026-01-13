@@ -25,6 +25,8 @@ import ProgressBar from './components/ProgressBar.vue';
 import Breadcrumbs from './components/Breadcrumbs.vue';
 import FeedbackWidget from './components/FeedbackWidget.vue';
 import ShareButtons from './components/ShareButtons.vue';
+import CommitHistory from './components/CommitHistory.vue';
+import CopyCodeButton from './components/CopyCodeButton.vue';
 
 import './styles/main.css';
 
@@ -130,7 +132,11 @@ export default {
       VPLTheme.enhanceApp({ app });
     }
     
+    // Register global components
     app.component('vImageViewer', vImageViewer);
+    app.component('CommitHistory', CommitHistory);
+    app.component('CopyCodeButton', CopyCodeButton);
+    
     vitepressBackToTop({ threshold: 300 });
   },
 
