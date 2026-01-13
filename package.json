@@ -2,17 +2,18 @@
   "name": "Blaze & Company Official",
   "version": "1.0.0",
   "description": "Official Blaze & Company site",
-  "main": "index.js",
+  "main": "index. js",
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },
   "author": "theCrazy8",
-  "license": "CC-BY-NC-SA-4.0",
+  "license":  "CC-BY-NC-SA-4.0",
   "devDependencies": {
     "sass": "^1.83.1",
-    "vitepress": "^1.6.4",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitepress":  "^1.6.4",
     "vue": "^3.5.18"
   },
   "dependencies": {
