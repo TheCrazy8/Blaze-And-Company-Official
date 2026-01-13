@@ -2,7 +2,7 @@ name: Update Plugin Cache
 
 on:  
   push:
-    paths:
+    paths: 
       - 'community made plugins/**'
       - '. github/workflows/update-plugin-cache.yml'
   schedule:
@@ -10,25 +10,25 @@ on:
   workflow_dispatch:  # Manual trigger
 
 permissions:
-  contents: write
+  contents:  write
 
 jobs:
   update-cache:
-    runs-on: ubuntu-latest
-    steps:
+    runs-on:  ubuntu-latest
+    steps: 
       - name: Checkout repository
         uses:  actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for commit data
+          fetch-depth:  0  # Full history for commit data
       
-      - name: Setup Node.js
+      - name:  Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version:  '20'
+          node-version: '20'
       
       - name: Generate Plugin Cache
         env:
-          GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Create docs/public directory if it doesn't exist
           mkdir -p docs/public
@@ -47,7 +47,7 @@ jobs:
               const options = {
                 headers: {
                   'User-Agent': 'BrightOS-Cache-Generator',
-                  'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+                  'Authorization': 'Bearer ' + process.env. GITHUB_TOKEN,
                   'Accept': 'application/vnd.github. v3+json'
                 }
               };
@@ -60,10 +60,10 @@ jobs:
                     try {
                       resolve(JSON.parse(data));
                     } catch (e) {
-                      resolve(data);  // Return raw data if not JSON
+                      resolve(data);
                     }
                   } else {
-                    reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+                    reject(new Error('HTTP ' + res.statusCode + ': ' + data));
                   }
                 });
               }).on('error', reject);
@@ -73,7 +73,7 @@ jobs:
           function httpsGetRaw(url) {
             return new Promise((resolve, reject) => {
               const options = {
-                headers: {
+                headers:  {
                   'User-Agent': 'BrightOS-Cache-Generator'
                 }
               };
@@ -85,7 +85,7 @@ jobs:
                   if (res.statusCode === 200) {
                     resolve(data);
                   } else {
-                    reject(new Error(`HTTP ${res.statusCode}`));
+                    reject(new Error('HTTP ' + res.statusCode));
                   }
                 });
               }).on('error', reject);
@@ -96,33 +96,30 @@ jobs:
             console.log('Fetching plugins from GitHub...');
             
             try {
-              // Fetch directory contents
               const files = await httpsGet(
-                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(PLUGINS_PATH)}`
+                'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + encodeURIComponent(PLUGINS_PATH)
               );
               
-              // Filter . py files
+              console.log('Files received:', files.length);
+              
               const pluginFiles = files.filter(f => f.name.endsWith('. py') && f.type === 'file');
-              console.log(`Found ${pluginFiles.length} plugin files`);
+              console.log('Found ' + pluginFiles. length + ' plugin files');
               
               const plugins = [];
               
               for (const file of pluginFiles) {
-                console.log(`Processing ${file.name}...`);
+                console. log('Processing ' + file.name + '...');
                 
                 try {
-                  // Fetch file content (raw)
                   const content = await httpsGetRaw(file.download_url);
                   
-                  // Fetch commits for this file
                   const commits = await httpsGet(
-                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${encodeURIComponent(PLUGINS_PATH)}/${file.name}&per_page=100`
+                    'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/commits?path=' + encodeURIComponent(PLUGINS_PATH + '/' + file.name) + '&per_page=100'
                   );
                   
-                  const contributors = [... new Set(commits.map(c => c.author?. login).filter(Boolean))];
+                  const contributors = Array.from(new Set(commits. map(c => c.author && c.author.login).filter(Boolean)));
                   
-                  // Parse metadata
-                  const classMatch = content.match(/class\s+(\w+)\s*\(/i);
+                  const classMatch = content. match(/class\s+(\w+)\s*\(/i);
                   const className = classMatch ? classMatch[1] : file.name.replace('.py', '');
                   
                   const docstringMatch = content.match(/"""([\s\S]*?)"""/m);
@@ -131,7 +128,6 @@ jobs:
                   const descriptionLines = docstring.split('\n').filter(line => line.trim());
                   const shortDescription = descriptionLines[0] || 'No description available';
                   
-                  // Extract functions
                   const functions = [];
                   const functionRegex = /def\s+(\w+)\s*\([^)]*\):/g;
                   let match;
@@ -141,20 +137,18 @@ jobs:
                     }
                   }
                   
-                  // Determine category
                   const contentLower = content.toLowerCase();
                   let category = 'Utilities';
                   if (contentLower.includes('motor') || contentLower.includes('servo')) {
                     category = 'Motor Control';
                   } else if (contentLower.includes('sensor')) {
                     category = 'Sensors';
-                  } else if (contentLower.includes('display') || contentLower.includes('led')) {
+                  } else if (contentLower. includes('display') || contentLower.includes('led')) {
                     category = 'Display';
                   } else if (contentLower.includes('serial') || contentLower.includes('communication')) {
                     category = 'Communication';
                   }
                   
-                  // Determine difficulty
                   const lineCount = content.split('\n').length;
                   let difficulty = 'Beginner';
                   if (lineCount > 200) {
@@ -163,32 +157,28 @@ jobs:
                     difficulty = 'Intermediate';
                   }
                   
-                  // Extract tags
                   const tags = [];
                   if (contentLower.includes('servo')) tags.push('servo');
                   if (contentLower.includes('motor')) tags.push('motor');
-                  if (contentLower.includes('dc motor') || contentLower.includes('dc-motor')) tags.push('dc-motor');
+                  if (contentLower. includes('dc motor') || contentLower.includes('dc-motor')) tags.push('dc-motor');
                   if (contentLower.includes('stepper')) tags.push('stepper');
-                  if (contentLower. includes('sensor')) tags.push('sensor');
-                  if (contentLower. includes('pwm')) tags.push('pwm');
+                  if (contentLower.includes('sensor')) tags.push('sensor');
+                  if (contentLower.includes('pwm')) tags.push('pwm');
                   
-                  // Hardware requirements
                   const hardware = [];
                   if (content.includes('TelemetrixUnoR4WiFi')) hardware.push('Arduino Uno R4 WiFi');
-                  if (content.includes('Uno') && !hardware.includes('Arduino Uno R4 WiFi')) hardware.push('Arduino Uno');
+                  if (content.includes('Uno') && hardware.indexOf('Arduino Uno R4 WiFi') === -1) hardware.push('Arduino Uno');
                   if (content.includes('Mega')) hardware.push('Arduino Mega');
                   if (hardware.length === 0) hardware.push('Any Arduino');
                   
-                  // Dependencies
                   const dependencies = [];
                   if (content.includes('telemetrix')) dependencies.push('telemetrix-uno-r4-wifi');
                   if (content.includes('simple_plugin_loader')) dependencies.push('simple-plugin-loader');
                   
-                  // Calculate quality score
                   let qualityScore = 0;
                   const hasDocstring = content.includes('"""');
                   const hasExamples = contentLower.includes('example');
-                  const hasTypeHints = content.includes(':  ') && content.includes('->');
+                  const hasTypeHints = content.includes(': ') && content.includes('->');
                   const hasErrorHandling = content.includes('try:') || content.includes('except');
                   const hasLogging = content.includes('print') || content.includes('log');
                   
@@ -206,24 +196,21 @@ jobs:
                   
                   const rating = (3.5 + (qualityScore / 100) * 1.5).toFixed(1);
                   
-                  // Extract version
                   const versionMatch = content.match(/version\s*=\s*['"]([^'"]+)['"]/i) ||
                                        content.match(/@version\s+([^\s]+)/i) ||
                                        content.match(/__version__\s*=\s*['"]([^'"]+)['"]/i);
-                  const version = versionMatch ? versionMatch[1] : `1.${commits.length}.0`;
+                  const version = versionMatch ?  versionMatch[1] : '1.' + commits.length + '.0';
                   
-                  // Last updated
-                  const lastUpdated = commits[0]?.commit?.author?.date 
+                  const lastUpdated = commits[0] && commits[0].commit && commits[0].commit.author && commits[0].commit.author.date
                     ? new Date(commits[0].commit.author.date).toISOString().split('T')[0]
                     : new Date().toISOString().split('T')[0];
                   
-                  // Generate changelog
                   const changelog = [];
-                  if (commits.length > 0 && commits[0].commit) {
-                    changelog.push({
-                      version:  `1.${commits.length}.0`,
+                  if (commits.length > 0 && commits[0]. commit) {
+                    changelog. push({
+                      version:  '1.' + commits.length + '. 0',
                       date: new Date(commits[0].commit. author.date).toISOString().split('T')[0],
-                      changes: commits[0].commit.message,
+                      changes: commits[0]. commit.message,
                       author: commits[0].commit.author.name
                     });
                   } else {
@@ -238,40 +225,38 @@ jobs:
                     id: file.sha,
                     name: className,
                     filename: file.name,
-                    version,
+                    version:  version,
                     author: contributors[0] || REPO_OWNER,
-                    contributors,
+                    contributors:  contributors,
                     description: shortDescription,
                     longDescription: docstring,
-                    rating:  parseFloat(rating),
-                    category,
-                    difficulty,
-                    tags:  tags. slice(0, 5),
-                    hardware,
-                    dependencies,
-                    functions,
-                    lastUpdated,
+                    rating: parseFloat(rating),
+                    category:  category,
+                    difficulty: difficulty,
+                    tags: tags. slice(0, 5),
+                    hardware: hardware,
+                    dependencies: dependencies,
+                    functions: functions,
+                    lastUpdated: lastUpdated,
                     downloadUrl: file.download_url,
                     githubUrl: file.html_url,
                     size: file.size,
                     commitCount: commits.length,
-                    lineCount,
-                    changelog
+                    lineCount: lineCount,
+                    changelog: changelog
                   });
                   
-                  console.log(`✓ Processed ${className}`);
+                  console.log('✓ Processed ' + className);
                 } catch (err) {
-                  console.error(`✗ Error processing ${file.name}:`, err.message);
+                  console.error('✗ Error processing ' + file. name + ':', err.message);
                 }
               }
               
-              // Fetch repo stats
-              const repoStats = await httpsGet(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`);
+              const repoStats = await httpsGet('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME);
               
-              // Create cache object
               const cache = {
                 generated_at: new Date().toISOString(),
-                version:  '1.0',
+                version: '1.0',
                 repository: {
                   owner: REPO_OWNER,
                   name: REPO_NAME,
@@ -279,33 +264,39 @@ jobs:
                   forks: repoStats.forks_count,
                   watchers: repoStats.watchers_count
                 },
-                plugins
+                plugins: plugins
               };
               
-              // Write cache file
-              fs.writeFileSync('docs/public/plugins-cache. json', JSON.stringify(cache, null, 2));
-              console.log(`\n✓ Cache generated with ${plugins.length} plugins`);
-              console.log(`✓ Saved to docs/public/plugins-cache.json`);
+              fs.writeFileSync('docs/public/plugins-cache.json', JSON.stringify(cache, null, 2));
+              console. log('\n✓ Cache generated with ' + plugins.length + ' plugins');
+              console.log('✓ Saved to docs/public/plugins-cache.json');
               
             } catch (err) {
               console.error('Fatal error:', err);
-              process.exit(1);
+              console.error('Stack:', err.stack);
+              process. exit(1);
             }
           }
           
           fetchPlugins();
           SCRIPT_END
       
-      - name: Commit and push cache
-        run: |
+      - name:  Commit and push cache
+        run:  |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add docs/public/plugins-cache.json
           
-          # Only commit if there are changes
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
+          # Check if file exists before adding
+          if [ -f docs/public/plugins-cache.json ]; then
+            git add docs/public/plugins-cache.json
+            
+            if git diff --staged --quiet; then
+              echo "No changes to commit"
+            else
+              git commit -m "chore: update plugin cache [skip ci]"
+              git push
+            fi
           else
-            git commit -m "chore: update plugin cache [skip ci]"
-            git push
+            echo "ERROR: Cache file was not generated!"
+            exit 1
           fi
