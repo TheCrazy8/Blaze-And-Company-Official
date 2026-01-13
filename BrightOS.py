@@ -83,30 +83,22 @@ brightos_dir = get_brightos_dir()
 print(f"BrightOS directory: {brightos_dir}")
 
 # Create directories with cross-platform paths
-try:
-    os.makedirs(os.path.join(brightos_dir, "Plugins"), exist_ok=True)
-    print("Directory 'Plugins' created.")
-except FileExistsError:
-    print("Directory 'Plugins' already exists.")
-except FileNotFoundError:
-    print("Parent directory does not exist.")
+os.makedirs(os.path.join(brightos_dir, "Plugins"), exist_ok=True)
+print("Directory 'Plugins' created/verified.")
 
-try:
-    os.makedirs(os.path.join(brightos_dir, "Scripts"), exist_ok=True)
-    print("Directory 'Scripts' created.")
-except FileExistsError:
-    print("Directory 'Scripts' already exists.")
-except FileNotFoundError:
-    print("Parent directory does not exist.")
+os.makedirs(os.path.join(brightos_dir, "Scripts"), exist_ok=True)
+print("Directory 'Scripts' created/verified.")
 
 importlist_path = os.path.join(brightos_dir, "Importlist.txt")
-try:
-  with open(importlist_path, 'x') as file:
-    print("Created Importlist.txt")
-except FileExistsError:
-  print("Importlist.txt already exists.")
-except FileNotFoundError:
-  print("Parent directory does not exist.")
+if not os.path.exists(importlist_path):
+    try:
+        with open(importlist_path, 'w') as file:
+            file.write("# BrightOS Import List\n")
+        print("Created Importlist.txt")
+    except Exception as e:
+        print(f"Error creating Importlist.txt: {e}")
+else:
+    print("Importlist.txt already exists.")
 
 plugin_dir = os.path.join(brightos_dir, "Plugins")
 print(plugin_dir)
