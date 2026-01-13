@@ -14,17 +14,17 @@ const pageTitle = computed(() => {
 })
 
 const shareTwitter = () => {
-  const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl. value)}&text=${encodeURIComponent(pageTitle.value)}`
+  const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl.value)}&text=${encodeURIComponent(pageTitle.value)}`
   window.open(url, '_blank')
 }
 
 const shareLinkedIn = () => {
-  const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl. value)}`
+  const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl.value)}`
   window.open(url, '_blank')
 }
 
 const copyLink = () => {
-  navigator.clipboard.writeText(currentUrl. value)
+  navigator.clipboard.writeText(currentUrl.value)
   alert('Link copied to clipboard!')
 }
 </script>
@@ -45,18 +45,18 @@ const copyLink = () => {
 </template>
 
 <style scoped>
-. share-buttons {
-  display:  flex;
+.share-buttons {
+  display: flex;
   align-items: center;
   gap: 8px;
-  margin:  24px 0;
+  margin: 24px 0;
   padding: 16px;
   border-top: 1px solid var(--vp-c-divider);
 }
 
 .share-label {
   font-weight: 600;
-  color:  var(--vp-c-text-2);
+  color: var(--vp-c-text-2);
   margin-right: 8px;
 }
 
@@ -71,7 +71,7 @@ const copyLink = () => {
 }
 
 .share-btn:hover {
-  background:  var(--vp-c-brand-soft);
+  background: var(--vp-c-brand-soft);
   border-color: var(--vp-c-brand-1);
   transform: translateY(-2px);
 }

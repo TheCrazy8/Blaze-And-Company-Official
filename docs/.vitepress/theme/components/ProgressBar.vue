@@ -28,12 +28,12 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-. progress-bar-container {
+.progress-bar-container {
   position: fixed;
-  top:  0;
+  top: 0;
   left: 0;
   right: 0;
-  height:  3px;
+  height: 3px;
   background: transparent;
   z-index: 1000;
 }

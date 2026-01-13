@@ -6,7 +6,7 @@ let registration = null
 
 onMounted(async () => {
   if ('serviceWorker' in navigator) {
-    registration = await navigator. serviceWorker.getRegistration()
+    registration = await navigator.serviceWorker.getRegistration()
     
     // Listen for updates
     navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -17,7 +17,7 @@ onMounted(async () => {
 
 const updateApp = () => {
   if (registration && registration.waiting) {
-    registration.waiting. postMessage({ type: 'SKIP_WAITING' })
+    registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     window.location.reload()
   }
 }
@@ -65,7 +65,7 @@ const dismissPrompt = () => {
   }
 }
 
-. pwa-prompt-content p {
+.pwa-prompt-content p {
   margin: 0 0 16px 0;
   font-weight: 600;
   font-size: 16px;
