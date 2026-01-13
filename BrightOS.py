@@ -135,6 +135,24 @@ def ChooseScript(plugins, scripts):
 
   root = tk.Tk()
   root.title("BrightOS")
+  
+  # Set window icon (favicon)
+  try:
+    # Try to find the favicon in various locations
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    possible_icon_paths = [
+      os.path.join(script_dir, "docs", "public", "favicon.ico"),  # When run from repo
+      os.path.join(script_dir, "..", "..", "favicon.ico"),  # When run from launcher install dir
+      os.path.join(script_dir, "favicon.ico"),  # Same directory
+    ]
+    
+    for icon_path in possible_icon_paths:
+      if os.path.exists(icon_path):
+        root.iconbitmap(icon_path)
+        break
+  except Exception:
+    # If icon setting fails, just continue without it
+    pass
 
   ttk.Label(root, text="Select a script to run").pack(padx=10, pady=(10, 5))
 
