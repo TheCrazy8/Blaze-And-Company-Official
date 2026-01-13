@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-13T23:31:47.345Z",
+  "generated_at": "2026-01-13T23:56:29.649Z",
   "version": "1.0",
   "repository": {
     "owner": "TheCrazy8",
@@ -9,6 +9,54 @@
     "watchers": 1
   },
   "plugins": [
+    {
+      "id": "817358a24c062fb7623d1b75ae87a054fea521e0",
+      "name": "LEDController",
+      "filename": "led_controller_plugin.py",
+      "version": "1.1.0",
+      "author": "TheCrazy8",
+      "contributors": [
+        "TheCrazy8"
+      ],
+      "description": "Plugin for controlling LEDs connected to Arduino pins.",
+      "longDescription": "Plugin for controlling LEDs connected to Arduino pins.\n    Supports on/off, blinking, and fading.",
+      "rating": 4.4,
+      "category": "Display",
+      "difficulty": "Intermediate",
+      "tags": [
+        "pwm"
+      ],
+      "hardware": [
+        "Any Arduino"
+      ],
+      "dependencies": [
+        "telemetrix-uno-r4-wifi",
+        "simple-plugin-loader"
+      ],
+      "functions": [
+        "set_board",
+        "setup_led",
+        "turn_on",
+        "turn_off",
+        "blink",
+        "fade",
+        "cleanup"
+      ],
+      "lastUpdated": "2026-01-13",
+      "downloadUrl": "https://raw.githubusercontent.com/TheCrazy8/Blaze-And-Company-Official/main/community%20made%20plugins/led_controller_plugin.py",
+      "githubUrl": "https://github.com/TheCrazy8/Blaze-And-Company-Official/blob/main/community%20made%20plugins/led_controller_plugin.py",
+      "size": 4360,
+      "commitCount": 1,
+      "lineCount": 140,
+      "changelog": [
+        {
+          "version": "1.1.0",
+          "date": "2026-01-13",
+          "changes": "Create led_controller_plugin.py",
+          "author": "Scarlett/Eight"
+        }
+      ]
+    },
     {
       "id": "43e4783b94a74439859080d0f73c84bacac7cc03",
       "name": "MotorController",
