@@ -230,7 +230,7 @@ const getIcon = (type) => {
   color: #10b981;
 }
 
-. toast-error .toast-progress {
+.toast-error .toast-progress {
   color: #ef4444;
 }
 
@@ -238,8 +238,8 @@ const getIcon = (type) => {
   color: #f59e0b;
 }
 
-.toast-info . toast-progress {
-  color:  #3b82f6;
+.toast-info .toast-progress {
+  color: #3b82f6;
 }
 
 /* Animations */

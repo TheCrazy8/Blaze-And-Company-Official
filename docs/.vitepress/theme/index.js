@@ -24,7 +24,9 @@ import ProgressBar from './components/ProgressBar.vue';
 import Breadcrumbs from './components/Breadcrumbs.vue';
 import FeedbackWidget from './components/FeedbackWidget.vue';
 import ShareButtons from './components/ShareButtons.vue';
-import ToastNotification from './components/ToastNotification.vue'; // NEW
+import ToastNotification from './components/ToastNotification.vue';
+import CopyCodeButton from './components/CopyCodeButton.vue';
+import PluginCard from './components/PluginCard.vue';
 
 import './styles/main.css';
 
@@ -75,7 +77,11 @@ export default {
       VPLTheme.enhanceApp(ctx);
     }
     
+    // Register global components for use in markdown
     ctx.app.component('vImageViewer', vImageViewer);
+    ctx.app.component('CopyCodeButton', CopyCodeButton);
+    ctx.app.component('PluginCard', PluginCard);
+    
     vitepressBackToTop({ threshold: 300 });
   },
 
