@@ -204,7 +204,7 @@ jobs:
                   qualityScore += commitBonus + contributorBonus;
                   qualityScore = Math.min(qualityScore, 100);
                   
-                  const rating = (3. 5 + (qualityScore / 100) * 1.5).toFixed(1);
+                  const rating = (3.5 + (qualityScore / 100) * 1.5).toFixed(1);
                   
                   // Extract version
                   const versionMatch = content.match(/version\s*=\s*['"]([^'"]+)['"]/i) ||
