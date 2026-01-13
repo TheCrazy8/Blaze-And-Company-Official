@@ -67,11 +67,24 @@ def load_scripts(script_dir):
   
   return scripts
 
+def get_brightos_dir():
+    """Get the BrightOS directory path (cross-platform)"""
+    userdir = os.path.expanduser("~")
+    if sys.platform == "win32":
+        return os.path.join(userdir, "AppData", "Local", "BrightOS")
+    else:
+        # For Linux/macOS, use a hidden directory in home
+        return os.path.join(userdir, ".brightos")
+
 userdir = home_dir = os.path.expanduser("~")
 print(userdir)
 
+brightos_dir = get_brightos_dir()
+print(f"BrightOS directory: {brightos_dir}")
+
+# Create directories with cross-platform paths
 try:
-    os.mkdir(f"{userdir}\\AppData\\Local\\BrightOS\\Plugins")
+    os.makedirs(os.path.join(brightos_dir, "Plugins"), exist_ok=True)
     print("Directory 'Plugins' created.")
 except FileExistsError:
     print("Directory 'Plugins' already exists.")
@@ -79,29 +92,26 @@ except FileNotFoundError:
     print("Parent directory does not exist.")
 
 try:
-    os.mkdir(f"{userdir}\\AppData\\Local\\BrightOS\\Scripts")
+    os.makedirs(os.path.join(brightos_dir, "Scripts"), exist_ok=True)
     print("Directory 'Scripts' created.")
 except FileExistsError:
     print("Directory 'Scripts' already exists.")
 except FileNotFoundError:
     print("Parent directory does not exist.")
 
+importlist_path = os.path.join(brightos_dir, "Importlist.txt")
 try:
-  with open(f'{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt', 'x') as file:
+  with open(importlist_path, 'x') as file:
     print("Created Importlist.txt")
 except FileExistsError:
   print("Importlist.txt already exists.")
 except FileNotFoundError:
   print("Parent directory does not exist.")
 
-plugin_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Plugins"
+plugin_dir = os.path.join(brightos_dir, "Plugins")
 print(plugin_dir)
-script_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Scripts"
+script_dir = os.path.join(brightos_dir, "Scripts")
 print(script_dir)
-try:
-  import f"{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt"
-except ImportError:
-  pass
 
 # initialize the loader
 loader = Loader()
