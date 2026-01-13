@@ -84,12 +84,38 @@
           </div>
         </div>
       </div>
+
+      <div class="section">
+        <h3>Workspace</h3>
+        <div class="button-group">
+          <button @click="clearWorkspace" class="button secondary" title="Clear all scripts and plugins">
+            Clear Workspace
+          </button>
+          <span class="workspace-info">
+            {{ scripts.length }} script(s), {{ plugins.length }} plugin(s) loaded
+          </span>
+        </div>
+      </div>
     </div>
 
     <div class="output-panel">
       <div class="output-header">
         <h3>Output</h3>
-        <button @click="clearOutput" class="button small">Clear</button>
+        <div class="output-controls">
+          <label class="auto-scroll-toggle">
+            <input type="checkbox" v-model="autoScroll" />
+            <span>Auto-scroll</span>
+          </label>
+          <button @click="copyOutput" class="button small" title="Copy output to clipboard">
+            📋 Copy
+          </button>
+          <button @click="exportOutput" class="button small" title="Export output as file">
+            💾 Export
+          </button>
+          <button @click="clearOutput" class="button small" title="Clear output">
+            🗑️ Clear
+          </button>
+        </div>
       </div>
       <div class="output-content" ref="outputContent">
         <div v-if="outputLines.length === 0" class="empty-state">
@@ -105,7 +131,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 
 // State management
 const scripts = ref([])
@@ -116,6 +142,7 @@ const isRunning = ref(false)
 const isArduinoConnected = ref(false)
 const serialSupported = ref(false)
 const outputContent = ref(null)
+const autoScroll = ref(true)
 
 // Serial port management
 let serialPort = null
@@ -125,6 +152,8 @@ let writer = null
 // Check for Web Serial API support
 onMounted(() => {
   serialSupported.value = 'serial' in navigator
+  loadWorkspace()
+  loadExampleScripts()
   addOutput('BrightOS Web Interface initialized', 'info')
   
   if (!serialSupported.value) {
@@ -132,13 +161,18 @@ onMounted(() => {
   }
 })
 
+// Watch for workspace changes and save
+watch([scripts, plugins], () => {
+  saveWorkspace()
+}, { deep: true })
+
 // Output management
 function addOutput(message, type = 'info') {
   const timestamp = new Date().toLocaleTimeString()
   outputLines.value.push({ timestamp, message, type })
   
   nextTick(() => {
-    if (outputContent.value) {
+    if (outputContent.value && autoScroll.value) {
       outputContent.value.scrollTop = outputContent.value.scrollHeight
     }
   })
@@ -147,6 +181,55 @@ function addOutput(message, type = 'info') {
 function clearOutput() {
   outputLines.value = []
   addOutput('Output cleared', 'info')
+}
+
+function copyOutput() {
+  const text = outputLines.value
+    .map(line => `[${line.timestamp}] ${line.message}`)
+    .join('\n')
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        addOutput('Output copied to clipboard', 'success')
+      })
+      .catch(err => {
+        addOutput(`Failed to copy: ${err.message}`, 'error')
+      })
+  } else {
+    // Fallback for older browsers
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed'
+    textarea.style.opacity = '0'
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      document.execCommand('copy')
+      addOutput('Output copied to clipboard', 'success')
+    } catch (err) {
+      addOutput('Failed to copy output', 'error')
+    }
+    document.body.removeChild(textarea)
+  }
+}
+
+function exportOutput() {
+  const text = outputLines.value
+    .map(line => `[${line.timestamp}] ${line.message}`)
+    .join('\n')
+  
+  const blob = new Blob([text], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `brightos-output-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.log`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+  
+  addOutput('Output exported', 'success')
 }
 
 // Script management
@@ -346,6 +429,166 @@ async function readFromSerial() {
     }
   }
 }
+
+// Workspace persistence
+function saveWorkspace() {
+  try {
+    const workspace = {
+      scripts: scripts.value,
+      plugins: plugins.value,
+      selectedScript: selectedScript.value
+    }
+    localStorage.setItem('brightos-workspace', JSON.stringify(workspace))
+  } catch (error) {
+    console.error('Failed to save workspace:', error)
+  }
+}
+
+function loadWorkspace() {
+  try {
+    const saved = localStorage.getItem('brightos-workspace')
+    if (saved) {
+      const workspace = JSON.parse(saved)
+      scripts.value = workspace.scripts || []
+      plugins.value = workspace.plugins || []
+      selectedScript.value = workspace.selectedScript || ''
+      if (scripts.value.length > 0 || plugins.value.length > 0) {
+        addOutput('Workspace restored from last session', 'success')
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load workspace:', error)
+  }
+}
+
+function clearWorkspace() {
+  scripts.value = []
+  plugins.value = []
+  selectedScript.value = ''
+  localStorage.removeItem('brightos-workspace')
+  addOutput('Workspace cleared', 'info')
+}
+
+// Example scripts
+function loadExampleScripts() {
+  const examples = [
+    {
+      name: 'blink-led.js',
+      content: `// Blink LED Example - Beginner
+// Toggle an LED on/off every second
+
+function main(plugins) {
+  const board = plugins.get("telemetrix");
+  
+  if (!board) {
+    console.error("Telemetrix not connected");
+    return;
+  }
+  
+  const LED_PIN = 13;
+  let isOn = false;
+  
+  console.log("Starting LED blink on pin " + LED_PIN);
+  
+  // Toggle LED every second
+  setInterval(() => {
+    if (arduino.write) {
+      const value = isOn ? 1 : 0;
+      arduino.write(\`digitalWrite(\${LED_PIN}, \${value})\\n\`);
+      console.log("LED " + (isOn ? "ON" : "OFF"));
+      isOn = !isOn;
+    }
+  }, 1000);
+}`,
+      type: 'javascript'
+    },
+    {
+      name: 'servo-sweep.js',
+      content: `// Servo Sweep Example - Beginner
+// Sweep a servo motor from 0 to 180 degrees
+
+function main(plugins) {
+  const board = plugins.get("telemetrix");
+  const motor = plugins.get("motorcontroller");
+  
+  if (!motor || !board) {
+    console.error("Required plugins not loaded");
+    return;
+  }
+  
+  motor.set_board(board);
+  
+  const SERVO_PIN = 9;
+  let angle = 0;
+  let direction = 1;
+  
+  console.log("Starting servo sweep on pin " + SERVO_PIN);
+  
+  setInterval(() => {
+    motor.servo_control(SERVO_PIN, angle);
+    console.log("Servo angle: " + angle);
+    
+    angle += direction * 10;
+    if (angle >= 180 || angle <= 0) {
+      direction *= -1;
+    }
+  }, 100);
+}`,
+      type: 'javascript'
+    },
+    {
+      name: 'button-input.js',
+      content: `// Button Input Handler - Intermediate
+// Read button state and control LED
+
+function main(plugins) {
+  const board = plugins.get("telemetrix");
+  
+  if (!board) {
+    console.error("Telemetrix not connected");
+    return;
+  }
+  
+  const BUTTON_PIN = 2;
+  const LED_PIN = 13;
+  
+  console.log("Button input demo ready");
+  console.log("Press button on pin " + BUTTON_PIN);
+  
+  // Simulated button reading
+  setInterval(() => {
+    if (arduino.read) {
+      arduino.read().then(data => {
+        if (data && data.includes("BUTTON")) {
+          console.log("Button pressed! LED ON");
+          if (arduino.write) {
+            arduino.write(\`digitalWrite(\${LED_PIN}, 1)\\n\`);
+          }
+        }
+      });
+    }
+  }, 100);
+}`,
+      type: 'javascript'
+    }
+  ]
+  
+  // Don't auto-load examples if workspace already has scripts
+  if (scripts.value.length === 0) {
+    examples.forEach(example => {
+      scripts.value.push(example)
+    })
+    addOutput(`${examples.length} example scripts loaded`, 'info')
+  }
+}
+
+function loadExampleScript(scriptName) {
+  const script = scripts.value.find(s => s.name === scriptName)
+  if (script) {
+    selectedScript.value = script.name
+    addOutput(`Selected example: ${scriptName}`, 'info')
+  }
+}
 </script>
 
 <style scoped>
@@ -488,6 +731,32 @@ async function readFromSerial() {
   color: var(--vp-c-text-1);
 }
 
+.output-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.auto-scroll-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.auto-scroll-toggle input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.workspace-info {
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  padding: 4px 8px;
+}
+
 .output-content {
   padding: 16px;
   max-height: 400px;
@@ -552,5 +821,35 @@ async function readFromSerial() {
 
 .output-content::-webkit-scrollbar-thumb:hover {
   background: var(--vp-c-text-3);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .script-select {
+    min-width: 100%;
+  }
+  
+  .output-controls {
+    flex-wrap: wrap;
+  }
+  
+  .auto-scroll-toggle {
+    font-size: 12px;
+  }
+  
+  .button.small {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .output-content {
+    max-height: 300px;
+    font-size: 12px;
+  }
 }
 </style>
