@@ -52,7 +52,7 @@ const fetchPlugins = async () => {
   try {
     // Try to load from cache first
     console.log('Loading plugins from cache...')
-    const cacheResponse = await fetch('/plugins-cache.json')
+    const cacheResponse = await fetch('public/plugins-cache.json')
     
     if (cacheResponse.ok) {
       const cache = await cacheResponse.json()
