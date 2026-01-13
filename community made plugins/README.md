@@ -18,8 +18,8 @@ Plugins are Python classes that inherit from `SamplePlugin` and provide reusable
 
 ```python
 def main(plugins):
-    # Get a plugin by its class name
-    my_plugin = plugins.get("PluginClassName")
+    # Get a plugin by its class name (lowercase)
+    my_plugin = plugins.get("pluginclassname")
     
     if my_plugin:
         # Use the plugin's methods

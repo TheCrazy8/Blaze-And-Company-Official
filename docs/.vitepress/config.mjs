@@ -22,6 +22,7 @@ export default defineConfig({
       { text: 'FLARE', link: '/FLARE Competition'},
       { text: 'BrightOS Web', link: '/brightos-web'},
       { text: 'Downloads', link: '/downloads'},
+      { text: 'Dev Guide', link: '/development-guide'},
     ],
     sidebar: [],
     lastUpdated: {

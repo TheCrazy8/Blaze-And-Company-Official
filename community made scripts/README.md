@@ -76,8 +76,8 @@ def main(plugins):
     # Get the telemetrix board
     board = plugins.get("telemetrix")
     
-    # Get a custom plugin
-    motor = plugins.get("MotorController")
+    # Get a custom plugin (note: plugin keys are lowercase)
+    motor = plugins.get("motorcontroller")
     
     if motor and board:
         motor.set_board(board)

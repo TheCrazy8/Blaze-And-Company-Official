@@ -106,7 +106,7 @@ In stock: 0 (<mark style="background-color: red">Discontinued</mark>)
 BlitzOS \- Made on VexCode, and is fully modular and available for all teams as a complete (but formerly continually updating) operating system. Can support all motorized modules or integrations with the addition of some code. Copyright information: Branches allowed, direct modification allowed, claim to ownership disallowed  
 In stock: 0 (<mark style="background-color: red">Discontinued</mark>)  
 
-[BrightOS](https://github.com/TheCrazy8/BrightOS) \- A new version of the now deprecated BlitzOS, created from scratch, in python, and being much higher quality than its predecessor.  Will interact with an Arduino UNO R4 Wifi instead of Vex IQ brain for increased customizeability and to allow it to do more.  Controls said Arduino via scripts run on the device running the program. (21 KB)  
+[BrightOS](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases/tag/launcher-dev-20260113-175555) \- A new version of the now deprecated BlitzOS, created from scratch, in python, and being much higher quality than its predecessor.  Will interact with an Arduino UNO R4 Wifi instead of Vex IQ brain for increased customizeability and to allow it to do more.  Controls said Arduino via scripts run on the device running the program. (21 KB)  
 
 In stock: ∞ (<mark style="background-color: blue">Open Source</mark>)
 

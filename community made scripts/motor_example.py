@@ -46,7 +46,7 @@ def main(plugins):
         return
     
     # Get or create the MotorController plugin
-    _motor_controller = plugins.get("MotorController")
+    _motor_controller = plugins.get("motorcontroller")
     if not _motor_controller:
         print("ERROR: MotorController plugin not found.")
         print("Please ensure motor_controller_plugin.py is in the Plugins directory.")
@@ -182,8 +182,9 @@ def stop():
 
 def main(plugins):
     # Get the motor controller and board
+    # Note: Plugin keys are lowercase
     board = plugins.get("telemetrix")
-    motor = plugins.get("MotorController")
+    motor = plugins.get("motorcontroller")
     motor.set_board(board)
     
     # Control a servo

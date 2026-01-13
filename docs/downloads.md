@@ -2,6 +2,16 @@
 
 Download community-made plugins and scripts for BrightOS to extend its functionality.
 
+## Get BrightOS
+
+::: tip Download BrightOS Launcher
+**[Download BrightOS Launcher](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases/tag/launcher-dev-20260113-175555)** - Get the latest BrightOS launcher to run plugins and scripts
+:::
+
+The launcher automatically downloads and updates BrightOS, then you can install plugins and scripts from below.
+
+---
+
 ## What's the Difference?
 
 - **Plugins** are reusable classes that provide functionality to scripts (like a library)
@@ -59,7 +69,8 @@ Control various types of motors (servos, DC motors) connected to your Arduino bo
 ```python
 def main(plugins):
     board = plugins.get("telemetrix")
-    motor = plugins.get("MotorController")
+    # Note: Plugin keys are lowercase
+    motor = plugins.get("motorcontroller")
     
     if motor and board:
         motor.set_board(board)
@@ -128,9 +139,11 @@ Comprehensive demonstration of motor control capabilities using the MotorControl
 
 ## Creating Your Own Content
 
-### Creating a Plugin
+Want to create your own plugins and scripts? Check out the **[Development Guide](/development-guide)** for complete tutorials and examples.
 
-Plugins extend BrightOS functionality as reusable classes:
+### Quick Start
+
+**Plugins** extend BrightOS with reusable functionality:
 
 ```python
 from simple_plugin_loader.sample_plugin import SamplePlugin
@@ -146,11 +159,7 @@ class MyPlugin(SamplePlugin):
         self.print("Hello from my plugin!")
 ```
 
-Save your plugin in the Plugins directory and restart BrightOS.
-
-### Creating a Script
-
-Scripts are programs that run in BrightOS:
+**Scripts** are programs that use plugins:
 
 ```python
 def main(plugins):
@@ -168,7 +177,7 @@ def stop():
     print("Script stopped")
 ```
 
-Save your script in the Scripts directory and restart BrightOS.
+**Learn more:** [Development Guide](/development-guide) - Complete tutorials with examples
 
 ---
 
