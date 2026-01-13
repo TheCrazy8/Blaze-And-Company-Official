@@ -98,7 +98,7 @@ When you run BrightOS (via launcher or manually), it creates:
 
 ### Documentation
 - [Launcher Documentation](LAUNCHER.md) - Details about the BrightOS Launcher
-- [Build Documentation](BUILD.md) - How to build BrightOS and the launcher
+- [Build Documentation](docs/BUILD.md) - How to build BrightOS and the launcher
 
 ### Updates
 - **Using the Launcher**: Just run the launcher again - it automatically checks for and downloads updates

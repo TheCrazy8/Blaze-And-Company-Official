@@ -207,6 +207,6 @@ Please ensure your contributions:
 
 ## Additional Resources
 
-- [Build Documentation](/BUILD.md) - How to build BrightOS
+- [Build Documentation](/BUILD) - How to build BrightOS
 - [Telemetrix Setup Guide](/) - Configure Arduino connection
 - [GitHub Releases](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases) - Download BrightOS
