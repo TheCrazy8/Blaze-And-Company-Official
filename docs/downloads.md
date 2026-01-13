@@ -5,7 +5,7 @@ title: Plugin Marketplace
 # 🔌 Plugin Marketplace
 
 <script setup>
-import PluginMarketplace from '. /. vitepress/theme/components/PluginMarketplace.vue'
+import PluginMarketplace from '../.vitepress/theme/components/PluginMarketplace.vue'
 </script>
 
 <PluginMarketplace />
