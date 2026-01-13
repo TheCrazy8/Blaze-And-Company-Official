@@ -1,22 +1,34 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Supabase configuration
-// Note: The anon key is safe to expose publicly - it's designed for client-side use
-// Row Level Security (RLS) policies protect the database
 const SUPABASE_URL = 'https://rshigflhanzjrqeoynpa.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaGlnZmxoYW56anJxZW95bnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNDIxOTcsImV4cCI6MjA4MzkxODE5N30.49JJ_nlcby45UlkpcRFJQETTM4ocbmGX2OYGN6z7z5g'
 
-// Initialize Supabase client
+// ADD YOUR GITHUB TOKEN HERE
+const GITHUB_TOKEN = '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'  // Replace with your actual token
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+// GitHub API configuration
+const GITHUB_API = 'https://api.github.com'
+const REPO_OWNER = 'TheCrazy8'
+const REPO_NAME = 'Blaze-And-Company-Official'
+const PLUGINS_PATH = 'community%20made%20plugins'
+
+// Helper to create GitHub request with authentication
+const createGitHubRequest = (url) => {
+  const req = new Request(url)
+  req.headers.set('User-Agent', 'BrightOS-Marketplace')
+  
+  // Add authentication if token is available
+  if (GITHUB_TOKEN && GITHUB_TOKEN !== 'ghp_YOUR_TOKEN_HERE') {
+    req.headers.set('Authorization', `Bearer ${GITHUB_TOKEN}`)
+  }
+  
+  return req
+}
+
 // Analytics API
-export const analyticsAPI = {
-  /**
-   * Track a plugin download
-   * @param {string} pluginId - The plugin ID
-   * @param {string} pluginName - The plugin name
-   * @returns {Promise<object>} Result of the operation
-   */
+export const analytics = {
   async trackDownload(pluginId, pluginName) {
     try {
       const { data, error } = await supabase
