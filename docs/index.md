@@ -15,6 +15,9 @@ hero:
     - theme: brand
       text: View Competition Information
       link: /FLARE%20Competition
+    - theme: brand
+      text: Run BrightOS in Browser
+      link: /brightos-web
     - theme: alt
       text: GitHub Repo
       link: https://github.com/TheCrazy8/Blaze-And-Company-Official
@@ -33,8 +36,10 @@ features:
 - [Key](/key)
 - [Products](/products)
 - [FLARE](/FLARE%20Competition)
+- [BrightOS Web Interface](/brightos-web) - Run BrightOS in your browser
 
 ## Getting Started
 1. Use the navigation on the left to browse docs.
 2. Check the **Key** page for essential resources.
-3. Star the repo on GitHub to stay notified.
+3. Try the **BrightOS Web Interface** to run scripts in your browser.
+4. Star the repo on GitHub to stay notified.

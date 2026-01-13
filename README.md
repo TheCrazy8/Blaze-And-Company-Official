@@ -5,24 +5,34 @@ Arduino modular program for managing and running scripts with hardware control c
 
 ### Quick Start
 
-**Option 1: Use the Launcher (Recommended)**
-1. Download `BrightOS-Launcher.exe` from the [latest launcher release](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases)
-2. Run it - the launcher will automatically:
+**Option 1: Use the Web Interface (Cross-Platform)**
+1. Visit the [BrightOS Web Interface](https://thecrazy8.github.io/Blaze-And-Company-Official/brightos-web) on any modern browser
+2. Load your scripts and plugins directly in the browser
+3. Connect to Arduino boards using Web Serial API (Chrome/Edge/Opera)
+4. No installation required!
+
+**Option 2: Use the Desktop Launcher (Windows/Linux)**
+1. **Windows**: Download `BrightOS-Launcher.exe` from the [latest launcher release](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases)
+2. **Linux**: Download `launcher.py` and run with `python3 launcher.py`
+3. The launcher will automatically:
    - Download the latest BrightOS Python files
    - Install dependencies
    - Create necessary directories
    - Launch BrightOS
 
-**Option 2: Run Manually**
+**Option 3: Run Manually**
 1. Download `BrightOS.py` and `requirements.txt` from the [latest release](https://github.com/TheCrazy8/Blaze-And-Company-Official/releases)
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run: `python BrightOS.py`
 
 ### Features
+- **Cross-Platform Support**: Works on Windows, Linux, and macOS
+- **Web Interface**: Run BrightOS directly in your browser with no installation
 - Plugin and script loader system
 - Telemetrix support for Arduino Uno R4 WiFi board control
 - GUI interface with dark theme for running scripts and managing connections
-- Auto-update capability through the launcher
+- Arduino Web Serial API support for browser-based control
+- Auto-update capability through the desktop launcher
 - Custom window icon matching the website
 
 ### Directory Structure

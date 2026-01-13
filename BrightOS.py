@@ -67,41 +67,40 @@ def load_scripts(script_dir):
   
   return scripts
 
-userdir = home_dir = os.path.expanduser("~")
-print(userdir)
+def get_brightos_dir():
+    """Get the BrightOS directory path (cross-platform)"""
+    userdir = os.path.expanduser("~")
+    if sys.platform == "win32":
+        return os.path.join(userdir, "AppData", "Local", "BrightOS")
+    else:
+        # For Linux/macOS, use a hidden directory in home
+        return os.path.join(userdir, ".brightos")
 
-try:
-    os.mkdir(f"{userdir}\\AppData\\Local\\BrightOS\\Plugins")
-    print("Directory 'Plugins' created.")
-except FileExistsError:
-    print("Directory 'Plugins' already exists.")
-except FileNotFoundError:
-    print("Parent directory does not exist.")
+brightos_dir = get_brightos_dir()
+print(f"BrightOS directory: {brightos_dir}")
 
-try:
-    os.mkdir(f"{userdir}\\AppData\\Local\\BrightOS\\Scripts")
-    print("Directory 'Scripts' created.")
-except FileExistsError:
-    print("Directory 'Scripts' already exists.")
-except FileNotFoundError:
-    print("Parent directory does not exist.")
+# Create directories with cross-platform paths
+os.makedirs(os.path.join(brightos_dir, "Plugins"), exist_ok=True)
+print("Directory 'Plugins' created/verified.")
 
-try:
-  with open(f'{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt', 'x') as file:
-    print("Created Importlist.txt")
-except FileExistsError:
-  print("Importlist.txt already exists.")
-except FileNotFoundError:
-  print("Parent directory does not exist.")
+os.makedirs(os.path.join(brightos_dir, "Scripts"), exist_ok=True)
+print("Directory 'Scripts' created/verified.")
 
-plugin_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Plugins"
+importlist_path = os.path.join(brightos_dir, "Importlist.txt")
+if not os.path.exists(importlist_path):
+    try:
+        with open(importlist_path, 'w') as file:
+            file.write("# BrightOS Import List\n")
+        print("Created Importlist.txt")
+    except Exception as e:
+        print(f"Error creating Importlist.txt: {e}")
+else:
+    print("Importlist.txt already exists.")
+
+plugin_dir = os.path.join(brightos_dir, "Plugins")
 print(plugin_dir)
-script_dir = f"{userdir}\\AppData\\Local\\BrightOS\\Scripts"
+script_dir = os.path.join(brightos_dir, "Scripts")
 print(script_dir)
-try:
-  import f"{userdir}\\AppData\\Local\\BrightOS\\Importlist.txt"
-except ImportError:
-  pass
 
 # initialize the loader
 loader = Loader()

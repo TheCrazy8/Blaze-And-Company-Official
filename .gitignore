@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 node_modules
 docs/.vitepress/dist
+docs/.vitepress/cache
 
 # PyInstaller build artifacts
 build/
