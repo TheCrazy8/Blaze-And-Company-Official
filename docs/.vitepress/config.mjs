@@ -41,7 +41,7 @@ export default defineConfig({
         items: [
           { text: '🏡 Home', link: '/' },
           { text: '🔑 Key Resources', link: '/key' },
-          { text: '���� Products', link: '/products' },
+          { text: '🛠 Products', link: '/products' },
         ]
       },
       { 
