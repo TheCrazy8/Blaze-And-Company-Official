@@ -1,4 +1,4 @@
-. VPSocialLinks. VPNavBarSocialLinks. social-links {
+.VPSocialLinks.VPNavBarSocialLinks.social-links {
   margin-right: 0;
 }
 
@@ -8,8 +8,8 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.48) !important;
 }
 
-.dark .go-to-top: hover {
-  background-color:  var(--vp-c-bg-mute) !important;
+.dark .go-to-top:hover {
+  background-color: var(--vp-c-bg-mute) !important;
 }
 
 /* ===== BLAZE & COMPANY THEME - Based on Favicon ===== */
@@ -45,7 +45,7 @@
 }
 
 /* Dark mode colors - Ember/Fire theme */
-. dark {
+.dark {
   --vp-c-brand-1: #ff6b35;
   --vp-c-brand-2: #ff8c5a;
   --vp-c-brand-3: #ffad7f;
@@ -103,7 +103,7 @@ body::before {
 /* ===== HERO SECTION - BLAZE THEME ===== */
 
 /* Hero gradient background with fire effect */
-.VPHome . VPHero {
+.VPHome.VPHero {
   background: linear-gradient(135deg, 
     rgba(255, 69, 0, 0.08) 0%, 
     rgba(255, 140, 0, 0.08) 50%,
@@ -135,7 +135,7 @@ body::before {
   }
 }
 
-. dark .VPHome .VPHero {
+.dark .VPHome .VPHero {
   background: linear-gradient(135deg, 
     rgba(255, 107, 53, 0.12) 0%, 
     rgba(255, 140, 90, 0.12) 50%,
@@ -172,7 +172,7 @@ body::before {
 }
 
 /* Hero buttons with fire effect */
-.VPHome .VPButton. brand {
+.VPHome .VPButton.brand {
   background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
   border: none;
   color: white;
@@ -195,7 +195,7 @@ body::before {
   transition: width 0.6s, height 0.6s;
 }
 
-.VPHome . VPButton.brand:hover:: before {
+.VPHome.VPButton.brand:hover::before {
   width: 300px;
   height: 300px;
 }
@@ -234,7 +234,7 @@ body::before {
 }
 
 /* Navbar title with fire gradient */
-.VPNavBarTitle . title {
+.VPNavBarTitle.title {
   font-weight: 800;
   background: linear-gradient(120deg, #ff4500, #ffa726);
   background-clip: text;
@@ -270,7 +270,7 @@ body::before {
 }
 
 /* Active sidebar link with fire accent */
-.VPSidebarItem.is-active > .item . link {
+.VPSidebarItem.is-active > .item.link {
   color: var(--vp-c-brand-1);
   font-weight: 600;
   background: linear-gradient(90deg, var(--vp-c-brand-soft) 0%, transparent 100%);
@@ -286,7 +286,7 @@ body::before {
   }
 }
 
-.VPSidebarItem.is-active > .item .link:: before {
+.VPSidebarItem.is-active > .item .link::before {
   content: '';
   position: absolute;
   left: -16px;
@@ -298,7 +298,7 @@ body::before {
 }
 
 /* Sidebar link hover */
-.VPSidebarItem . link:hover {
+.VPSidebarItem.link:hover {
   color: var(--vp-c-brand-1);
   background: linear-gradient(90deg, var(--vp-c-brand-soft) 0%, transparent 100%);
 }
@@ -315,8 +315,8 @@ div[class*='language-'] {
 }
 
 /* Inline code with fire accent */
-. vp-doc : not(pre) > code {
-  background:  linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 165, 0, 0.1));
+.vp-doc:not(pre) > code {
+  background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 165, 0, 0.1));
   color: var(--vp-c-brand-1);
   padding: 3px 8px;
   border-radius: 4px;
@@ -325,26 +325,26 @@ div[class*='language-'] {
 }
 
 /* Copy code button - always visible */
-.vp-code-group . copy,
-div[class*='language-'] . copy {
+.vp-code-group.copy,
+div[class*='language-'].copy {
   opacity: 0.6 !important;
   transition: opacity 0.3s;
 }
 
-.vp-code-group: hover .copy,
-div[class*='language-']: hover .copy {
+.vp-code-group:hover .copy,
+div[class*='language-']:hover .copy {
   opacity: 1 !important;
 }
 
 /* ===== CUSTOM CONTAINERS ===== */
 
 /* Tip container - fire themed */
-.vp-doc .custom-block. tip {
+.vp-doc .custom-block.tip {
   border-left: 4px solid var(--vp-c-brand-1);
   background: linear-gradient(90deg, var(--vp-c-brand-soft), transparent);
 }
 
-. vp-doc .custom-block.tip .custom-block-title {
+.vp-doc .custom-block.tip .custom-block-title {
   color: var(--vp-c-brand-1);
   font-weight: 700;
 }
@@ -355,7 +355,7 @@ div[class*='language-']: hover .copy {
   background: linear-gradient(90deg, rgba(255, 167, 38, 0.1), transparent);
 }
 
-.vp-doc .custom-block. warning .custom-block-title {
+.vp-doc .custom-block.warning .custom-block-title {
   color: #ff8c00;
 }
 
@@ -376,14 +376,14 @@ div[class*='language-']: hover .copy {
   position: relative;
 }
 
-.vp-doc a:: after {
+.vp-doc a::after {
   content: '';
   position: absolute;
-  bottom:  -2px;
+  bottom: -2px;
   left: 0;
   width: 0;
-  height:  2px;
-  background:  linear-gradient(90deg, #ff4500, #ffa726);
+  height: 2px;
+  background: linear-gradient(90deg, #ff4500, #ffa726);
   transition: width 0.3s;
 }
 
@@ -391,14 +391,14 @@ div[class*='language-']: hover .copy {
   width: 100%;
 }
 
-. vp-doc a:hover {
+.vp-doc a:hover {
   color: var(--vp-c-brand-2);
   text-shadow: 0 0 8px rgba(255, 69, 0, 0.3);
 }
 
 /* ===== TABLES ===== */
 
-. vp-doc table {
+.vp-doc table {
   border-collapse: collapse;
   margin: 20px 0;
   border-radius: 8px;
@@ -407,7 +407,7 @@ div[class*='language-']: hover .copy {
 }
 
 .vp-doc th {
-  background:  linear-gradient(135deg, rgba(255, 69, 0, 0.15), rgba(255, 165, 0, 0.15));
+  background: linear-gradient(135deg, rgba(255, 69, 0, 0.15), rgba(255, 165, 0, 0.15));
   color: var(--vp-c-brand-1);
   font-weight: 700;
   border-bottom: 2px solid var(--vp-c-brand-1);
@@ -419,7 +419,7 @@ div[class*='language-']: hover .copy {
 
 /* ===== SCROLLBAR - FIRE THEMED ===== */
 
-: :-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
@@ -440,7 +440,7 @@ div[class*='language-']: hover .copy {
 
 /* ===== SEARCH ===== */
 
-.VPNavBarSearch . DocSearch-Button {
+.VPNavBarSearch.DocSearch-Button {
   background-color: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-border);
   transition: all 0.3s;
@@ -469,12 +469,12 @@ div[class*='language-']: hover .copy {
   transform: translateY(-6px);
 }
 
-.VPFeature . icon {
+.VPFeature.icon {
   color: var(--vp-c-brand-1);
   filter: drop-shadow(0 0 8px rgba(255, 69, 0, 0.3));
 }
 
-. VPFeature .title {
+.VPFeature .title {
   color: var(--vp-c-brand-1);
   font-weight: 700;
 }
@@ -524,7 +524,7 @@ div[class*='language-']: hover .copy {
 
 /* Flame badge with shimmer */
 .vp-doc .badge,
-.badge. flame {
+.badge.flame {
   background: linear-gradient(135deg, #ff4500 0%, #ff6b35 50%, #ffa726 100%);
   color: white;
   padding: 4px 12px;
@@ -598,7 +598,7 @@ div[class*='language-']: hover .copy {
 
 /* ===== NEOMORPHISM ===== */
 
-. neomorphic {
+.neomorphic {
   background: var(--vp-c-bg);
   border-radius: 16px;
   padding: 24px;
@@ -671,7 +671,7 @@ div[class*='language-']: hover .copy {
   transition: all 0.3s;
 }
 
-[data-tooltip]: hover:: before,
+[data-tooltip]:hover::before,
 [data-tooltip]:hover::after {
   opacity: 1;
   transform: translateX(-50%) translateY(-4px);
@@ -700,12 +700,12 @@ div[class*='language-']: hover .copy {
   100% { background-position: -200% 0; }
 }
 
-. skeleton-text {
+.skeleton-text {
   height: 16px;
   margin: 8px 0;
 }
 
-. skeleton-title {
+.skeleton-title {
   height: 32px;
   width: 60%;
   margin: 16px 0;
@@ -718,36 +718,36 @@ div[class*='language-']: hover .copy {
 
 /* ===== GLOWING BUTTONS ===== */
 
-.VPButton. brand,
+.VPButton.brand,
 .vp-doc button {
   position: relative;
   overflow: hidden;
 }
 
-.VPButton.brand:: before,
-.vp-doc button:: before {
+.VPButton.brand::before,
+.vp-doc button::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
   width: 0;
-  height:  0;
+  height: 0;
   border-radius: 50%;
-  background:  radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
   transform: translate(-50%, -50%);
   transition: width 0.6s, height 0.6s;
 }
 
-.VPButton.brand: hover::before,
+.VPButton.brand:hover::before,
 .vp-doc button:hover::before {
   width: 300px;
   height: 300px;
 }
 
 /* Glowing borders on focus */
-input: focus,
+input:focus,
 textarea:focus,
-. VPNavBarSearch .DocSearch-Button:focus {
+.VPNavBarSearch .DocSearch-Button:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--vp-c-brand-1), 
               0 0 20px rgba(255, 69, 0, 0.4);
@@ -783,14 +783,14 @@ textarea:focus,
 /* ===== PRINT STYLES ===== */
 
 @media print {
-  . VPNav,
+  .VPNav,
   .VPSidebar,
   .VPFooter,
   .VPDocFooter,
   .feedback-widget,
   .share-buttons,
   .go-to-top,
-  . pwa-prompt,
+  .pwa-prompt,
   .announcement-banner,
   .fab-container,
   .progress-bar-container,
@@ -803,11 +803,11 @@ textarea:focus,
     padding: 0;
   }
   
-  . vp-doc a:: after {
+  .vp-doc a::after {
     content: none;
   }
   
-  body:: before {
+  body::before {
     display: none;
   }
 }
@@ -823,7 +823,7 @@ textarea:focus,
     margin-bottom: 16px;
   }
   
-  .VPHome .VPHero:: before {
+  .VPHome .VPHero::before {
     animation-duration: 10s;
   }
   

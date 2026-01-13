@@ -65,7 +65,7 @@ const dismissPrompt = () => {
   }
 }
 
-. pwa-prompt-content p {
+.pwa-prompt-content p {
   margin: 0 0 16px 0;
   font-weight: 600;
   font-size: 16px;

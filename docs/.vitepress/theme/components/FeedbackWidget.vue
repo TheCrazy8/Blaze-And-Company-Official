@@ -38,7 +38,7 @@ const handleFeedback = (isHelpful) => {
 
 <style scoped>
 .feedback-widget {
-  margin:  48px 0 24px;
+  margin: 48px 0 24px;
   padding: 24px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
@@ -49,13 +49,13 @@ const handleFeedback = (isHelpful) => {
 .feedback-question p {
   margin: 0 0 16px;
   font-weight: 600;
-  color:  var(--vp-c-text-1);
+  color: var(--vp-c-text-1);
 }
 
 .feedback-buttons {
-  display:  flex;
+  display: flex;
   gap: 12px;
-  justify-content:  center;
+  justify-content: center;
 }
 
 .feedback-btn {
@@ -65,12 +65,12 @@ const handleFeedback = (isHelpful) => {
   color: var(--vp-c-brand-1);
   border-radius: 8px;
   font-weight: 600;
-  cursor:  pointer;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
 .feedback-btn:hover {
-  background:  var(--vp-c-brand-1);
+  background: var(--vp-c-brand-1);
   color: white;
   transform: translateY(-2px);
 }
