@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-13T23:15:00.936Z",
+  "generated_at": "2026-01-13T23:31:47.345Z",
   "version": "1.0",
   "repository": {
     "owner": "TheCrazy8",
@@ -8,5 +8,60 @@
     "forks": 0,
     "watchers": 1
   },
-  "plugins": []
+  "plugins": [
+    {
+      "id": "43e4783b94a74439859080d0f73c84bacac7cc03",
+      "name": "MotorController",
+      "filename": "motor_controller_plugin.py",
+      "version": "1.1.0",
+      "author": "Copilot",
+      "contributors": [
+        "Copilot"
+      ],
+      "description": "Motor Controller Plugin for BrightOS",
+      "longDescription": "Motor Controller Plugin for BrightOS\n\nThis plugin provides functions for controlling different types of motors:\n- Servo motors with precise rotation control\n- DC motors with speed control using PWM\n- Stepper motors (basic support)\n\nExample usage in a script:\n    def main(plugins):\n        motor = plugins.get(\"MotorController\")\n        if motor:\n            # Control a servo on pin 9 to 90 degrees\n            motor.servo_control(9, 90)\n            \n            # Control a DC motor on pin 5 with 75% speed\n            motor.dc_motor_control(5, 75)\n            \n            # Stop all motors\n            motor.stop_all()",
+      "rating": 4.5,
+      "category": "Motor Control",
+      "difficulty": "Advanced",
+      "tags": [
+        "servo",
+        "motor",
+        "dc-motor",
+        "stepper",
+        "pwm"
+      ],
+      "hardware": [
+        "Arduino Uno R4 WiFi"
+      ],
+      "dependencies": [
+        "telemetrix-uno-r4-wifi",
+        "simple-plugin-loader"
+      ],
+      "functions": [
+        "main",
+        "set_board",
+        "servo_control",
+        "get_servo_position",
+        "dc_motor_control",
+        "stop_motor",
+        "stop_all",
+        "sweep_servo",
+        "ramp_dc_motor"
+      ],
+      "lastUpdated": "2026-01-13",
+      "downloadUrl": "https://raw.githubusercontent.com/TheCrazy8/Blaze-And-Company-Official/main/community%20made%20plugins/motor_controller_plugin.py",
+      "githubUrl": "https://github.com/TheCrazy8/Blaze-And-Company-Official/blob/main/community%20made%20plugins/motor_controller_plugin.py",
+      "size": 11321,
+      "commitCount": 1,
+      "lineCount": 312,
+      "changelog": [
+        {
+          "version": "1.1.0",
+          "date": "2026-01-13",
+          "changes": "Separate plugins from scripts and add downloads page\n\nCo-authored-by: TheCrazy8 <187664439+TheCrazy8@users.noreply.github.com>",
+          "author": "copilot-swe-agent[bot]"
+        }
+      ]
+    }
+  ]
 }
