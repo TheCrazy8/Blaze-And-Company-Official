@@ -13,23 +13,23 @@ Arduino modular program for managing and running scripts with hardware control c
 - GUI interface for running scripts and managing connections
 
 ### Telemetrix Configuration
-Arduino
+Arduino  
 Open Arduino IDE
 
 Install Telemetrix4UnoR4 library:
 
-Go to Sketch → Include Library → Manage Libraries
-Search for "Telemetrix4UnoR4"
-Click Install
+Go to Sketch → Include Library → Manage Libraries  
+Search for "Telemetrix4UnoR4"  
+Click Install  
 Load the WiFi example:
 
-Go to File → Examples → Telemetrix4UnoR4 → WiFi_Telemetrix4UnoR4WiFi
+Go to File → Examples → Telemetrix4UnoR4 → WiFi_Telemetrix4UnoR4WiFi  
 Create arduino_secrets.h file in the same folder as the sketch:
 
-arduino_secrets.h
-// WiFi credentials for Arduino Uno R4 WiFi
-#define SECRET_SSID "YOUR_WIFI_NETWORK_NAME"
-#define SECRET_PASS "YOUR_WIFI_PASSWORD"
+arduino_secrets.h  
+// WiFi credentials for Arduino Uno R4 WiFi  
+#define SECRET_SSID "YOUR_WIFI_NETWORK_NAME"  
+#define SECRET_PASS "YOUR_WIFI_PASSWORD"  
 
 Upload to your Arduino Uno R4 WiFi board
 
