@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { analyticsAPI, reviewsAPI } from '../config/supabase.js'
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')
@@ -14,11 +15,55 @@ const difficulties = ['all', 'Beginner', 'Intermediate', 'Advanced']
 const plugins = ref([])
 const selectedPlugin = ref(null)
 
+// Review system state
+const showReviewModal = ref(false)
+const reviewPluginId = ref(null)
+const reviewForm = ref({
+  userName: '',
+  rating: 5,
+  comment: ''
+})
+const pluginReviews = ref([])
+const pluginStats = ref({})
+const reviewStats = ref({
+  avgRating: 0,
+  totalReviews: 0,
+  distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+})
+
 // GitHub API configuration
 const GITHUB_API = 'https://api.github.com'
 const REPO_OWNER = 'TheCrazy8'
 const REPO_NAME = 'Blaze-And-Company-Official'
 const PLUGINS_PATH = 'community%20made%20plugins'
+
+// Helper to get real stats for a plugin
+const getPluginStats = (pluginId) => {
+  return pluginStats.value[pluginId] || { downloads: 0, rating: 0, reviews: 0 }
+}
+
+// Fetch real statistics from Supabase
+const fetchRealStats = async () => {
+  try {
+    const stats = await analyticsAPI.getAllStats()
+    pluginStats.value = stats
+  } catch (error) {
+    console.error('Error fetching real stats:', error)
+  }
+}
+
+// Track download in Supabase
+const trackDownload = async (pluginId, pluginName) => {
+  try {
+    const result = await analyticsAPI.trackDownload(pluginId, pluginName)
+    if (result.success) {
+      // Update local stats
+      await fetchRealStats()
+    }
+  } catch (error) {
+    console.error('Error tracking download:', error)
+  }
+}
 
 // Fetch plugins from GitHub
 const fetchPlugins = async () => {
@@ -143,7 +188,7 @@ const parsePluginMetadata = (filename, content, githubFile) => {
   
   // Generate mock stats (in production, fetch from analytics/database)
   const downloads = Math.floor(Math.random() * 500) + 50
-  const rating = (Math.random() * 1. 5 + 3. 5).toFixed(1)
+  const rating = (Math.random() * 1.5 + 3.5).toFixed(1)
   const reviews = Math.floor(Math.random() * 30) + 5
   
   return {
@@ -175,12 +220,21 @@ const parsePluginMetadata = (filename, content, githubFile) => {
 
 // Computed stats
 const totalPlugins = computed(() => plugins.value.length)
-const totalDownloads = computed(() => 
-  plugins.value.reduce((sum, p) => sum + p.downloads, 0)
-)
+const totalDownloads = computed(() => {
+  // Use real stats from Supabase if available
+  const realTotal = Object.values(pluginStats.value).reduce((sum, stat) => sum + (stat.downloads || 0), 0)
+  if (realTotal > 0) return realTotal
+  // Fallback to plugin data
+  return plugins.value.reduce((sum, p) => sum + p.downloads, 0)
+})
 const totalContributors = computed(() => 
   new Set(plugins.value.map(p => p.author)).size
 )
+const avgRating = computed(() => {
+  const ratings = Object.values(pluginStats.value).filter(s => s.reviews > 0).map(s => s.rating)
+  if (ratings.length === 0) return 0
+  return (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(1)
+})
 
 const filteredPlugins = computed(() => {
   return plugins.value
@@ -208,6 +262,10 @@ const copyCode = async (plugin) => {
     const response = await fetch(plugin.downloadUrl)
     const code = await response.text()
     await navigator.clipboard.writeText(code)
+    
+    // Track download in Supabase
+    await trackDownload(plugin.id, plugin.name)
+    
     if (window.$toast) {
       window.$toast. success(`✨ ${plugin.name} code copied to clipboard!`)
     } else {
@@ -222,7 +280,10 @@ const copyCode = async (plugin) => {
   }
 }
 
-const downloadPlugin = (plugin) => {
+const downloadPlugin = async (plugin) => {
+  // Track download in Supabase
+  await trackDownload(plugin.id, plugin.name)
+  
   window.open(plugin.downloadUrl, '_blank')
   if (window.$toast) {
     window.$toast.success(`📥 Downloading ${plugin.name}...`)
@@ -237,13 +298,120 @@ const closeModal = () => {
   selectedPlugin.value = null
 }
 
+// Review modal functions
+const openReviewModal = async (plugin) => {
+  reviewPluginId.value = plugin.id
+  showReviewModal.value = true
+  reviewForm.value = { userName: '', rating: 5, comment: '' }
+  
+  // Load reviews and stats for this plugin
+  await loadPluginReviews(plugin.id)
+}
+
+const closeReviewModal = () => {
+  showReviewModal.value = false
+  reviewPluginId.value = null
+  pluginReviews.value = []
+}
+
+const loadPluginReviews = async (pluginId) => {
+  try {
+    // Fetch reviews
+    const reviews = await reviewsAPI.getReviews(pluginId, 50, 0)
+    pluginReviews.value = reviews
+    
+    // Fetch review stats
+    const stats = await reviewsAPI.getReviewStats(pluginId)
+    reviewStats.value = stats
+  } catch (error) {
+    console.error('Error loading reviews:', error)
+  }
+}
+
+const submitReview = async () => {
+  if (!reviewForm.value.userName.trim()) {
+    if (window.$toast) {
+      window.$toast.warning('⚠️ Please enter your name')
+    }
+    return
+  }
+  
+  if (!reviewForm.value.comment.trim()) {
+    if (window.$toast) {
+      window.$toast.warning('⚠️ Please enter a comment')
+    }
+    return
+  }
+  
+  const plugin = plugins.value.find(p => p.id === reviewPluginId.value)
+  if (!plugin) return
+  
+  try {
+    const result = await reviewsAPI.submitReview(
+      plugin.id,
+      plugin.name,
+      reviewForm.value.userName,
+      reviewForm.value.rating,
+      reviewForm.value.comment
+    )
+    
+    if (result.success) {
+      if (window.$toast) {
+        window.$toast.success('✨ Review submitted successfully!')
+      }
+      
+      // Reload reviews and stats
+      await loadPluginReviews(plugin.id)
+      await fetchRealStats()
+      
+      // Reset form
+      reviewForm.value = { userName: '', rating: 5, comment: '' }
+    } else {
+      if (window.$toast) {
+        window.$toast.error('❌ Failed to submit review. Please try again.')
+      }
+    }
+  } catch (error) {
+    console.error('Error submitting review:', error)
+    if (window.$toast) {
+      window.$toast.error('❌ An error occurred. Please try again.')
+    }
+  }
+}
+
+const markReviewHelpful = async (reviewId) => {
+  try {
+    const result = await reviewsAPI.markHelpful(reviewId)
+    if (result.success) {
+      // Reload reviews to show updated count
+      if (reviewPluginId.value) {
+        await loadPluginReviews(reviewPluginId.value)
+      }
+      if (window.$toast) {
+        window.$toast.success('👍 Marked as helpful!')
+      }
+    }
+  } catch (error) {
+    console.error('Error marking review helpful:', error)
+  }
+}
+
 const getTimeSince = (date) => {
-  const days = Math.floor((new Date() - new Date(date)) / (1000 * 60 * 60 * 24))
+  const now = new Date()
+  const past = new Date(date)
+  const seconds = Math.floor((now - past) / 1000)
+  
+  if (seconds < 60) return 'Just now'
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`
+  
+  const days = Math.floor(seconds / 86400)
   if (days === 0) return 'Today'
   if (days === 1) return 'Yesterday'
   if (days < 7) return `${days} days ago`
   if (days < 30) return `${Math.floor(days / 7)} weeks ago`
-  return `${Math.floor(days / 30)} months ago`
+  if (days < 365) return `${Math.floor(days / 30)} months ago`
+  return `${Math.floor(days / 365)} years ago`
 }
 
 const retryFetch = () => {
@@ -251,8 +419,9 @@ const retryFetch = () => {
 }
 
 // Load plugins on mount
-onMounted(() => {
-  fetchPlugins()
+onMounted(async () => {
+  await fetchRealStats()
+  await fetchPlugins()
 })
 </script>
 
@@ -293,6 +462,10 @@ onMounted(() => {
           <div class="stat">
             <strong>{{ totalContributors }}</strong>
             <span>Contributor{{ totalContributors !== 1 ? 's' : '' }}</span>
+          </div>
+          <div class="stat" v-if="avgRating > 0">
+            <strong>⭐ {{ avgRating }}</strong>
+            <span>Avg Rating</span>
           </div>
         </div>
       </div>
@@ -349,14 +522,14 @@ onMounted(() => {
             </div>
             <div class="plugin-rating">
               <span class="stars">⭐</span>
-              <span class="rating-value">{{ plugin.rating }}</span>
-              <span class="review-count">({{ plugin.reviews }})</span>
+              <span class="rating-value">{{ getPluginStats(plugin.id).rating || plugin.rating }}</span>
+              <span class="review-count">({{ getPluginStats(plugin.id).reviews || plugin.reviews }})</span>
             </div>
           </div>
 
           <div class="plugin-meta">
             <span class="author">👤 {{ plugin.author }}</span>
-            <span class="downloads">📥 {{ plugin.downloads }}</span>
+            <span class="downloads">📥 {{ getPluginStats(plugin.id).downloads || plugin.downloads }}</span>
             <span class="updated">🕒 {{ getTimeSince(plugin.lastUpdated) }}</span>
           </div>
 
@@ -378,6 +551,9 @@ onMounted(() => {
           <div class="plugin-actions">
             <button @click="viewPlugin(plugin)" class="btn btn-primary">
               📖 Details
+            </button>
+            <button @click="openReviewModal(plugin)" class="btn btn-secondary">
+              ⭐ Review
             </button>
             <button @click="copyCode(plugin)" class="btn btn-secondary">
               📋 Copy
@@ -409,8 +585,8 @@ onMounted(() => {
 
           <div class="modal-meta">
             <span>👤 By {{ selectedPlugin.author }}</span>
-            <span>📥 {{ selectedPlugin.downloads }} downloads</span>
-            <span>⭐ {{ selectedPlugin.rating }} ({{ selectedPlugin.reviews }} reviews)</span>
+            <span>📥 {{ getPluginStats(selectedPlugin.id).downloads || selectedPlugin.downloads }} downloads</span>
+            <span>⭐ {{ getPluginStats(selectedPlugin.id).rating || selectedPlugin.rating }} ({{ getPluginStats(selectedPlugin.id).reviews || selectedPlugin.reviews }} reviews)</span>
             <span>📦 {{ (selectedPlugin.size / 1024).toFixed(1) }} KB</span>
           </div>
 
@@ -454,9 +630,128 @@ onMounted(() => {
             <button @click="downloadPlugin(selectedPlugin)" class="btn btn-primary">
               💾 Download
             </button>
-            <a : href="selectedPlugin.githubUrl" target="_blank" class="btn btn-secondary">
+            <a :href="selectedPlugin.githubUrl" target="_blank" class="btn btn-secondary">
               🔗 View on GitHub
             </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Modal -->
+      <div v-if="showReviewModal" class="modal-overlay" @click="closeReviewModal">
+        <div class="modal-content review-modal" @click.stop>
+          <button class="modal-close" @click="closeReviewModal">×</button>
+          
+          <div class="modal-header">
+            <h2>⭐ Reviews & Ratings</h2>
+          </div>
+
+          <!-- Review Statistics -->
+          <div class="review-stats">
+            <div class="avg-rating">
+              <div class="rating-number">{{ reviewStats.avgRating }}</div>
+              <div class="stars-display">
+                <span v-for="i in 5" :key="i" :class="['star', i <= Math.round(reviewStats.avgRating) ? 'filled' : 'empty']">
+                  {{ i <= Math.round(reviewStats.avgRating) ? '⭐' : '☆' }}
+                </span>
+              </div>
+              <div class="rating-count">{{ reviewStats.totalReviews }} reviews</div>
+            </div>
+
+            <div class="rating-distribution">
+              <div v-for="rating in [5, 4, 3, 2, 1]" :key="rating" class="rating-bar">
+                <span class="rating-label">{{ rating }} ⭐</span>
+                <div class="bar-container">
+                  <div 
+                    class="bar-fill" 
+                    :style="{ width: reviewStats.totalReviews > 0 ? ((reviewStats.distribution[rating] || 0) / reviewStats.totalReviews * 100) + '%' : '0%' }"
+                  ></div>
+                </div>
+                <span class="rating-count">{{ reviewStats.distribution[rating] || 0 }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Write Review Form -->
+          <div class="write-review">
+            <h3>Write a Review</h3>
+            
+            <div class="form-group">
+              <label for="reviewer-name">Your Name</label>
+              <input 
+                id="reviewer-name"
+                v-model="reviewForm.userName" 
+                type="text" 
+                placeholder="Enter your name"
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Rating</label>
+              <div class="rating-input">
+                <button 
+                  v-for="i in 5" 
+                  :key="i"
+                  @click="reviewForm.rating = i"
+                  :class="['star-button', i <= reviewForm.rating ? 'active' : '']"
+                  type="button"
+                >
+                  {{ i <= reviewForm.rating ? '⭐' : '☆' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="review-comment">Your Review</label>
+              <textarea 
+                id="review-comment"
+                v-model="reviewForm.comment" 
+                placeholder="Share your thoughts about this plugin..."
+                class="form-textarea"
+                rows="4"
+              ></textarea>
+            </div>
+
+            <button @click="submitReview" class="btn btn-primary submit-review-btn">
+              ✨ Submit Review
+            </button>
+          </div>
+
+          <!-- Reviews List -->
+          <div class="reviews-list">
+            <h3>All Reviews</h3>
+            
+            <div v-if="pluginReviews.length === 0" class="no-reviews">
+              <p>No reviews yet. Be the first to review this plugin!</p>
+            </div>
+
+            <div v-else>
+              <div v-for="review in pluginReviews" :key="review.id" class="review-item">
+                <div class="review-header">
+                  <div class="reviewer-info">
+                    <span class="reviewer-name">{{ review.user_name }}</span>
+                    <div class="review-stars">
+                      <span v-for="i in 5" :key="i">
+                        {{ i <= review.rating ? '⭐' : '☆' }}
+                      </span>
+                    </div>
+                  </div>
+                  <span class="review-date">{{ getTimeSince(review.created_at) }}</span>
+                </div>
+                
+                <p class="review-comment">{{ review.comment }}</p>
+                
+                <div class="review-actions">
+                  <button 
+                    @click="markReviewHelpful(review.id)" 
+                    class="helpful-btn"
+                  >
+                    👍 Helpful ({{ review.helpful_count || 0 }})
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -886,6 +1181,287 @@ onMounted(() => {
   
   .modal-actions {
     flex-direction: column;
+  }
+}
+
+/* Review Modal Styles */
+.review-modal {
+  max-width: 900px;
+}
+
+.review-stats {
+  display: flex;
+  gap: 40px;
+  padding: 24px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.avg-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 150px;
+}
+
+.rating-number {
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--vp-c-brand-1);
+  line-height: 1;
+}
+
+.stars-display {
+  display: flex;
+  gap: 4px;
+  font-size: 24px;
+}
+
+.stars-display .star.filled {
+  color: #fbbf24;
+}
+
+.stars-display .star.empty {
+  color: var(--vp-c-text-3);
+}
+
+.rating-count {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+}
+
+.rating-distribution {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.rating-label {
+  min-width: 50px;
+  color: var(--vp-c-text-2);
+}
+
+.bar-container {
+  flex: 1;
+  height: 8px;
+  background: var(--vp-c-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  transition: width 0.3s ease;
+}
+
+.write-review {
+  padding: 24px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 12px;
+  margin-bottom: 32px;
+}
+
+.write-review h3 {
+  margin-bottom: 20px;
+  color: var(--vp-c-brand-1);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px var(--vp-c-brand-soft);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.rating-input {
+  display: flex;
+  gap: 8px;
+}
+
+.star-button {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.2s;
+  color: var(--vp-c-text-3);
+}
+
+.star-button.active {
+  color: #fbbf24;
+}
+
+.star-button:hover {
+  transform: scale(1.2);
+}
+
+.submit-review-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.reviews-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.reviews-list h3 {
+  margin-bottom: 20px;
+  color: var(--vp-c-brand-1);
+  position: sticky;
+  top: 0;
+  background: var(--vp-c-bg);
+  padding: 12px 0;
+  z-index: 1;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--vp-c-text-2);
+}
+
+.review-item {
+  padding: 20px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  background: var(--vp-c-bg-soft);
+  transition: all 0.2s;
+}
+
+.review-item:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.reviewer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  font-size: 16px;
+}
+
+.review-stars {
+  font-size: 16px;
+  color: #fbbf24;
+}
+
+.review-date {
+  color: var(--vp-c-text-3);
+  font-size: 14px;
+}
+
+.review-comment {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
+.review-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.helpful-btn {
+  padding: 6px 12px;
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.helpful-btn:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+}
+
+/* Mobile responsive for review modal */
+@media (max-width: 768px) {
+  .review-stats {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .rating-distribution {
+    width: 100%;
+  }
+
+  .star-button {
+    font-size: 28px;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reviews-list {
+    max-height: 400px;
   }
 }
 </style>
