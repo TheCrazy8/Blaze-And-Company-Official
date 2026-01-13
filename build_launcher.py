@@ -44,9 +44,9 @@ def build():
     
     try:
         PyInstaller.__main__.run(pyinstaller_args)
-        print("\n✓ Build completed successfully!")
+        print("\n Build completed successfully!")
         exe_name = 'BrightOS-Launcher.exe' if sys.platform == 'win32' else 'BrightOS-Launcher'
-        print(f"✓ Executable location: {os.path.join(script_dir, 'dist', exe_name)}")
+        print(f"Executable location: {os.path.join(script_dir, 'dist', exe_name)}")
         print("\nThe launcher will:")
         print("  1. Download/update BrightOS Python files from GitHub")
         print("  2. Install missing dependencies")
@@ -54,7 +54,7 @@ def build():
         print("  4. Run BrightOS.py")
         return 0
     except Exception as e:
-        print(f"\n✗ Build failed: {e}")
+        print(f"\n Build failed: {e}")
         return 1
 
 if __name__ == "__main__":
