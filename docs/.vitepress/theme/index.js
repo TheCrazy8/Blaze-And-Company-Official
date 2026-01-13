@@ -27,6 +27,7 @@ import FeedbackWidget from './components/FeedbackWidget.vue';
 import ShareButtons from './components/ShareButtons.vue';
 import CommitHistory from './components/CommitHistory.vue';
 import CopyCodeButton from './components/CopyCodeButton.vue';
+import PluginCard from './components/PluginCard.vue';
 
 import './styles/main.css';
 
@@ -136,6 +137,7 @@ export default {
     app.component('vImageViewer', vImageViewer);
     app.component('CommitHistory', CommitHistory);
     app.component('CopyCodeButton', CopyCodeButton);
+    app.component('PluginCard', PluginCard);
     
     vitepressBackToTop({ threshold: 300 });
   },
