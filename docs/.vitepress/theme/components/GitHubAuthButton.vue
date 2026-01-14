@@ -201,11 +201,11 @@ onMounted(() => {
   z-index: 1000;
 }
 .github-auth__content {
-  background: #fff; padding: 1.25rem; border-radius: 8px; width: 440px; max-width: calc(100% - 32px);
+  background: #000; padding: 1.25rem; border-radius: 8px; width: 440px; max-width: calc(100% - 32px);
   position: relative;
 }
 .github-auth__btn { /* simple button style */ }
-.code { font-family: monospace; background:#f3f3f3; padding:0.15rem 0.4rem; border-radius:4px; }
+.code { font-family: monospace; background:#000; padding:0.15rem 0.4rem; border-radius:4px; }
 .error { color: crimson; }
 .actions { margin-top: 1rem; display:flex; gap:0.5rem; }
 .close { position: absolute; right: 8px; top: 8px; background: transparent; border: none; font-size: 16px; cursor: pointer; }
