@@ -39,7 +39,7 @@ jobs:
           const https = require('https');
           
           const REPO_OWNER = 'TheCrazy8';
-          const REPO_NAME = 'Blaze-And-Company-Official';
+          const REPO_NAME = 'Blaze-Official';
           const PLUGINS_PATH = 'community made plugins';
           
           function httpsGet(url) {
