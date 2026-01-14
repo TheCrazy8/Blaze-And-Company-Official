@@ -15,10 +15,11 @@
 const BACKEND_BASE = (typeof window !== 'undefined' && window.__BACKEND_BASE__) || ''
 
 const GITHUB_CONFIG = {
-  // Public client ID (kept for informational / legacy). Device flow works through backend.
+  // Public client ID (kept for informational / legacy). Device flow works through backend by default.
   clientId: import.meta.env.VITE_GITHUB_CLIENT_ID || 'Ov23li1xL6Hj2CflCVf2',
 
   // Backend endpoints (relative by default). If backend is on separate origin, set window.__BACKEND_BASE__ in template.
+  // Example backends often expose POST /device/start and POST /device/poll
   deviceCodeUrl: `${BACKEND_BASE}/device/start`,
   accessTokenUrl: `${BACKEND_BASE}/device/poll`,
 
@@ -92,24 +93,62 @@ class GitHubAuth {
     return this.token
   }
 
-  // Start device flow via backend
+  // Start device flow via backend (preferred) or directly against GitHub if BACKEND_BASE is empty.
+  // Note: many backends expect POST /device/start. If your backend returns 404 on GET, switch to POST.
   async startDeviceFlow() {
     if (typeof window === 'undefined') {
       throw new Error('startDeviceFlow must be called from the browser')
     }
-    const url = new URL(GITHUB_CONFIG.deviceCodeUrl, window.location.origin).toString()
-    const res = await fetch(url, {
-      method: 'GET',
-      credentials: 'include'
-    })
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}))
-      throw new Error(body.message || `startDeviceFlow failed: ${res.status}`)
+
+    const rawUrl = GITHUB_CONFIG.deviceCodeUrl || ''
+    const url = new URL(rawUrl, window.location.origin).toString()
+
+    // If no backend is configured (BACKEND_BASE === ''), call GitHub's public device endpoint directly.
+    // GitHub expects application/x-www-form-urlencoded POST for /login/device/code.
+    const callingGitHubDirectly = rawUrl === '' || /github\.com\/login\/device\/code/.test(url)
+
+    try {
+      let res
+      if (callingGitHubDirectly) {
+        // Call GitHub directly
+        const body = new URLSearchParams({
+          client_id: GITHUB_CONFIG.clientId,
+          scope: GITHUB_CONFIG.scope
+        })
+        res = await fetch('https://github.com/login/device/code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString()
+        })
+      } else {
+        // Call backend. Many backends expect POST JSON; if your backend expects GET, change to method: 'GET'.
+        res = await fetch(url, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ client_id: GITHUB_CONFIG.clientId, scope: GITHUB_CONFIG.scope })
+        })
+      }
+
+      if (!res.ok) {
+        // try to parse JSON error or raw text for better diagnostics
+        let errBody = await res.text().catch(() => '')
+        let parsed = {}
+        try { parsed = JSON.parse(errBody || '{}') } catch (e) { /* not JSON */ }
+        const message = parsed.message || errBody || `startDeviceFlow failed: ${res.status}`
+        throw new Error(message)
+      }
+
+      // Parse JSON response (GitHub returns device_code, user_code, verification_uri, expires_in, interval)
+      const data = await res.json()
+      this.deviceInfo = data
+      return data
+    } catch (err) {
+      // surface a clearer error
+      const msg = err && err.message ? err.message : String(err)
+      // Useful debug info: expose the URL we tried (will be same-origin absolute URL)
+      throw new Error(`startDeviceFlow failed calling ${url}: ${msg}`)
     }
-    const data = await res.json()
-    // data should include: device_code, user_code, verification_uri, expires_in, interval
-    this.deviceInfo = data
-    return data
   }
 
   // Poll for token by asking backend to poll GitHub on our behalf
