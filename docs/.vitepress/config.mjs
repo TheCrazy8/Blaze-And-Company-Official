@@ -13,12 +13,12 @@ export default defineConfig({
       md.use(footnote)
     }
   },
-  title: "B&C Official",
-  description: "The Blaze & Company official site.",
-  base: "/Blaze-And-Company-Official/",
+  title: "Blaze Official",
+  description: "The Blaze official site.",
+  base: "/Blaze-Official/",
   themeConfig: {
     editLink: {
-      pattern: 'https://github.com/TheCrazy8/Blaze-And-Company-Official/edit/main/docs/:path',
+      pattern: 'https://github.com/TheCrazy8/Blaze-Official/edit/main/docs/:path',
       text: '✏️ Edit this page'
     },
 
@@ -28,7 +28,7 @@ export default defineConfig({
     },
 
     externalLinkIcon: false,
-    siteTitle: "Blaze & Company",
+    siteTitle: "Blaze",
     footer: {
       message: "Released under the CC BY-NC-ND 4.0 License.",
       copyright: "Copyright © 2025-present TheCrazy8",
@@ -64,7 +64,7 @@ export default defineConfig({
         text: '🌟 Community',
         items:  [
           { text: '📝 Blog', link: '/blog/' },
-          { text: '💬 GitHub Discussions', link: 'https://github.com/TheCrazy8/Blaze-And-Company-Official/discussions' },
+          { text: '💬 GitHub Discussions', link: 'https://github.com/TheCrazy8/Blaze-Official/discussions' },
           { text: '📡 RSS Feed', link: '/blog/feed.xml' },
           { text: '⚛️ Atom Feed', link: '/blog/feed.atom' },
         ]
@@ -158,21 +158,21 @@ export default defineConfig({
     },
     
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/TheCrazy8/Blaze-And-Company-Official' }
+      { icon: 'github', link: 'https://github.com/TheCrazy8/Blaze-Official' }
     ],
   },
   
   head: [
-    ['link', { rel: 'icon', type: 'image/x-icon', href: '/Blaze-And-Company-Official/favicon.ico' }],
-    ['link', { rel: 'apple-touch-icon', href: '/Blaze-And-Company-Official/icon-192x192.png' }],
-    ['link', { rel:  'alternate', type: 'application/rss+xml', title: 'BrightOS Blog RSS', href: '/Blaze-And-Company-Official/blog/feed.xml' }],
-    ['link', { rel: 'alternate', type: 'application/atom+xml', title: 'BrightOS Blog Atom', href: '/Blaze-And-Company-Official/blog/feed.atom' }],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: '/Blaze-Official/favicon.ico' }],
+    ['link', { rel: 'apple-touch-icon', href: '/Blaze-Official/icon-192x192.png' }],
+    ['link', { rel:  'alternate', type: 'application/rss+xml', title: 'BrightOS Blog RSS', href: '/Blaze-Official/blog/feed.xml' }],
+    ['link', { rel: 'alternate', type: 'application/atom+xml', title: 'BrightOS Blog Atom', href: '/Blaze-Official/blog/feed.atom' }],
     ['meta', { name: 'theme-color', content: '#ff4500' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
     ['meta', { name:  'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:site_name', content: 'Blaze & Company' }],
-    ['meta', { property: 'og:image', content: '/Blaze-And-Company-Official/og-image.png' }],
+    ['meta', { property: 'og:site_name', content: 'Blaze' }],
+    ['meta', { property: 'og:image', content: '/Blaze-Official/og-image.png' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
   ],
   
@@ -186,67 +186,67 @@ export default defineConfig({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', '*.png'],
         manifest: {
-          name: 'Blaze & Company Official',
-          short_name: 'B&C',
+          name: 'Blaze Official',
+          short_name: 'Blaze',
           description: 'Arduino modular program - Official documentation and resources',
           theme_color:  '#ff4500',
           background_color: '#ffffff',
           display: 'standalone',
-          scope: '/Blaze-And-Company-Official/',
-          start_url:  '/Blaze-And-Company-Official/',
+          scope: '/Blaze-Official/',
+          start_url:  '/Blaze-Official/',
           icons: [
             {
-              src: '/Blaze-And-Company-Official/icon-48x48.png',
+              src: '/Blaze-Official/icon-48x48.png',
               sizes: '48x48',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-72x72.png',
+              src: '/Blaze-Official/icon-72x72.png',
               sizes: '72x72',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-96x96.png',
+              src: '/Blaze-Official/icon-96x96.png',
               sizes: '96x96',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-128x128.png',
+              src: '/Blaze-Official/icon-128x128.png',
               sizes: '128x128',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-144x144.png',
+              src: '/Blaze-Official/icon-144x144.png',
               sizes: '144x144',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-152x152.png',
+              src: '/Blaze-Official/icon-152x152.png',
               sizes: '152x152',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-192x192.png',
+              src: '/Blaze-Official/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-256x256.png',
+              src: '/Blaze-Official/icon-256x256.png',
               sizes: '256x256',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-384x384.png',
+              src: '/Blaze-Official/icon-384x384.png',
               sizes: '384x384',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-512x512.png',
+              src: '/Blaze-Official/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png'
             },
             {
-              src: '/Blaze-And-Company-Official/icon-512x512.png',
+              src: '/Blaze-Official/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
@@ -256,30 +256,30 @@ export default defineConfig({
             {
               name: 'BrightOS Web',
               short_name: 'Web Interface',
-              url: '/Blaze-And-Company-Official/brightos-web',
+              url: '/Blaze-Official/brightos-web',
               description: 'Run BrightOS in browser',
-              icons: [{ src: '/Blaze-And-Company-Official/icon-192x192.png', sizes: '192x192' }]
+              icons: [{ src: '/Blaze-Official/icon-192x192.png', sizes: '192x192' }]
             },
             {
               name: 'Examples',
               short_name: 'Examples',
-              url: '/Blaze-And-Company-Official/examples',
+              url: '/Blaze-Official/examples',
               description:  'View example scripts',
-              icons: [{ src: '/Blaze-And-Company-Official/icon-192x192.png', sizes: '192x192' }]
+              icons: [{ src: '/Blaze-Official/icon-192x192.png', sizes: '192x192' }]
             },
             {
               name: 'Downloads',
               short_name: 'Downloads',
-              url: '/Blaze-And-Company-Official/downloads',
+              url: '/Blaze-Official/downloads',
               description: 'Download plugins and scripts',
-              icons: [{ src: '/Blaze-And-Company-Official/icon-192x192.png', sizes: '192x192' }]
+              icons: [{ src: '/Blaze-Official/icon-192x192.png', sizes: '192x192' }]
             },
             {
               name: 'Blog',
               short_name: 'Blog',
-              url: '/Blaze-And-Company-Official/blog/',
+              url: '/Blaze-Official/blog/',
               description: 'Read latest updates',
-              icons: [{ src:  '/Blaze-And-Company-Official/icon-192x192.png', sizes: '192x192' }]
+              icons: [{ src:  '/Blaze-Official/icon-192x192.png', sizes: '192x192' }]
             }
           ]
         },
