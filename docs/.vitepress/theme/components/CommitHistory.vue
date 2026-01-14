@@ -97,6 +97,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { githubFetch } from '../config/github-auth.js'
 
 const commits = ref([])
 const loading = ref(true)
@@ -146,14 +147,11 @@ async function fetchCommits() {
   error.value = null
 
   try {
-    const response = await fetch(
+    const response = await githubFetch(
       `https://api.github.com/repos/TheCrazy8/Blaze-And-Company-Official/commits?per_page=${perPage}&page=${page.value}`
     )
 
     if (!response.ok) {
-      if (response.status === 403) {
-        throw new Error('GitHub API rate limit exceeded. Please try again later.')
-      }
       throw new Error(`GitHub API error: ${response.status}`)
     }
 

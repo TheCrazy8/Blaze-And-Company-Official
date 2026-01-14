@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { withBase } from 'vitepress'
 import { analytics, reviews } from '../config/supabase.js'
 import PluginCard from './PluginCard.vue'
 
@@ -46,25 +45,26 @@ const fetchRealStats = async () => {
   }
 }
 
-// Fetch plugins from cache (primary) or GitHub API (fallback)
+// Fetch plugins from GitHub (always fresh)
 const fetchPlugins = async () => {
   isLoading.value = true
   error.value = null
   
   try {
-    // Try to load from cache first
-    console.log('Loading plugins from cache...')
-    const cacheResponse = await fetch(withBase('/plugins-cache.json'))
+    // Fetch directly from GitHub repository (always up-to-date)
+    console.log('Loading plugins from GitHub...')
+    const githubUrl = 'https://raw.githubusercontent.com/TheCrazy8/Blaze-And-Company-Official/main/docs/public/plugins-cache.json'
+    const cacheResponse = await fetch(githubUrl)
     
     if (cacheResponse.ok) {
       const cache = await cacheResponse.json()
       
       // Calculate cache age
-      const generatedAt = new Date(cache. generated_at)
+      const generatedAt = new Date(cache.generated_at)
       const ageHours = Math.floor((Date.now() - generatedAt.getTime()) / (1000 * 60 * 60))
       cacheAge.value = ageHours < 1 ? 'less than 1 hour' : `${ageHours} hours`
       
-      console.log(`✓ Loaded ${cache.plugins.length} plugins from cache (${cacheAge.value} old)`)
+      console.log(`✓ Loaded ${cache.plugins.length} plugins from GitHub (${cacheAge.value} old)`)
       
       // Load plugins from cache
       plugins.value = cache.plugins
@@ -72,26 +72,26 @@ const fetchPlugins = async () => {
       // Load repo stats from cache
       if (cache.repository) {
         repoStats.value = {
-          stars: cache.repository. stars,
+          stars: cache.repository.stars,
           forks: cache.repository.forks,
           watchers: cache.repository.watchers
         }
       }
       
       // Extract unique categories
-      const uniqueCategories = [... new Set(cache.plugins.map(p => p.category))]
+      const uniqueCategories = [...new Set(cache.plugins.map(p => p.category))]
       categories.value = ['all', ...uniqueCategories]
       
       isLoading.value = false
       return
     }
     
-    // Fallback:  Cache not available, show error with helpful message
-    throw new Error('Plugin cache not found. The cache will be generated automatically on the next repository update.')
+    // Fallback: Cache not available on GitHub
+    throw new Error('Plugin cache not found on GitHub. The cache will be generated automatically on the next repository update.')
     
   } catch (err) {
     console.error('Error loading plugins:', err)
-    error.value = err. message
+    error.value = err.message
     isLoading.value = false
   }
 }
@@ -316,7 +316,7 @@ onMounted(async () => {
     <!-- Loading State -->
     <div v-if="isLoading" class="loading-state">
       <div class="spinner">⚙️</div>
-      <p>Loading plugins from cache...</p>
+      <p>Loading plugins from GitHub...</p>
     </div>
 
     <!-- Error State -->
@@ -342,7 +342,7 @@ onMounted(async () => {
         
         <!-- Cache age indicator -->
         <div v-if="cacheAge" class="cache-info">
-          <span>📦 Data cached {{ cacheAge }} ago</span>
+          <span>📦 Data from GitHub (generated {{ cacheAge }} ago)</span>
         </div>
         
         <!-- Stats Overview -->
