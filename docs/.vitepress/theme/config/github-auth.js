@@ -1,8 +1,17 @@
 // GitHub OAuth Device Flow client utilities — modified to use backend device-flow server
-// Server endpoints expected:
-//   GET  /device/start   -> returns { device_code, user_code, verification_uri, expires_in, interval }
-//   POST /device/poll    -> body { device_code, max_wait } -> returns { token: { access_token, token_type, scope }, user }
-// If your backend runs on a different origin, set BACKEND_BASE to that origin (including scheme).
+// Exports:
+//   default export: githubAuth (instance of GitHubAuth)
+//   named exports: GITHUB_CONFIG, GitHubAuth, githubFetch
+//
+// githubFetch is a small wrapper around fetch that:
+// - prefixes relative paths with https://api.github.com
+// - adds Authorization header from stored token (localStorage) when available
+// - sets Accept header for GitHub v3 API
+// - clears stored token on 401 responses (best-effort, client-side only)
+//
+// IMPORTANT: This module must be usable during SSR builds. It avoids access to window/localStorage
+// when not running in a browser.
+
 const BACKEND_BASE = (typeof window !== 'undefined' && window.__BACKEND_BASE__) || ''
 
 const GITHUB_CONFIG = {
@@ -85,6 +94,9 @@ class GitHubAuth {
 
   // Start device flow via backend
   async startDeviceFlow() {
+    if (typeof window === 'undefined') {
+      throw new Error('startDeviceFlow must be called from the browser')
+    }
     const url = new URL(GITHUB_CONFIG.deviceCodeUrl, window.location.origin).toString()
     const res = await fetch(url, {
       method: 'GET',
@@ -103,6 +115,9 @@ class GitHubAuth {
   // Poll for token by asking backend to poll GitHub on our behalf
   // maxWait in seconds
   async pollForToken(deviceCode, maxWait = 300) {
+    if (typeof window === 'undefined') {
+      throw new Error('pollForToken must be called from the browser')
+    }
     const url = new URL(GITHUB_CONFIG.accessTokenUrl, window.location.origin).toString()
     // allow cancellation
     this.pollAbortController = new AbortController()
@@ -140,7 +155,7 @@ class GitHubAuth {
     }
   }
 
-  // High-level login: start device flow then poll. Returns { token, user }
+  // High-level login: start device flow then poll. Returns { success, token, user | error }
   async login({ maxWait = 300, openVerificationInNewTab = false } = {}) {
     if (typeof window === 'undefined') return { success: false, error: 'Not running in browser' }
     try {
@@ -156,7 +171,62 @@ class GitHubAuth {
   }
 }
 
+// --- githubFetch helper (named export) ---
+// Usage in components:
+// import { githubFetch } from '../config/github-auth.js'
+// const res = await githubFetch('/repos/owner/repo/commits?per_page=30')
+// or githubFetch('https://api.github.com/whatever', { method: 'GET' })
+async function githubFetch(input, init = {}) {
+  // If running under SSR, just throw or return a lightweight stub that fails gracefully.
+  if (typeof fetch === 'undefined') {
+    throw new Error('githubFetch: fetch is not available (SSR). Call from browser only.')
+  }
+
+  // Normalize URL: if input is relative (starts with /), prefix with GitHub API base
+  let url = input
+  if (typeof input === 'string' && input.startsWith('/')) {
+    url = `https://api.github.com${input}`
+  }
+
+  // Prepare headers
+  const headers = new Headers(init.headers || {})
+  // Add Accept header for GitHub v3 unless already present
+  if (!headers.has('Accept')) {
+    headers.set('Accept', 'application/vnd.github.v3+json')
+  }
+
+  // Add Authorization if token present in localStorage
+  try {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem(GITHUB_CONFIG.tokenKey)
+      if (token && !headers.has('Authorization')) {
+        // token typically stored as plain token from device flow
+        headers.set('Authorization', `token ${token}`)
+      }
+    }
+  } catch (e) {
+    // localStorage might throw in some environments; ignore
+    console.warn('githubFetch: could not access localStorage', e)
+  }
+
+  const merged = Object.assign({}, init, { headers, credentials: init.credentials || 'same-origin' })
+
+  const res = await fetch(url, merged)
+
+  // If unauthorized, clear stored token (best-effort) so UI can re-authenticate
+  if (res.status === 401) {
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.removeItem(GITHUB_CONFIG.tokenKey)
+        localStorage.removeItem(GITHUB_CONFIG.tokenExpiryKey)
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  return res
+}
+
 // Export a singleton instance for easy import
 const githubAuth = new GitHubAuth()
 export default githubAuth
-export { GITHUB_CONFIG, GitHubAuth }
+export { GITHUB_CONFIG, GitHubAuth, githubFetch }
