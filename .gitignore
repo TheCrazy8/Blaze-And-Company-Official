@@ -12,3 +12,6 @@ dist/
 
 # Arduino secrets (WiFi credentials)
 arduino_secrets.h
+
+# Environment variables
+.env
