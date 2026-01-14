@@ -26,10 +26,22 @@ The GitHub Device Flow allows you to authenticate without requiring a backend se
 
 ## Benefits
 
-- **5,000 requests/hour** instead of 60 for anonymous users
+- **5,000 requests/hour PER USER** instead of 60/hour shared by IP for anonymous users
+- Each signed-in user gets their own personal quota (not shared!)
 - No backend server required (Device Flow)
 - Secure OAuth 2.0 authentication
 - Only requests read-only `public_repo` access
+
+### Rate Limit Breakdown
+
+| User Type | Rate Limit | Shared? |
+|-----------|------------|---------|
+| Anonymous (not signed in) | 60/hour | Yes (by IP address) |
+| Authenticated (signed in) | 5,000/hour | No (per user) |
+
+**Example Scenario**: 
+- 🏢 10 people in an office, none signed in → Share 60 requests/hour (6 per person!)
+- ✅ 10 people in an office, all signed in → Each gets 5,000 requests/hour (50,000 total!)
 
 ## Testing
 

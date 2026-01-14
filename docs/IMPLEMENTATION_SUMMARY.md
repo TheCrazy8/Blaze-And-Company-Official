@@ -85,7 +85,9 @@ This PR adds three major quality-of-life features to the BrightOS documentation 
 ### 4. ✅ GitHub OAuth with Device Flow (NEW!)
 
 **The Challenge**: 
-- GitHub API rate limits: 60 requests/hour (unauthenticated) vs 5,000/hour (authenticated)
+- GitHub API rate limits:
+  - **Unauthenticated**: 60 requests/hour **shared by IP address**
+  - **Authenticated**: 5,000 requests/hour **per user** (personal quota!)
 - Static hosting (GitHub Pages) = no backend server
 - Traditional OAuth requires backend to exchange tokens
 
@@ -268,19 +270,28 @@ All features are documented in:
 ## Benefits
 
 ### Before
-- ❌ 60 API requests/hour
+- ❌ 60 API requests/hour (shared by IP - problematic on shared networks!)
 - ❌ Stale plugin cache
 - ❌ No loading indicators
 - ❌ PWA updates only
 
 ### After
-- ✅ 5,000 API requests/hour (when authenticated)
+- ✅ 5,000 API requests/hour **per authenticated user** (personal quota!)
+- ✅ Anonymous users still work (60/hour shared by IP)
 - ✅ Live plugin data from GitHub
 - ✅ Loading spinners for async operations
 - ✅ PWA install prompt + updates
 - ✅ No backend infrastructure needed
 - ✅ Complete user authentication system
 - ✅ Better user experience overall
+
+### Rate Limit Comparison
+
+| Scenario | Before | After |
+|----------|--------|-------|
+| 1 anonymous user | 60/hour | 60/hour (or 5,000 if signed in) |
+| 10 anonymous users (same IP) | 6/hour per person | 6/hour per person (or 5,000 each if signed in) |
+| 10 authenticated users | N/A | **5,000/hour EACH** (50,000 total!) |
 
 ---
 

@@ -4,6 +4,23 @@
 
 This guide covers all the quality-of-life features available in the BrightOS documentation site.
 
+### Understanding GitHub API Rate Limits
+
+**Anonymous/Unauthenticated Users**:
+- 60 requests per hour
+- **Shared by IP address** - if multiple users access from the same network, they share the 60 request limit
+- Can run out quickly on shared networks (schools, offices, etc.)
+
+**Authenticated Users (Signed in with GitHub)**:
+- **5,000 requests per hour PER USER** 🎉
+- Each person who signs in gets their own separate quota
+- Your personal 5,000/hour limit is NOT shared with other users
+- Perfect for heavy documentation browsing
+
+**Example**: If 10 people in your office sign in with GitHub, each person gets their own 5,000 requests/hour!
+
+---
+
 ## 1. 🔍 Search Functionality
 
 ### Local Search (Default)

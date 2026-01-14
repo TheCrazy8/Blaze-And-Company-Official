@@ -22,10 +22,11 @@ The site uses GitHub's Device Flow OAuth, which allows users to authenticate wit
 
 ### Why Sign In?
 
-- **Higher Rate Limits**: Authenticated users get 5,000 requests/hour vs 60 for anonymous users
+- **Higher Rate Limits**: Authenticated users get **5,000 requests/hour PER USER** vs 60/hour shared by IP for anonymous users
 - **Better Experience**: No interruptions due to rate limiting
 - **Secure**: Uses OAuth 2.0 standard authentication flow
 - **No Backend Required**: Device Flow works without a server
+- **Personal Quota**: Each signed-in user gets their own rate limit quota
 
 ### How to Sign In
 
