@@ -16,6 +16,16 @@ if (!CLIENT_ID) {
   console.warn('Warning: GITHUB_CLIENT_ID not set. Device flow will fail without a client id.')
 }
 
+// Helper function to parse GitHub API response
+async function parseGitHubResponse(ghRes) {
+  try {
+    return await ghRes.json()
+  } catch {
+    const text = await ghRes.text().catch(() => '')
+    return { _raw: text }
+  }
+}
+
 // POST /device/start
 // forwards to https://github.com/login/device/code
 app.post('/device/start', async (req, res) => {
@@ -35,10 +45,7 @@ app.post('/device/start', async (req, res) => {
       body: params.toString()
     })
 
-    const json = await ghRes.json().catch(async () => {
-      const text = await ghRes.text().catch(() => '')
-      return { _raw: text }
-    })
+    const json = await parseGitHubResponse(ghRes)
 
     return res.status(ghRes.status).json(json)
   } catch (err) {
@@ -69,10 +76,7 @@ app.post('/device/poll', async (req, res) => {
       body: params.toString()
     })
 
-    const json = await ghRes.json().catch(async () => {
-      const text = await ghRes.text().catch(() => '')
-      return { _raw: text }
-    })
+    const json = await parseGitHubResponse(ghRes)
 
     return res.status(ghRes.status).json(json)
   } catch (err) {
