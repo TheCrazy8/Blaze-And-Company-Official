@@ -2,7 +2,7 @@
   "name": "Blaze & Company Official",
   "version": "1.0.0",
   "description": "Official Blaze & Company site",
-  "main": "index. js",
+  "main": "index.js",
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",

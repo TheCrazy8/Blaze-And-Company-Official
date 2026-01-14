@@ -20,6 +20,9 @@ if (!CLIENT_ID) {
 // forwards to https://github.com/login/device/code
 app.post('/device/start', async (req, res) => {
   try {
+    if (!CLIENT_ID) {
+      return res.status(500).json({ message: 'GITHUB_CLIENT_ID is not configured' })
+    }
     const scope = req.body?.scope || 'public_repo'
     const params = new URLSearchParams({
       client_id: CLIENT_ID,
@@ -48,6 +51,9 @@ app.post('/device/start', async (req, res) => {
 // forwards to https://github.com/login/oauth/access_token
 app.post('/device/poll', async (req, res) => {
   try {
+    if (!CLIENT_ID) {
+      return res.status(500).json({ message: 'GITHUB_CLIENT_ID is not configured' })
+    }
     const { device_code } = req.body || {}
     if (!device_code) return res.status(400).json({ message: 'device_code required' })
 
