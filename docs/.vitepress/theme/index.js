@@ -15,6 +15,7 @@ import { NolebaseEnhancedReadabilitiesPlugin } from '@nolebase/vitepress-plugin-
 
 // Import all custom components
 import PWAPrompt from './components/PWAPrompt.vue';
+import PWAInstallPrompt from './components/PWAInstallPrompt.vue';
 import FireParticles from './components/FireParticles.vue';
 import CursorTrail from './components/CursorTrail.vue';
 import FloatingActionButton from './components/FloatingActionButton.vue';
@@ -27,6 +28,9 @@ import ShareButtons from './components/ShareButtons.vue';
 import ToastNotification from './components/ToastNotification.vue';
 import CopyCodeButton from './components/CopyCodeButton.vue';
 import PluginCard from './components/PluginCard.vue';
+import LoadingSpinner from './components/LoadingSpinner.vue';
+import DownloadStats from './components/DownloadStats.vue';
+import GitHubAuthButton from './components/GitHubAuthButton.vue';
 
 import './styles/main.css';
 
@@ -65,7 +69,8 @@ export default {
         h(FireParticles),
         h(CursorTrail),
         h(FloatingActionButton),
-        h(PWAPrompt)
+        h(PWAPrompt),
+        h(PWAInstallPrompt)
       ]
     });
   },
@@ -81,6 +86,9 @@ export default {
     ctx.app.component('vImageViewer', vImageViewer);
     ctx.app.component('CopyCodeButton', CopyCodeButton);
     ctx.app.component('PluginCard', PluginCard);
+    ctx.app.component('LoadingSpinner', LoadingSpinner);
+    ctx.app.component('DownloadStats', DownloadStats);
+    ctx.app.component('GitHubAuthButton', GitHubAuthButton);
     
     vitepressBackToTop({ threshold: 300 });
   },

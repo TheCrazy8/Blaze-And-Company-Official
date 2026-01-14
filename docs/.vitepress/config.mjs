@@ -135,6 +135,10 @@ export default defineConfig({
       }
     },
     
+    // Local search configuration (no external dependencies required)
+    // To upgrade to Algolia DocSearch:
+    // 1. Apply at https://docsearch.algolia.com/
+    // 2. Replace with: search: { provider: 'algolia', options: { appId: 'XXX', apiKey: 'XXX', indexName: 'XXX' } }
     search: { 
       provider: 'local',
       options: {
@@ -321,6 +325,20 @@ export default defineConfig({
                 },
                 cacheableResponse: {
                   statuses:  [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: /^https:\/\/rshigflhanzjrqeoynpa\.supabase\.co\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'supabase-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 // 1 hour
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
                 }
               }
             }
