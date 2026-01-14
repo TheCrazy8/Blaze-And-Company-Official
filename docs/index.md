@@ -1,10 +1,10 @@
 ---
 layout: home
-title: Blaze & Company Official
+title: Blaze Official
 hero:
-  name: Blaze & Company
+  name: Blaze
   text: Your official home for resources, news, and key links.
-  tagline: Stay up to date with everything Blaze & Company.
+  tagline: Stay up to date with everything to do with the Blaze robotics framework.
   actions:
     - theme: brand
       text: View the Key
@@ -26,7 +26,7 @@ hero:
       link: /development-guide
     - theme: alt
       text: GitHub Repo
-      link: https://github.com/TheCrazy8/Blaze-And-Company-Official
+      link: https://github.com/TheCrazy8/Blaze-Official
 features:
   - title: Quick Links
     details: Jump straight to the most important resources and docs.
