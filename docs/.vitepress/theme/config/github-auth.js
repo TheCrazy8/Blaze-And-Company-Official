@@ -2,28 +2,34 @@
 // This module handles GitHub OAuth authentication to prevent rate limiting
 
 const GITHUB_CONFIG = {
+  // For GitHub Pages deployment, we use Device Flow (no backend needed)
+  // Device Flow: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow
+  
   // OAuth App credentials (set these in your GitHub App settings)
   // Get them from: https://github.com/settings/developers
-  clientId: import.meta.env.VITE_GITHUB_CLIENT_ID || '',
-  // Note: Client secret should NEVER be exposed in frontend code
-  // We'll use a serverless function or backend proxy for token exchange
+  clientId: import.meta.env.VITE_GITHUB_CLIENT_ID || 'Ov23li1xL6Hj2CflCVf2',
   
-  // OAuth URLs
-  authorizeUrl: 'https://github.com/login/oauth/authorize',
-  tokenUrl: 'https://github.com/login/oauth/access_token',
+  // Device Flow URLs
+  deviceCodeUrl: 'https://github.com/login/device/code',
+  accessTokenUrl: 'https://github.com/login/oauth/access_token',
   
   // Scopes needed (public_repo for read-only access to public repos)
   scope: 'public_repo',
   
   // Storage keys
   tokenKey: 'github_oauth_token',
-  tokenExpiryKey: 'github_oauth_expiry'
+  tokenExpiryKey: 'github_oauth_expiry',
+  
+  // Polling interval for device flow (in seconds)
+  pollInterval: 5
 }
 
 class GitHubAuth {
   constructor() {
     // Only load token on client-side
     this.token = typeof window !== 'undefined' ? this.loadToken() : null
+    this.deviceCode = null
+    this.pollTimer = null
   }
 
   // Load token from localStorage
@@ -97,76 +103,143 @@ class GitHubAuth {
     return this.token
   }
 
-  // Initiate OAuth flow
+  // Initiate Device Flow
   async login() {
     // Skip if running on server
     if (typeof window === 'undefined') {
-      return false
+      return { success: false, error: 'Not running in browser' }
     }
     
     if (!GITHUB_CONFIG.clientId) {
       console.warn('GitHub OAuth not configured. Set VITE_GITHUB_CLIENT_ID environment variable.')
-      return false
+      return { success: false, error: 'OAuth not configured' }
     }
 
     try {
-      // Generate state for CSRF protection
-      const state = Math.random().toString(36).substring(7)
-      sessionStorage.setItem('github_oauth_state', state)
-
-      // Build authorization URL
-      const params = new URLSearchParams({
-        client_id: GITHUB_CONFIG.clientId,
-        scope: GITHUB_CONFIG.scope,
-        state: state,
-        redirect_uri: window.location.origin + window.location.pathname
+      // Step 1: Request device code
+      const deviceResponse = await fetch(GITHUB_CONFIG.deviceCodeUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          client_id: GITHUB_CONFIG.clientId,
+          scope: GITHUB_CONFIG.scope
+        })
       })
 
-      // Redirect to GitHub authorization
-      window.location.href = `${GITHUB_CONFIG.authorizeUrl}?${params.toString()}`
-      return true
+      if (!deviceResponse.ok) {
+        throw new Error('Failed to get device code')
+      }
+
+      const deviceData = await deviceResponse.json()
+      
+      this.deviceCode = {
+        device_code: deviceData.device_code,
+        user_code: deviceData.user_code,
+        verification_uri: deviceData.verification_uri,
+        expires_in: deviceData.expires_in,
+        interval: deviceData.interval || GITHUB_CONFIG.pollInterval
+      }
+
+      return {
+        success: true,
+        userCode: deviceData.user_code,
+        verificationUri: deviceData.verification_uri,
+        expiresIn: deviceData.expires_in
+      }
     } catch (err) {
-      console.error('Error initiating GitHub OAuth:', err)
-      return false
+      console.error('Error initiating GitHub Device Flow:', err)
+      return { success: false, error: err.message }
     }
   }
 
-  // Handle OAuth callback
-  async handleCallback() {
-    // Skip if running on server
-    if (typeof window === 'undefined') {
-      return false
+  // Start polling for token (call after user authorizes)
+  async startPolling(onSuccess, onError) {
+    if (!this.deviceCode) {
+      onError('No device code available')
+      return
     }
+
+    const startTime = Date.now()
+    const expiryTime = startTime + (this.deviceCode.expires_in * 1000)
     
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get('code')
-    const state = params.get('state')
-    const storedState = sessionStorage.getItem('github_oauth_state')
+    const poll = async () => {
+      try {
+        // Check if expired
+        if (Date.now() > expiryTime) {
+          this.stopPolling()
+          onError('Device code expired. Please try again.')
+          return
+        }
 
-    if (!code || !state || state !== storedState) {
-      return false
+        const response = await fetch(GITHUB_CONFIG.accessTokenUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            client_id: GITHUB_CONFIG.clientId,
+            device_code: this.deviceCode.device_code,
+            grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+          })
+        })
+
+        const data = await response.json()
+
+        if (data.access_token) {
+          // Success! Got the token
+          this.stopPolling()
+          this.saveToken(data.access_token, data.expires_in)
+          this.deviceCode = null
+          onSuccess()
+        } else if (data.error === 'authorization_pending') {
+          // User hasn't authorized yet, keep polling
+          // Continue polling
+        } else if (data.error === 'slow_down') {
+          // Rate limited, increase interval
+          this.deviceCode.interval += 5
+        } else if (data.error === 'expired_token') {
+          // Code expired
+          this.stopPolling()
+          this.deviceCode = null
+          onError('Authorization expired. Please try again.')
+        } else if (data.error === 'access_denied') {
+          // User denied access
+          this.stopPolling()
+          this.deviceCode = null
+          onError('Authorization denied.')
+        } else {
+          // Unknown error
+          this.stopPolling()
+          this.deviceCode = null
+          onError(data.error_description || data.error || 'Unknown error')
+        }
+      } catch (err) {
+        console.error('Polling error:', err)
+      }
     }
 
-    try {
-      // Exchange code for token
-      // NOTE: This requires a backend proxy to avoid exposing client secret
-      // For now, we'll show a message that OAuth needs backend setup
-      console.info('GitHub OAuth code received. Backend token exchange needed.')
-      
-      // Clean up URL and state
-      sessionStorage.removeItem('github_oauth_state')
-      window.history.replaceState({}, document.title, window.location.pathname)
-      
-      return false // Return false until backend is set up
-    } catch (err) {
-      console.error('Error handling OAuth callback:', err)
-      return false
+    // Start polling
+    this.pollTimer = setInterval(poll, this.deviceCode.interval * 1000)
+    poll() // Poll immediately once
+  }
+
+  // Stop polling
+  stopPolling() {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer)
+      this.pollTimer = null
     }
   }
 
   // Logout
   logout() {
+    this.stopPolling()
     this.clearToken()
+    this.deviceCode = null
   }
 }
 

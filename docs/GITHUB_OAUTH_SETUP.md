@@ -2,7 +2,21 @@
 
 ## Overview
 
-BrightOS documentation site uses GitHub's API to fetch commit history and other dynamic content. To prevent rate limiting (60 requests/hour for unauthenticated users), you can set up GitHub OAuth authentication.
+BrightOS documentation site uses GitHub's API to fetch commit history and other dynamic content. To prevent rate limiting (60 requests/hour for unauthenticated users), the site implements **GitHub Device Flow OAuth** authentication.
+
+## Device Flow Authentication
+
+✅ **No backend server required!**
+
+The site uses GitHub's Device Flow OAuth, which allows users to authenticate without requiring a backend server to exchange tokens. This is perfect for static sites hosted on GitHub Pages.
+
+### How It Works
+
+1. User clicks "Sign in with GitHub"
+2. App requests a device code from GitHub
+3. User copies the code and authorizes on GitHub
+4. App polls GitHub for the access token
+5. Token is stored locally and used for API requests
 
 ## For Users
 
@@ -11,215 +25,163 @@ BrightOS documentation site uses GitHub's API to fetch commit history and other 
 - **Higher Rate Limits**: Authenticated users get 5,000 requests/hour vs 60 for anonymous users
 - **Better Experience**: No interruptions due to rate limiting
 - **Secure**: Uses OAuth 2.0 standard authentication flow
+- **No Backend Required**: Device Flow works without a server
 
 ### How to Sign In
 
 1. Look for the "Sign in with GitHub" button on pages that fetch GitHub data
-2. Click the button to authorize the app
-3. You'll be redirected to GitHub to grant permissions
-4. After authorization, you'll be redirected back with increased rate limits
+2. Click the button to open the authentication modal
+3. Copy the unique code displayed
+4. Click "Open GitHub to Authorize" to open GitHub in a new tab
+5. Paste the code on GitHub and click "Continue"
+6. Authorize the app
+7. Return to the documentation - you'll be automatically signed in!
 
 ### What Permissions Are Requested?
 
 - **`public_repo`**: Read-only access to public repository data
 - No write permissions or access to private data
+- No access to personal information
 
 ## For Developers/Maintainers
 
-### Setting Up GitHub OAuth App
+### Setup (Already Configured!)
 
-To enable OAuth authentication for your deployment:
+The Device Flow is already set up and requires minimal configuration:
 
-#### 1. Create a GitHub OAuth App
+**OAuth App Client ID**: `Ov23li1xL6Hj2CflCVf2`
+
+This client ID is:
+- ✅ Safe to commit to public repositories
+- ✅ Configured for Device Flow
+- ✅ Limited to `public_repo` scope
+- ✅ No client secret needed (Device Flow advantage!)
+
+### Testing the Authentication
+
+1. Navigate to the [GitHub Auth Test Page](/github-auth-test)
+2. Click "Sign in with GitHub"
+3. Follow the Device Flow process
+4. Verify authentication status and rate limits
+
+### Creating Your Own OAuth App (Optional)
+
+If you want to use your own OAuth App:
 
 1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
 2. Click "New OAuth App"
 3. Fill in the details:
-   - **Application name**: BrightOS Documentation
-   - **Homepage URL**: `https://yourdomain.github.io/Blaze-And-Company-Official/`
-   - **Authorization callback URL**: `https://yourdomain.github.io/Blaze-And-Company-Official/`
-   - **Application description**: Official documentation for BrightOS
+   - **Application name**: Your App Name
+   - **Homepage URL**: Your site URL
+   - **Authorization callback URL**: Not used for Device Flow
+   - **Application description**: Description
 
-4. Click "Register application"
-5. Note your **Client ID** and generate a **Client Secret**
+4. After creation, note your **Client ID**
+5. Enable **Device Flow** in your OAuth App settings
+6. Update the client ID in `.env`:
+   ```bash
+   VITE_GITHUB_CLIENT_ID=your_client_id_here
+   ```
 
-#### 2. Configure Environment Variables
+### Architecture
 
-Create a `.env` file in the project root:
+**No Backend Needed!** The implementation uses:
 
-```bash
-# GitHub OAuth Configuration
-VITE_GITHUB_CLIENT_ID=your_client_id_here
+```
+User Browser
+    ↓ (1) Request device code
+GitHub API (Device Flow)
+    ↓ (2) Return device code + verification URL
+User Browser → GitHub Website (User authorizes)
+    ↓ (3) Poll for token
+GitHub API
+    ↓ (4) Return access token
+User Browser (Token stored in localStorage)
+    ↓ (5) Authenticated API requests
+GitHub API
 ```
 
-**⚠️ IMPORTANT**: Never commit the client secret to your repository!
+### Implementation Details
 
-#### 3. Set Up Token Exchange Backend
-
-Since client secrets cannot be exposed in frontend code, you need a backend service to exchange OAuth codes for access tokens.
-
-**Option A: Netlify Functions** (Recommended for Netlify deployments)
-
-Create `netlify/functions/github-oauth.js`:
-
+**File**: `docs/.vitepress/theme/config/github-auth.js`
 ```javascript
-exports.handler = async (event) => {
-  const { code } = JSON.parse(event.body)
-  
-  const response = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
-      code: code
-    })
-  })
-  
-  const data = await response.json()
-  
-  return {
-    statusCode: 200,
-    body: JSON.stringify(data)
-  }
+// Device Flow configuration
+const GITHUB_CONFIG = {
+  clientId: 'Ov23li1xL6Hj2CflCVf2',
+  deviceCodeUrl: 'https://github.com/login/device/code',
+  accessTokenUrl: 'https://github.com/login/oauth/access_token',
+  scope: 'public_repo',
+  pollInterval: 5 // seconds
 }
 ```
 
-**Option B: Vercel Serverless Functions**
+**Component**: `docs/.vitepress/theme/components/GitHubAuthButton.vue`
+- Modal-based UI for Device Flow
+- Automatic polling for token
+- Token storage with expiry
+- Rate limit display
 
-Create `api/github-oauth.js`:
-
-```javascript
-export default async function handler(req, res) {
-  const { code } = req.body
-  
-  const response = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
-      code: code
-    })
-  })
-  
-  const data = await response.json()
-  res.json(data)
-}
+**Usage in Markdown**:
+```vue
+<GitHubAuthButton 
+  message="Sign in for higher limits"
+  :showSignIn="true"
+  :showRateLimit="true"
+/>
 ```
-
-**Option C: Custom Backend Proxy**
-
-Set up your own backend service that handles the token exchange. Update `docs/.vitepress/theme/config/github-auth.js` to point to your backend endpoint.
-
-#### 4. Update OAuth Configuration
-
-In `docs/.vitepress/theme/config/github-auth.js`, update the token exchange URL to point to your backend:
-
-```javascript
-// Add to GitHubAuth class
-async handleCallback() {
-  // ... existing code ...
-  
-  // Call your backend to exchange code for token
-  const tokenResponse = await fetch('/api/github-oauth', {  // Or your backend URL
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code })
-  })
-  
-  const tokenData = await tokenResponse.json()
-  
-  if (tokenData.access_token) {
-    this.saveToken(tokenData.access_token)
-    return true
-  }
-  
-  return false
-}
-```
-
-#### 5. Set Environment Variables in Deployment
-
-**For GitHub Pages with GitHub Actions:**
-
-1. Go to your repository Settings → Secrets and variables → Actions
-2. Add secrets:
-   - `GITHUB_CLIENT_ID`: Your OAuth app client ID
-   - `GITHUB_CLIENT_SECRET`: Your OAuth app client secret
-
-**For Netlify:**
-
-1. Go to Site settings → Build & deploy → Environment
-2. Add variables:
-   - `GITHUB_CLIENT_ID`
-   - `GITHUB_CLIENT_SECRET`
-
-**For Vercel:**
-
-1. Go to Project settings → Environment Variables
-2. Add variables for all environments
 
 ## Current Implementation Status
 
-### ✅ Implemented
-- GitHub OAuth authentication flow
+### ✅ Fully Implemented
+- GitHub Device Flow OAuth authentication
+- Modal UI with code display and copy
+- Automatic token polling
 - Token storage and management
 - Authenticated API requests with `githubFetch`
-- Rate limit detection and user feedback
-- GitHubAuthButton component for sign-in UI
+- Rate limit detection and display
+- SSR-safe implementation
 
-### ⚠️ Requires Backend Setup
-- Token exchange (requires serverless function or backend)
-- Token refresh mechanism
-
-### 💡 Without Backend
-The site will work without OAuth setup, but users will be limited to:
-- 60 API requests per hour (unauthenticated)
-- Potential rate limiting on popular pages
-- Raw content fetching from GitHub (no rate limits) for plugins
-
-## Testing OAuth Flow
-
-1. Set `VITE_GITHUB_CLIENT_ID` in `.env`
-2. Run dev server: `npm run dev`
-3. Navigate to a page with GitHub data
-4. Click "Sign in with GitHub"
-5. Verify OAuth flow (note: token exchange won't work without backend)
+### 🎯 Benefits Over Traditional OAuth
+- ✅ No backend server required
+- ✅ No client secret to protect
+- ✅ Works on static hosting (GitHub Pages)
+- ✅ Secure and standards-compliant
+- ✅ User-friendly copy-paste flow
 
 ## Security Considerations
 
-- ✅ Client secret never exposed in frontend code
-- ✅ CSRF protection using state parameter
+- ✅ No client secret needed (Device Flow advantage)
+- ✅ Client ID safe to expose (public by design)
+- ✅ CSRF not applicable (no redirect callback)
 - ✅ Tokens stored in localStorage with expiry
 - ✅ Only requests `public_repo` scope (read-only)
 - ✅ No access to private repositories or user data
 
 ## Troubleshooting
 
-### "GitHub OAuth not configured" warning
-- Set `VITE_GITHUB_CLIENT_ID` environment variable
-- Rebuild the site
+### Modal doesn't appear
+- Check browser console for errors
+- Verify JavaScript is enabled
+- Try disabling ad blockers
 
-### OAuth callback fails
-- Verify callback URL matches exactly in GitHub OAuth app settings
-- Check backend token exchange is working
-- Verify client secret is set correctly in backend environment
+### Authorization fails
+- Verify the code was copied correctly
+- Check if the code expired (10 minutes timeout)
+- Try the process again with a new code
 
 ### Rate limiting still occurs
-- Check if authentication token is being sent with requests
+- Verify you're signed in (check auth status)
+- Check if authentication token is being sent (browser dev tools)
 - Verify token hasn't expired (check localStorage)
-- Ensure backend token exchange is working
 
-## Alternative: Use Personal Access Token (Development Only)
+### Polling timeout
+- Check internet connection
+- Ensure you clicked "Authorize" on GitHub
+- Try signing in again
 
-For local development, you can use a Personal Access Token instead:
+## Alternative: Personal Access Token (Development Only)
+
+For local development, you can manually set a Personal Access Token:
 
 1. Generate a token at https://github.com/settings/tokens
 2. Select `public_repo` scope
@@ -233,6 +195,8 @@ For local development, you can use a Personal Access Token instead:
 
 ## Resources
 
-- [GitHub OAuth Documentation](https://docs.github.com/en/developers/apps/building-oauth-apps)
+- [GitHub Device Flow Documentation](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow)
 - [GitHub API Rate Limiting](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting)
-- [OAuth 2.0 Best Practices](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics)
+- [OAuth 2.0 Device Flow RFC](https://datatracker.ietf.org/doc/html/rfc8628)
+- [Test Authentication Page](/github-auth-test)
+

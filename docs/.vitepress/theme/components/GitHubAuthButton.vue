@@ -1,5 +1,54 @@
 <template>
   <div class="github-auth">
+    <!-- Device Flow Modal -->
+    <Transition name="modal-fade">
+      <div v-if="showDeviceModal" class="modal-overlay" @click="closeDeviceModal">
+        <div class="modal-content" @click.stop>
+          <button @click="closeDeviceModal" class="modal-close" aria-label="Close">×</button>
+          
+          <div class="device-flow-content">
+            <div class="device-icon">🔐</div>
+            <h3>Sign in with GitHub</h3>
+            
+            <div v-if="deviceFlowStep === 'loading'" class="loading-state">
+              <div class="spinner"></div>
+              <p>Requesting authorization code...</p>
+            </div>
+            
+            <div v-else-if="deviceFlowStep === 'code'" class="code-state">
+              <p class="instruction">Copy this code and click the button below to authorize:</p>
+              <div class="user-code">
+                <code>{{ deviceUserCode }}</code>
+                <button @click="copyCode" class="copy-btn" :title="codeCopied ? 'Copied!' : 'Copy code'">
+                  {{ codeCopied ? '✓' : '📋' }}
+                </button>
+              </div>
+              <a :href="deviceVerificationUri" target="_blank" class="verify-btn" @click="startPolling">
+                Open GitHub to Authorize
+              </a>
+              <p class="waiting-text">Waiting for authorization...</p>
+              <div class="spinner-small"></div>
+              <p class="help-text">Paste the code on GitHub and authorize this app</p>
+            </div>
+            
+            <div v-else-if="deviceFlowStep === 'success'" class="success-state">
+              <div class="success-icon">✅</div>
+              <h4>Successfully signed in!</h4>
+              <p>You now have higher API rate limits</p>
+              <button @click="closeDeviceModal" class="done-btn">Done</button>
+            </div>
+            
+            <div v-else-if="deviceFlowStep === 'error'" class="error-state">
+              <div class="error-icon">❌</div>
+              <h4>Authorization failed</h4>
+              <p>{{ deviceError }}</p>
+              <button @click="retryAuth" class="retry-btn">Try Again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Authenticated State -->
     <div v-if="isAuthenticated" class="auth-status authenticated">
       <span class="status-icon">✅</span>
@@ -34,7 +83,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { githubAuth, getRateLimitStatus } from '../config/github-auth.js'
 
 const props = defineProps({
@@ -54,22 +103,26 @@ const props = defineProps({
 
 const isAuthenticated = ref(false)
 const rateLimitInfo = ref(null)
+const showDeviceModal = ref(false)
+const deviceFlowStep = ref('loading') // loading, code, success, error
+const deviceUserCode = ref('')
+const deviceVerificationUri = ref('')
+const deviceError = ref('')
+const codeCopied = ref(false)
 
 onMounted(async () => {
   // Check authentication status
   isAuthenticated.value = githubAuth.isAuthenticated()
-  
-  // Handle OAuth callback if present
-  const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.has('code')) {
-    await githubAuth.handleCallback()
-    isAuthenticated.value = githubAuth.isAuthenticated()
-  }
 
   // Fetch rate limit info if requested
   if (props.showRateLimit) {
     await fetchRateLimitInfo()
   }
+})
+
+onUnmounted(() => {
+  // Stop polling if modal is closed
+  githubAuth.stopPolling()
 })
 
 async function fetchRateLimitInfo() {
@@ -87,8 +140,45 @@ async function fetchRateLimitInfo() {
   }
 }
 
-function signIn() {
-  githubAuth.login()
+async function signIn() {
+  showDeviceModal.value = true
+  deviceFlowStep.value = 'loading'
+  
+  const result = await githubAuth.login()
+  
+  if (result.success) {
+    deviceFlowStep.value = 'code'
+    deviceUserCode.value = result.userCode
+    deviceVerificationUri.value = result.verificationUri
+  } else {
+    deviceFlowStep.value = 'error'
+    deviceError.value = result.error || 'Failed to initiate sign in'
+  }
+}
+
+function startPolling() {
+  // Start polling for token after user clicks to authorize
+  githubAuth.startPolling(
+    // onSuccess
+    () => {
+      deviceFlowStep.value = 'success'
+      isAuthenticated.value = true
+      if (window.$toast) {
+        window.$toast.success('✅ Successfully signed in with GitHub!')
+      }
+      setTimeout(() => {
+        closeDeviceModal()
+        if (props.showRateLimit) {
+          fetchRateLimitInfo()
+        }
+      }, 2000)
+    },
+    // onError
+    (error) => {
+      deviceFlowStep.value = 'error'
+      deviceError.value = error
+    }
+  )
 }
 
 function signOut() {
@@ -96,6 +186,33 @@ function signOut() {
   isAuthenticated.value = false
   if (window.$toast) {
     window.$toast.success('Signed out from GitHub')
+  }
+  if (props.showRateLimit) {
+    fetchRateLimitInfo()
+  }
+}
+
+function closeDeviceModal() {
+  githubAuth.stopPolling()
+  showDeviceModal.value = false
+  deviceFlowStep.value = 'loading'
+  codeCopied.value = false
+}
+
+function retryAuth() {
+  deviceFlowStep.value = 'loading'
+  signIn()
+}
+
+async function copyCode() {
+  try {
+    await navigator.clipboard.writeText(deviceUserCode.value)
+    codeCopied.value = true
+    setTimeout(() => {
+      codeCopied.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy code:', err)
   }
 }
 
@@ -201,6 +318,188 @@ function formatResetTime(resetTimestamp) {
   font-size: 0.8rem;
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--vp-c-bg);
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--vp-c-text-3);
+  line-height: 1;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  color: var(--vp-c-text-1);
+}
+
+.device-flow-content {
+  text-align: center;
+}
+
+.device-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.device-flow-content h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--vp-c-text-1);
+}
+
+.loading-state, .code-state, .success-state, .error-state {
+  padding: 1rem 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--vp-c-divider);
+  border-top-color: var(--vp-c-brand-1);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.spinner-small {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--vp-c-divider);
+  border-top-color: var(--vp-c-brand-1);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 1rem auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.instruction {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-2);
+  margin-bottom: 1rem;
+}
+
+.user-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.user-code code {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  background: var(--vp-c-bg-soft);
+  border: 2px solid var(--vp-c-brand-1);
+  border-radius: 8px;
+  letter-spacing: 0.5em;
+  color: var(--vp-c-brand-1);
+}
+
+.copy-btn {
+  padding: 0.5rem;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: var(--vp-c-bg-mute);
+}
+
+.verify-btn, .done-btn, .retry-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--vp-c-brand-1);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  margin: 1rem 0;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.verify-btn:hover, .done-btn:hover, .retry-btn:hover {
+  background: var(--vp-c-brand-2);
+  transform: translateY(-2px);
+}
+
+.waiting-text {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-2);
+  margin-top: 1.5rem;
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: var(--vp-c-text-3);
+  margin-top: 0.5rem;
+}
+
+.success-icon, .error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.success-state h4, .error-state h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--vp-c-text-1);
+}
+
+.success-state p, .error-state p {
+  margin: 0 0 1rem 0;
+  color: var(--vp-c-text-2);
+}
+
+.modal-fade-enter-active, .modal-fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.modal-fade-enter-from, .modal-fade-leave-to {
+  opacity: 0;
+}
+
 @media (max-width: 768px) {
   .auth-status {
     flex-direction: column;
@@ -216,6 +515,15 @@ function formatResetTime(resetTimestamp) {
   .rate-limit-info {
     flex-direction: column;
     text-align: center;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+  }
+  
+  .user-code code {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
   }
 }
 </style>
