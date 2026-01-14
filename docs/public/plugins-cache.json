@@ -3,7 +3,7 @@
   "version": "1.0",
   "repository": {
     "owner": "TheCrazy8",
-    "name": "Blaze-And-Company-Official",
+    "name": "Blaze-Official",
     "stars": 1,
     "forks": 0,
     "watchers": 1
@@ -43,8 +43,8 @@
         "cleanup"
       ],
       "lastUpdated": "2026-01-13",
-      "downloadUrl": "https://raw.githubusercontent.com/TheCrazy8/Blaze-And-Company-Official/main/community%20made%20plugins/led_controller_plugin.py",
-      "githubUrl": "https://github.com/TheCrazy8/Blaze-And-Company-Official/blob/main/community%20made%20plugins/led_controller_plugin.py",
+      "downloadUrl": "https://raw.githubusercontent.com/TheCrazy8/Blaze-Official/main/community%20made%20plugins/led_controller_plugin.py",
+      "githubUrl": "https://github.com/TheCrazy8/Blaze-Official/blob/main/community%20made%20plugins/led_controller_plugin.py",
       "size": 4360,
       "commitCount": 1,
       "lineCount": 140,
@@ -97,8 +97,8 @@
         "ramp_dc_motor"
       ],
       "lastUpdated": "2026-01-13",
-      "downloadUrl": "https://raw.githubusercontent.com/TheCrazy8/Blaze-And-Company-Official/main/community%20made%20plugins/motor_controller_plugin.py",
-      "githubUrl": "https://github.com/TheCrazy8/Blaze-And-Company-Official/blob/main/community%20made%20plugins/motor_controller_plugin.py",
+      "downloadUrl": "https://raw.githubusercontent.com/TheCrazy8/Blaze-Official/main/community%20made%20plugins/motor_controller_plugin.py",
+      "githubUrl": "https://github.com/TheCrazy8/Blaze-Official/blob/main/community%20made%20plugins/motor_controller_plugin.py",
       "size": 11321,
       "commitCount": 1,
       "lineCount": 312,
