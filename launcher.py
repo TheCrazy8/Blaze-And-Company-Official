@@ -329,7 +329,7 @@ def install_dependencies(install_dir):
 
 
 def run_brightos(install_dir):
-    """Run BrightOS.py"""
+    """Run BrightOS.py from its directory"""
     brightos_path = os.path. join(install_dir, "BrightOS.py")
     
     if not os.path. exists(brightos_path):
@@ -338,8 +338,8 @@ def run_brightos(install_dir):
     
     print("\nStarting BrightOS...")
     try:
-        # Run BrightOS.py with Python
-        subprocess.run([sys.executable, brightos_path])
+        # Run BrightOS.py with Python from the install directory
+        subprocess.run([sys.executable, brightos_path], cwd=install_dir)
         return True
     except Exception as e:  
         print(f"✗ Error running BrightOS: {e}")
