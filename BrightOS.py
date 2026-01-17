@@ -43,7 +43,9 @@ def discover_arduino_ip():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
-    # Bind to the broadcast port
+    # Bind to the broadcast port on all interfaces
+    # Note: Binding to '' is necessary to receive UDP broadcasts
+    # Security: We validate sender IP and message format below
     sock.bind(('', BROADCAST_PORT))
     
     # Set timeout for cross-platform compatibility (Windows doesn't have select for sockets)
@@ -71,12 +73,23 @@ def discover_arduino_ip():
           # Optional: Validate sender is on private network
           # This helps prevent spoofing from external networks
           sender_ip = addr[0]
-          first_octet = int(sender_ip.split('.')[0])
-          # Allow private IP ranges (10.x, 172.16-31.x, 192.168.x)
-          if first_octet == 10 or (first_octet == 172) or (first_octet == 192):
+          octets = [int(x) for x in sender_ip.split('.')]
+          
+          # Check for private IP ranges:
+          # 10.0.0.0/8: 10.x.x.x
+          # 172.16.0.0/12: 172.16.x.x - 172.31.x.x
+          # 192.168.0.0/16: 192.168.x.x
+          is_private = (
+            octets[0] == 10 or
+            (octets[0] == 172 and 16 <= octets[1] <= 31) or
+            (octets[0] == 192 and octets[1] == 168)
+          )
+          
+          if is_private:
             return ip_address
           
-          return ip_address  # Still return if not in private range (for edge cases)
+          # Still return if not in private range (for edge cases like unusual network setups)
+          return ip_address
         except (socket.error, ValueError, IndexError):
           # Invalid IP format or sender validation failed
           return None
