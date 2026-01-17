@@ -8,6 +8,8 @@ import threading
 import queue
 import sys
 import importlib.util
+import socket
+import select
 try:
   from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import telemetrix_uno_r4_wifi as telemetrix_wifi
   TelemetrixUnoR4WiFi = telemetrix_wifi.TelemetrixUnoR4WiFi
@@ -20,12 +22,48 @@ import sv_ttk
 
 # Configuration constants
 ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
+BROADCAST_PORT = 48879
+DISCOVERY_TIMEOUT = 3  # seconds to wait for Arduino broadcast
 
 def safe_listdir(path):
   try:
     return os.listdir(path)
   except FileNotFoundError:
     return []
+
+
+def discover_arduino_ip():
+  """
+  Discover Arduino IP address by listening for UDP broadcasts.
+  Returns the IP address as a string, or None if not found.
+  """
+  try:
+    # Create UDP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    
+    # Bind to the broadcast port
+    sock.bind(('', BROADCAST_PORT))
+    sock.setblocking(0)
+    
+    # Wait for broadcast message with timeout
+    ready = select.select([sock], [], [], DISCOVERY_TIMEOUT)
+    
+    if ready[0]:
+      data, addr = sock.recvfrom(1024)
+      message = data.decode('utf-8')
+      
+      # Check if this is a BrightOS Arduino broadcast
+      if message.startswith("BRIGHTOS_ARDUINO:"):
+        ip_address = message.split(":", 1)[1]
+        sock.close()
+        return ip_address
+    
+    sock.close()
+    return None
+  except Exception as e:
+    print(f"Error during Arduino discovery: {e}")
+    return None
 
 
 def load_scripts(script_dir):
@@ -265,7 +303,7 @@ def ChooseScript(plugins, scripts):
       append_output("Telemetrix not connected")
 
   def auto_connect_telemetrix():
-    """Automatically connect to Telemetrix if ARDUINO_IP_ADDRESS environment variable is set"""
+    """Automatically connect to Telemetrix using environment variable or network discovery"""
     if not TelemetrixUnoR4WiFi:
       return
     
@@ -273,11 +311,21 @@ def ChooseScript(plugins, scripts):
     if plugins["telemetrix"]:
       return
     
-    # Get IP address from environment variable
+    # Try to get IP address from environment variable first
     arduino_ip = os.environ.get(ARDUINO_IP_ENV_VAR, "")
-    if not arduino_ip:
-      return
     
+    # If not set, try to discover Arduino on the network
+    if not arduino_ip:
+      append_output("Searching for Arduino on network...")
+      arduino_ip = discover_arduino_ip()
+      
+      if arduino_ip:
+        append_output(f"Discovered Arduino at {arduino_ip}")
+      else:
+        append_output("No Arduino found on network. Use 'Configure Telemetrix' to connect manually.")
+        return
+    
+    # Attempt connection
     try:
       append_output(f"Auto-connecting to Arduino at {arduino_ip}...")
       new_board = TelemetrixUnoR4WiFi(transport_address=arduino_ip)
