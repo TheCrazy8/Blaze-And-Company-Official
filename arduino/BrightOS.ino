@@ -21,8 +21,8 @@
 
 /* YOU MUST ENTER YOUR SSID AND PASSWORD !!!!!!!!!!!!!!! */
 /* WIFI specific defines */
-const char *ssid = "bashnet";
-const char *password = "K2K18B79A5M10B79B10J25B08";
+const char *ssid = "your wifi name";
+const char *password = "your wifi password";
 
 char16_t PORT = 31336;
 
