@@ -118,7 +118,7 @@ def check_rate_limit():
 
 def get_latest_release_info():
     """Get the latest release information from GitHub with authentication"""
-    api_url = "https://api.github.com/repos/TheCrazy8/Blaze-And-Company-Official/releases/latest"
+    api_url = "https://api.github.com/repos/TheCrazy8/Blaze-Official/releases/latest"
     
     try:  
         print("Checking for latest BrightOS version...")
@@ -186,6 +186,41 @@ def download_file(url, dest_path):
         return False
 
 
+def download_files_from_release_assets(release_info, install_dir):
+    """Download Python files from release assets"""
+    FILES_TO_DOWNLOAD = ['BrightOS.py', 'requirements.txt', 'build.py']
+    
+    # Get assets from release
+    assets = release_info.get('assets', [])
+    if not assets:
+        return False
+    
+    # Create a mapping of asset names to download URLs
+    asset_map = {asset['name']: asset['browser_download_url'] for asset in assets}
+    
+    # Download each required file
+    success_count = 0
+    for file_name in FILES_TO_DOWNLOAD:
+        if file_name in asset_map:
+            dest_path = os.path.join(install_dir, file_name)
+            if download_file(asset_map[file_name], dest_path):
+                success_count += 1
+        else:
+            print(f"⚠ Asset not found in release: {file_name}")
+    
+    # Check if we got the essential files (at least BrightOS.py)
+    if success_count > 0 and os.path.exists(os.path.join(install_dir, 'BrightOS.py')):
+        # Save version info
+        tag_name = release_info.get('tag_name', 'unknown')
+        version_file = os.path.join(install_dir, "version.txt")
+        with open(version_file, 'w') as f:
+            f.write(tag_name)
+        print(f"✓ Installed version: {tag_name}")
+        return True
+    
+    return False
+
+
 def download_and_extract_release(install_dir):
     """Download and extract the latest BrightOS release"""
     # Files to copy from the repository
@@ -195,19 +230,27 @@ def download_and_extract_release(install_dir):
     release_info = get_latest_release_info()
     
     if release_info:
-        # Get the zipball URL from the release
+        # First, try to download files from release assets
+        print(f"Found version: {release_info.get('tag_name', 'unknown')}")
+        print("Attempting to download from release assets...")
+        
+        if download_files_from_release_assets(release_info, install_dir):
+            print("✓ Successfully downloaded files from release assets")
+            return True
+        
+        print("⚠ Release assets not available, falling back to zipball...")
+        
+        # Fallback to zipball if assets aren't available
         tag_name = release_info. get('tag_name', 'latest')
         zipball_url = release_info. get('zipball_url')
         
         if not zipball_url:
             print("No download URL found in release.  Falling back to main branch.")
-            zipball_url = "https://github.com/TheCrazy8/Blaze-And-Company-Official/archive/refs/heads/main.zip"
+            zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
             tag_name = "main"
-        
-        print(f"Found version: {tag_name}")
     else:
         # Fallback to main branch
-        zipball_url = "https://github.com/TheCrazy8/Blaze-And-Company-Official/archive/refs/heads/main.zip"
+        zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
         tag_name = "main"
         print("Using main branch")
     
