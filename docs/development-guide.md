@@ -593,12 +593,13 @@ my_script.main(mock_plugins)
 ### Integration Testing
 
 1. Start BrightOS
-2. Connect to Telemetrix
-3. Load your plugin/script
-4. Run with minimal hardware first
-5. Test error cases (disconnect, invalid values)
-6. Test the stop() function
-7. Verify cleanup happens correctly
+   - **Auto-connection**: Set `ARDUINO_IP_ADDRESS` environment variable before launching
+   - **Manual connection**: Use "Configure Telemetrix" button after launching
+2. Load your plugin/script
+3. Run with minimal hardware first
+4. Test error cases (disconnect, invalid values)
+5. Test the stop() function
+6. Verify cleanup happens correctly
 
 ---
 

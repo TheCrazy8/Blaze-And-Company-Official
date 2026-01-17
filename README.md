@@ -91,6 +91,24 @@ When you run BrightOS (via launcher or manually), it creates:
    ```
 
 #### BrightOS Telemetrix Configuration
+
+**Option 1: Auto-Connection (Recommended)**
+1. Set the `ARDUINO_IP_ADDRESS` environment variable to your Arduino's IP address
+2. Launch BrightOS - it will automatically connect to the Arduino board
+
+**Windows:**
+```cmd
+set ARDUINO_IP_ADDRESS=192.168.1.xxx
+python BrightOS.py
+```
+
+**Linux/macOS:**
+```bash
+export ARDUINO_IP_ADDRESS=192.168.1.xxx
+python3 BrightOS.py
+```
+
+**Option 2: Manual Configuration**
 1. Launch BrightOS
 2. Click "Configure Telemetrix"
 3. Enter your Arduino's IP address
