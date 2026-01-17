@@ -118,7 +118,7 @@ def check_rate_limit():
 
 def get_latest_release_info():
     """Get the latest release information from GitHub with authentication"""
-    api_url = "https://api.github.com/repos/TheCrazy8/Blaze-And-Company-Official/releases/latest"
+    api_url = "https://api.github.com/repos/TheCrazy8/Blaze-Official/releases/latest"
     
     try:  
         print("Checking for latest BrightOS version...")
@@ -186,6 +186,41 @@ def download_file(url, dest_path):
         return False
 
 
+def download_files_from_release_assets(release_info, install_dir):
+    """Download Python files from release assets"""
+    FILES_TO_DOWNLOAD = ['BrightOS.py', 'requirements.txt', 'build.py']
+    
+    # Get assets from release
+    assets = release_info.get('assets', [])
+    if not assets:
+        return False
+    
+    # Create a mapping of asset names to download URLs
+    asset_map = {asset['name']: asset['browser_download_url'] for asset in assets}
+    
+    # Download each required file
+    success_count = 0
+    for file_name in FILES_TO_DOWNLOAD:
+        if file_name in asset_map:
+            dest_path = os.path.join(install_dir, file_name)
+            if download_file(asset_map[file_name], dest_path):
+                success_count += 1
+        else:
+            print(f"⚠ Asset not found in release: {file_name}")
+    
+    # Check if we got the essential files (at least BrightOS.py)
+    if success_count > 0 and os.path.exists(os.path.join(install_dir, 'BrightOS.py')):
+        # Save version info
+        tag_name = release_info.get('tag_name', 'unknown')
+        version_file = os.path.join(install_dir, "version.txt")
+        with open(version_file, 'w') as f:
+            f.write(tag_name)
+        print(f"✓ Installed version: {tag_name}")
+        return True
+    
+    return False
+
+
 def download_and_extract_release(install_dir):
     """Download and extract the latest BrightOS release"""
     # Files to copy from the repository
@@ -195,19 +230,27 @@ def download_and_extract_release(install_dir):
     release_info = get_latest_release_info()
     
     if release_info:
-        # Get the zipball URL from the release
-        tag_name = release_info. get('tag_name', 'latest')
-        zipball_url = release_info. get('zipball_url')
+        # First, try to download files from release assets
+        print(f"Found version: {release_info.get('tag_name', 'unknown')}")
+        print("Attempting to download from release assets...")
+        
+        if download_files_from_release_assets(release_info, install_dir):
+            print("✓ Successfully downloaded files from release assets")
+            return True
+        
+        print("⚠ Release assets not available, falling back to zipball...")
+        
+        # Fallback to zipball if assets aren't available
+        tag_name = release_info.get('tag_name', 'latest')
+        zipball_url = release_info.get('zipball_url')
         
         if not zipball_url:
             print("No download URL found in release.  Falling back to main branch.")
-            zipball_url = "https://github.com/TheCrazy8/Blaze-And-Company-Official/archive/refs/heads/main.zip"
+            zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
             tag_name = "main"
-        
-        print(f"Found version: {tag_name}")
     else:
         # Fallback to main branch
-        zipball_url = "https://github.com/TheCrazy8/Blaze-And-Company-Official/archive/refs/heads/main.zip"
+        zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
         tag_name = "main"
         print("Using main branch")
     
@@ -264,7 +307,7 @@ def download_and_extract_release(install_dir):
 
 def install_dependencies(install_dir):
     """Install Python dependencies from requirements.txt"""
-    requirements_path = os.path.join(install_dir, "requirements. txt")
+    requirements_path = os.path.join(install_dir, "requirements.txt")
     
     if not os.path.exists(requirements_path):
         print("⚠ requirements.txt not found, skipping dependency installation")
@@ -286,17 +329,17 @@ def install_dependencies(install_dir):
 
 
 def run_brightos(install_dir):
-    """Run BrightOS.py"""
-    brightos_path = os.path. join(install_dir, "BrightOS.py")
+    """Run BrightOS.py from the install directory (e.g., AppData/Local/BrightOS/install)"""
+    brightos_path = os.path.join(install_dir, "BrightOS.py")
     
-    if not os.path. exists(brightos_path):
+    if not os.path.exists(brightos_path):
         print(f"✗ BrightOS.py not found at {brightos_path}")
         return False
     
     print("\nStarting BrightOS...")
     try:
-        # Run BrightOS.py with Python
-        subprocess.run([sys.executable, brightos_path])
+        # Run BrightOS.py with Python from the install directory
+        subprocess.run([sys.executable, brightos_path], cwd=install_dir)
         return True
     except Exception as e:  
         print(f"✗ Error running BrightOS: {e}")
@@ -305,7 +348,7 @@ def run_brightos(install_dir):
 
 def check_for_updates(install_dir):
     """Check if an update is available"""
-    version_file = os.path.join(install_dir, "version. txt")
+    version_file = os.path.join(install_dir, "version.txt")
     
     if not os.path.exists(version_file):
         return True  # No version file means we should install
@@ -346,7 +389,7 @@ def check_directories_exist():
             return False
     
     # Check if Importlist.txt exists
-    importlist_path = os.path. join(brightos_dir, "Importlist.txt")
+    importlist_path = os.path.join(brightos_dir, "Importlist.txt")
     if not os.path.exists(importlist_path):
         return False
     
@@ -357,7 +400,7 @@ def check_dependencies_installed(install_dir):
     """Check if dependencies are installed by checking pip list"""
     requirements_path = os.path.join(install_dir, "requirements.txt")
     
-    if not os.path. exists(requirements_path):
+    if not os.path.exists(requirements_path):
         return True  # No requirements file, assume OK
     
     try:

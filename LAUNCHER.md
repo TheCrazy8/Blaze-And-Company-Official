@@ -96,7 +96,9 @@ python3 launcher.py
 ## How Updates Work
 
 - The **launcher** (`.exe` on Windows or `.py` script) is a tool you run locally
-- When you run it, it automatically downloads the latest **Python files** from GitHub
+- When you run it, it automatically downloads the latest **Python files** from GitHub releases
+- The launcher first tries to download individual files from release assets (faster and more efficient)
+- If release assets aren't available, it falls back to downloading the full repository zip
 - You don't need to download a new launcher for BrightOS updates - just run it again
 - Updates are pulled from the GitHub repository's latest release or main branch
 - **Cross-platform**: Works on Windows, Linux, and macOS
