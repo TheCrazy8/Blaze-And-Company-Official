@@ -21,7 +21,7 @@ import sv_ttk
 
 # Configuration constants
 ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
-BROADCAST_PORT = 48879
+BROADCAST_PORT = 31335  # Must match DISCOVERY_PORT in Arduino code
 DISCOVERY_TIMEOUT = 3  # seconds to wait for Arduino broadcast
 
 def safe_listdir(path):
