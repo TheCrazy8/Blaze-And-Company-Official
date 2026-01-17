@@ -62,6 +62,11 @@ When you run BrightOS (via launcher or manually), it creates:
 ### Telemetrix Configuration
 
 #### Arduino Setup
+
+**Option 1: Auto-Discovery Sketch (Recommended)**
+
+Use the modified sketch that automatically broadcasts its IP address:
+
 1. Open Arduino IDE
 
 2. Install Telemetrix4UnoR4 library:
@@ -69,7 +74,30 @@ When you run BrightOS (via launcher or manually), it creates:
    - Search for "Telemetrix4UnoR4"  
    - Click Install  
 
-3. Load the WiFi example:
+3. Load the auto-discovery sketch from this repository:
+   - Open `arduino/WiFi_Telemetrix4UnoR4WiFi_AutoDiscovery.ino`
+   - See [arduino/README.md](arduino/README.md) for detailed instructions
+
+4. Configure WiFi credentials in `arduino/arduino_secrets.h`:
+   ```cpp
+   // WiFi credentials for Arduino Uno R4 WiFi  
+   #define SECRET_SSID "YOUR_WIFI_NETWORK_NAME"  
+   #define SECRET_PASS "YOUR_WIFI_PASSWORD"
+   ```
+
+5. Upload to your Arduino Uno R4 WiFi board
+
+6. BrightOS will automatically discover and connect to your Arduino!
+
+**Option 2: Standard Sketch (Manual IP Configuration)**
+
+Use the official sketch if you prefer manual configuration:
+
+1. Open Arduino IDE
+
+2. Install Telemetrix4UnoR4 library (same as above)
+
+3. Load the standard WiFi example:
    - Go to File → Examples → Telemetrix4UnoR4 → WiFi_Telemetrix4UnoR4WiFi  
 
 4. Create `arduino_secrets.h` file in the same folder as the sketch:
@@ -91,6 +119,30 @@ When you run BrightOS (via launcher or manually), it creates:
    ```
 
 #### BrightOS Telemetrix Configuration
+
+**Option 1: Automatic Discovery (Recommended)**
+1. Use the auto-discovery Arduino sketch (see Arduino Setup Option 1 above)
+2. Launch BrightOS - it will automatically discover and connect to your Arduino!
+   - No manual configuration needed
+   - Works as long as Arduino and computer are on the same network
+
+**Option 2: Environment Variable**
+1. Set the `ARDUINO_IP_ADDRESS` environment variable to your Arduino's IP address
+2. Launch BrightOS - it will automatically connect to the Arduino board
+
+**Windows:**
+```cmd
+set ARDUINO_IP_ADDRESS=192.168.1.xxx
+python BrightOS.py
+```
+
+**Linux/macOS:**
+```bash
+export ARDUINO_IP_ADDRESS=192.168.1.xxx
+python3 BrightOS.py
+```
+
+**Option 3: Manual Configuration**
 1. Launch BrightOS
 2. Click "Configure Telemetrix"
 3. Enter your Arduino's IP address
