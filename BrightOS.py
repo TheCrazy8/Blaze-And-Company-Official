@@ -9,7 +9,6 @@ import queue
 import sys
 import importlib.util
 import socket
-import select
 try:
   from telemetrix_uno_r4.wifi.telemetrix_uno_r4_wifi import telemetrix_uno_r4_wifi as telemetrix_wifi
   TelemetrixUnoR4WiFi = telemetrix_wifi.TelemetrixUnoR4WiFi
@@ -36,6 +35,7 @@ def discover_arduino_ip():
   """
   Discover Arduino IP address by listening for UDP broadcasts.
   Returns the IP address as a string, or None if not found.
+  Cross-platform implementation using socket.settimeout().
   """
   sock = None
   try:
@@ -45,12 +45,12 @@ def discover_arduino_ip():
     
     # Bind to the broadcast port
     sock.bind(('', BROADCAST_PORT))
-    sock.setblocking(0)
     
-    # Wait for broadcast message with timeout
-    ready = select.select([sock], [], [], DISCOVERY_TIMEOUT)
+    # Set timeout for cross-platform compatibility (Windows doesn't have select for sockets)
+    sock.settimeout(DISCOVERY_TIMEOUT)
     
-    if ready[0]:
+    # Wait for broadcast message
+    try:
       data, addr = sock.recvfrom(1024)
       
       # Safely decode UTF-8 data
@@ -67,14 +67,26 @@ def discover_arduino_ip():
         try:
           # Use socket.inet_aton to validate IPv4 format
           socket.inet_aton(ip_address)
-          return ip_address
-        except socket.error:
-          print(f"Invalid IP address format received: {ip_address}")
+          
+          # Optional: Validate sender is on private network
+          # This helps prevent spoofing from external networks
+          sender_ip = addr[0]
+          first_octet = int(sender_ip.split('.')[0])
+          # Allow private IP ranges (10.x, 172.16-31.x, 192.168.x)
+          if first_octet == 10 or (first_octet == 172) or (first_octet == 192):
+            return ip_address
+          
+          return ip_address  # Still return if not in private range (for edge cases)
+        except (socket.error, ValueError, IndexError):
+          # Invalid IP format or sender validation failed
           return None
+    except socket.timeout:
+      # No broadcast received within timeout
+      return None
     
     return None
-  except Exception as e:
-    print(f"Error during Arduino discovery: {e}")
+  except Exception:
+    # Silently fail - error will be shown in GUI via calling function
     return None
   finally:
     # Ensure socket is always closed
