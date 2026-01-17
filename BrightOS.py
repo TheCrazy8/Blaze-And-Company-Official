@@ -264,6 +264,29 @@ def ChooseScript(plugins, scripts):
     else:
       append_output("Telemetrix not connected")
 
+  def auto_connect_telemetrix():
+    """Automatically connect to Telemetrix if ARDUINO_IP_ADDRESS environment variable is set"""
+    if not TelemetrixUnoR4WiFi:
+      return
+    
+    # Check if already connected
+    if plugins["telemetrix"]:
+      return
+    
+    # Get IP address from environment variable
+    arduino_ip = os.environ.get(ARDUINO_IP_ENV_VAR, "")
+    if not arduino_ip:
+      return
+    
+    try:
+      append_output(f"Auto-connecting to Arduino at {arduino_ip}...")
+      new_board = TelemetrixUnoR4WiFi(transport_address=arduino_ip)
+      plugins["telemetrix"] = new_board
+      append_output(f"Auto-connected to Telemetrix at {arduino_ip}")
+    except Exception as exc:
+      append_output(f"Auto-connection failed: {exc}")
+      append_output("Use 'Configure Telemetrix' button to connect manually.")
+
   def run_selected():
     if running_thread["thread"] and running_thread["thread"].is_alive():
       append_output("A script is already running.")
@@ -327,6 +350,9 @@ def ChooseScript(plugins, scripts):
   ttk.Button(root, text="Stop", command=stop_running).pack(padx=10, pady=(0, 10))
 
   append_output(f"Plugins loaded: {len(plugins)}, Scripts loaded: {len(scripts)}")
+  
+  # Attempt auto-connection if ARDUINO_IP_ADDRESS environment variable is set
+  auto_connect_telemetrix()
 
   sv_ttk.use_dark_theme()
   poll_output()
