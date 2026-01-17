@@ -241,8 +241,8 @@ def download_and_extract_release(install_dir):
         print("⚠ Release assets not available, falling back to zipball...")
         
         # Fallback to zipball if assets aren't available
-        tag_name = release_info. get('tag_name', 'latest')
-        zipball_url = release_info. get('zipball_url')
+        tag_name = release_info.get('tag_name', 'latest')
+        zipball_url = release_info.get('zipball_url')
         
         if not zipball_url:
             print("No download URL found in release.  Falling back to main branch.")
@@ -307,7 +307,7 @@ def download_and_extract_release(install_dir):
 
 def install_dependencies(install_dir):
     """Install Python dependencies from requirements.txt"""
-    requirements_path = os.path.join(install_dir, "requirements. txt")
+    requirements_path = os.path.join(install_dir, "requirements.txt")
     
     if not os.path.exists(requirements_path):
         print("⚠ requirements.txt not found, skipping dependency installation")
@@ -329,10 +329,10 @@ def install_dependencies(install_dir):
 
 
 def run_brightos(install_dir):
-    """Run BrightOS.py from its directory"""
-    brightos_path = os.path. join(install_dir, "BrightOS.py")
+    """Run BrightOS.py from the install directory (e.g., AppData/Local/BrightOS/install)"""
+    brightos_path = os.path.join(install_dir, "BrightOS.py")
     
-    if not os.path. exists(brightos_path):
+    if not os.path.exists(brightos_path):
         print(f"✗ BrightOS.py not found at {brightos_path}")
         return False
     
@@ -348,7 +348,7 @@ def run_brightos(install_dir):
 
 def check_for_updates(install_dir):
     """Check if an update is available"""
-    version_file = os.path.join(install_dir, "version. txt")
+    version_file = os.path.join(install_dir, "version.txt")
     
     if not os.path.exists(version_file):
         return True  # No version file means we should install
@@ -389,7 +389,7 @@ def check_directories_exist():
             return False
     
     # Check if Importlist.txt exists
-    importlist_path = os.path. join(brightos_dir, "Importlist.txt")
+    importlist_path = os.path.join(brightos_dir, "Importlist.txt")
     if not os.path.exists(importlist_path):
         return False
     
@@ -400,7 +400,7 @@ def check_dependencies_installed(install_dir):
     """Check if dependencies are installed by checking pip list"""
     requirements_path = os.path.join(install_dir, "requirements.txt")
     
-    if not os.path. exists(requirements_path):
+    if not os.path.exists(requirements_path):
         return True  # No requirements file, assume OK
     
     try:
