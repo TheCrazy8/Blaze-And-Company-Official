@@ -37,6 +37,7 @@ def discover_arduino_ip():
   Discover Arduino IP address by listening for UDP broadcasts.
   Returns the IP address as a string, or None if not found.
   """
+  sock = None
   try:
     # Create UDP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -51,19 +52,37 @@ def discover_arduino_ip():
     
     if ready[0]:
       data, addr = sock.recvfrom(1024)
-      message = data.decode('utf-8')
+      
+      # Safely decode UTF-8 data
+      try:
+        message = data.decode('utf-8')
+      except UnicodeDecodeError:
+        return None
       
       # Check if this is a BrightOS Arduino broadcast
       if message.startswith("BRIGHTOS_ARDUINO:"):
-        ip_address = message.split(":", 1)[1]
-        sock.close()
-        return ip_address
+        ip_address = message.split(":", 1)[1].strip()
+        
+        # Validate IP address format
+        try:
+          # Use socket.inet_aton to validate IPv4 format
+          socket.inet_aton(ip_address)
+          return ip_address
+        except socket.error:
+          print(f"Invalid IP address format received: {ip_address}")
+          return None
     
-    sock.close()
     return None
   except Exception as e:
     print(f"Error during Arduino discovery: {e}")
     return None
+  finally:
+    # Ensure socket is always closed
+    if sock:
+      try:
+        sock.close()
+      except Exception:
+        pass
 
 
 def load_scripts(script_dir):

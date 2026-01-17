@@ -25,7 +25,13 @@ In Arduino IDE:
 
 ### 2. Configure WiFi Credentials
 
-Edit `arduino_secrets.h` and replace with your WiFi network details:
+1. Copy `arduino_secrets.h.template` to `arduino_secrets.h`:
+   ```bash
+   # In the arduino directory
+   cp arduino_secrets.h.template arduino_secrets.h
+   ```
+
+2. Edit `arduino_secrets.h` and replace with your WiFi network details:
 
 ```cpp
 #define SECRET_SSID "YOUR_WIFI_NETWORK_NAME"
