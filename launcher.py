@@ -17,6 +17,11 @@ import shutil
 from pathlib import Path
 import tempfile
 
+# GitHub repository configuration
+GITHUB_REPO_OWNER = "TheCrazy8"
+GITHUB_REPO_NAME = "Blaze-Official"
+GITHUB_REPO = f"{GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}"
+
 
 def get_user_dir():
     """Get the user's home directory"""
@@ -27,7 +32,7 @@ def get_brightos_dir():
     """Get the BrightOS installation directory"""
     userdir = get_user_dir()
     if sys.platform == "win32":  
-        return os.path. join(userdir, "AppData", "Local", "BrightOS")
+        return os.path.join(userdir, "AppData", "Local", "BrightOS")
     else:
         # For other platforms, use a hidden directory in home
         return os.path.join(userdir, ".brightos")
@@ -72,7 +77,7 @@ def create_directories():
     
     directories = [
         brightos_dir,
-        os. path.join(brightos_dir, "Plugins"),
+        os.path.join(brightos_dir, "Plugins"),
         os.path.join(brightos_dir, "Scripts"),
         os.path.join(brightos_dir, "install")
     ]
@@ -86,7 +91,7 @@ def create_directories():
             return False
     
     # Create Importlist.txt if it doesn't exist
-    importlist_path = os.path. join(brightos_dir, "Importlist.txt")
+    importlist_path = os.path.join(brightos_dir, "Importlist.txt")
     if not os.path.exists(importlist_path):
         try:
             with open(importlist_path, 'w') as f:
@@ -133,7 +138,7 @@ def get_latest_release_from_atom():
     """Get the latest release information from GitHub Atom feed (no rate limit)"""
     import xml.etree.ElementTree as ET
     
-    atom_url = "https://github.com/TheCrazy8/Blaze-Official/releases.atom"
+    atom_url = f"https://github.com/{GITHUB_REPO}/releases.atom"
     
     try:
         req = urllib.request.Request(atom_url)
@@ -159,7 +164,7 @@ def get_latest_release_from_atom():
         link = latest_entry.find('atom:link', ns)
         if link is not None:
             href = link.get('href', '')
-            # Extract tag from URL like https://github.com/TheCrazy8/Blaze-Official/releases/tag/dev-20260117-223158
+            # Extract tag from URL like https://github.com/{owner}/{repo}/releases/tag/{tag}
             if '/releases/tag/' in href:
                 tag_name = href.split('/releases/tag/')[-1]
                 # Skip launcher releases (we only want BrightOS releases)
@@ -185,7 +190,7 @@ def get_latest_release_from_atom():
 
 def get_latest_release_info():
     """Get the latest release information from GitHub with authentication"""
-    api_url = "https://api.github.com/repos/TheCrazy8/Blaze-Official/releases/latest"
+    api_url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
     
     try:  
         print("Checking for latest BrightOS version...")
@@ -214,7 +219,7 @@ def get_latest_release_info():
             print("   2. Click 'Generate new token (classic)'")
             print("   3. Select only 'public_repo' scope")
             print("   4. Copy the token (starts with ghp_)")
-            print("   5. Save it to: " + os.path. join(get_brightos_dir(), '.github_token'))
+            print("   5. Save it to: " + os.path.join(get_brightos_dir(), '.github_token'))
             print("\n  Falling back to main branch...")
             return None
         else:  
@@ -308,10 +313,10 @@ def download_and_extract_release(install_dir):
         
         # Use public archive URL (doesn't require authentication)
         # Format: https://github.com/owner/repo/archive/refs/tags/{tag}.zip
-        zipball_url = f"https://github.com/TheCrazy8/Blaze-Official/archive/refs/tags/{tag_name}.zip"
+        zipball_url = f"https://github.com/{GITHUB_REPO}/archive/refs/tags/{tag_name}.zip"
     else:
         # Fallback to main branch
-        zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
+        zipball_url = f"https://github.com/{GITHUB_REPO}/archive/refs/heads/main.zip"
         tag_name = "main"
         print("Using main branch")
     
@@ -329,7 +334,7 @@ def download_and_extract_release(install_dir):
                 zip_ref.extractall(temp_dir)
             
             # Find the extracted directory (GitHub zips have a top-level directory)
-            extracted_dirs = [d for d in os. listdir(temp_dir) if os.path.isdir(os. path.join(temp_dir, d))]
+            extracted_dirs = [d for d in os.listdir(temp_dir) if os.path.isdir(os.path.join(temp_dir, d))]
             if not extracted_dirs:
                 print("✗ No directory found in zip file")
                 return False
