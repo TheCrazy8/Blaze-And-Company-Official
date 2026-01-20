@@ -300,7 +300,8 @@ class TemperatureSensor(SamplePlugin):
             return None
         
         # Validate humidity to prevent math domain error
-        if humidity <= 0 or humidity > 100:
+        # Use small epsilon instead of 0 to avoid log(0)
+        if humidity < 0.01 or humidity > 100:
             self.eprint(f"Invalid humidity value: {humidity}%")
             return None
         

@@ -101,9 +101,9 @@ class Electromagnet(SamplePlugin):
             
         # Auto-setup pin if not configured
         if pin not in self._magnet_pins:
-            # Use PWM mode if strength is less than 100% for variable control
-            # Digital mode (non-PWM) is used for simple on/off at full strength
-            if not self.setup_magnet(pin, pwm=(strength < 100)):
+            # Always use PWM mode in auto-setup for maximum flexibility
+            # This allows both full strength (100%) and variable strength (0-99%)
+            if not self.setup_magnet(pin, pwm=True):
                 return False
         
         if not 0 <= strength <= 100:
