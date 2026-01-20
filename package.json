@@ -1,16 +1,28 @@
 {
-  "name": "github-device-backend",
+  "name": "Blaze & Company Official",
   "version": "1.0.0",
-  "type": "module",
-  "engines": {
-    "node": ">=18"
-  },
+  "description": "Official Blaze & Company site",
+  "main": "index. js",
   "scripts": {
-    "start": "node server.js"
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "serve": "vitepress serve docs"
+  },
+  "author": "theCrazy8",
+  "license": "CC-BY-NC-SA-4.0",
+  "devDependencies": {
+    "sass": "^1.83.1",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.18"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
-    "express": "^4.18.2"
+    "@lando/vitepress-theme-default-plus": "^1.1.1",
+    "@nolebase/vitepress-plugin-enhanced-readabilities": "^2.18.2",
+    "@supabase/supabase-js": "^2.90.1",
+    "markdown-it-footnote": "^4.0.0",
+    "viewerjs": "^1.11.7",
+    "vitepress-plugin-back-to-top": "^1.0.1",
+    "vitepress-plugin-image-viewer": "^1.1.6"
   }
 }
