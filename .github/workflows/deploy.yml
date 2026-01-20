@@ -294,6 +294,7 @@ jobs:
           SCRIPT_END
       - name: Install dependencies and build pages
         run: |
+          cd docs
           npm install
           npm run build
       - name: Upload artifact
