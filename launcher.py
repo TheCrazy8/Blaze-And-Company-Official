@@ -36,9 +36,22 @@ def get_brightos_dir():
 def get_github_token():
     """Get GitHub token from environment variable or config file"""
     # Try environment variable first
-    token = "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"
+    token = os.environ.get('GITHUB_TOKEN') or os.environ.get('VITE_GITHUB_TOKEN')
     if token:
         return token
+    
+    # Try reading from config file
+    try:
+        token_file = os.path.join(get_brightos_dir(), '.github_token')
+        if os.path.exists(token_file):
+            with open(token_file, 'r') as f:
+                token = f.read().strip()
+                if token:
+                    return token
+    except Exception:
+        pass
+    
+    return None
 
 def create_authenticated_request(url):
     """Create a URL request with GitHub authentication if available"""
@@ -231,23 +244,19 @@ def download_and_extract_release(install_dir):
     
     if release_info:
         # First, try to download files from release assets
-        print(f"Found version: {release_info.get('tag_name', 'unknown')}")
+        tag_name = release_info.get('tag_name', 'latest')
+        print(f"Found version: {tag_name}")
         print("Attempting to download from release assets...")
         
         if download_files_from_release_assets(release_info, install_dir):
             print("✓ Successfully downloaded files from release assets")
             return True
         
-        print("⚠ Release assets not available, falling back to zipball...")
+        print("⚠ Release assets not available, downloading release archive...")
         
-        # Fallback to zipball if assets aren't available
-        tag_name = release_info.get('tag_name', 'latest')
-        zipball_url = release_info.get('zipball_url')
-        
-        if not zipball_url:
-            print("No download URL found in release.  Falling back to main branch.")
-            zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
-            tag_name = "main"
+        # Use public archive URL (doesn't require authentication)
+        # Format: https://github.com/owner/repo/archive/refs/tags/{tag}.zip
+        zipball_url = f"https://github.com/TheCrazy8/Blaze-Official/archive/refs/tags/{tag_name}.zip"
     else:
         # Fallback to main branch
         zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
