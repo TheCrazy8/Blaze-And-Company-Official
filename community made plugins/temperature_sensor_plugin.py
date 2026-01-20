@@ -30,6 +30,7 @@ Example usage in a script:
 
 from simple_plugin_loader.sample_plugin import SamplePlugin
 import time
+import math
 
 
 class TemperatureSensor(SamplePlugin):
@@ -109,6 +110,13 @@ class TemperatureSensor(SamplePlugin):
         """
         Internal method to read DHT sensor data.
         Returns tuple (temperature_celsius, humidity_percent) or (None, None) on error.
+        
+        NOTE: This is a placeholder implementation. For actual sensor readings,
+        Telemetrix should have built-in DHT support with callbacks. Check your 
+        Telemetrix documentation for the proper DHT implementation for your board.
+        
+        If your board doesn't support DHT mode, you'll need to implement
+        DHT protocol timing on the Arduino side and read the results via callbacks.
         """
         if pin not in self._sensors:
             return None, None
@@ -121,29 +129,19 @@ class TemperatureSensor(SamplePlugin):
             cached = self._last_readings[pin]
             return cached["temperature"], cached["humidity"]
         
-        try:
-            # Note: This is a placeholder for actual DHT reading
-            # Real implementation depends on Telemetrix DHT support
-            # Most Telemetrix implementations use callbacks for DHT readings
-            
-            # If Telemetrix has DHT support, it would typically work like:
-            # self._board.dht_read(pin, callback=self._dht_callback)
-            # and the callback would update _last_readings
-            
-            # For this implementation, we'll use a simplified approach
-            # In production, check your Telemetrix documentation for DHT support
-            
-            # Update last read time
-            self._sensors[pin]["last_read_time"] = current_time
-            
-            # Return last cached readings
-            # (In real implementation, this would be updated by callback or direct read)
-            cached = self._last_readings[pin]
-            return cached["temperature"], cached["humidity"]
-            
-        except Exception as e:
-            self.eprint(f"Error reading DHT sensor on pin {pin}: {e}")
-            return None, None
+        # NOTE: This implementation is incomplete and returns placeholder values.
+        # For actual sensor readings, implement one of these approaches:
+        # 1. Use Telemetrix's built-in DHT support with callbacks if available
+        # 2. Create custom Arduino firmware that reads DHT data
+        # 3. Use the DHT library on Arduino and send results via serial
+        
+        # Update last read time
+        self._sensors[pin]["last_read_time"] = current_time
+        
+        # Return None to indicate no valid reading
+        # Users should implement proper DHT support based on their hardware
+        self.eprint("Warning: DHT sensor requires proper Telemetrix DHT support with callbacks")
+        return None, None
     
     def read_temperature(self, pin):
         """
@@ -301,7 +299,7 @@ class TemperatureSensor(SamplePlugin):
         a = 17.27
         b = 237.7
         
-        alpha = ((a * temp_c) / (b + temp_c)) + (humidity / 100.0)
+        alpha = ((a * temp_c) / (b + temp_c)) + math.log(humidity / 100.0)
         dew_point_c = (b * alpha) / (a - alpha)
         
         if use_fahrenheit:

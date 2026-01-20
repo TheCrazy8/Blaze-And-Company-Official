@@ -125,11 +125,15 @@ class Buzzer(SamplePlugin):
                 self.print(f"Playing {frequency}Hz for {duration}s")
             else:
                 # Fallback: Use PWM approximation
-                # This is a simplified approach - actual tone generation is complex
+                # NOTE: This simplified PWM approach does not generate accurate frequencies.
+                # It only provides a basic on/off signal. For actual tone generation,
+                # the Arduino should have tone support, or use a proper tone library.
+                # Consider implementing tone generation on the Arduino side for accurate results.
+                self.print(f"Warning: No tone support - using basic PWM (frequency control not available)")
                 self._board.analog_write(pin, 128)  # 50% duty cycle
                 time.sleep(duration)
                 self._board.analog_write(pin, 0)
-                self.print(f"Played tone (PWM mode) for {duration}s")
+                self.print(f"Basic PWM signal for {duration}s (not frequency-accurate)")
             
             return True
             

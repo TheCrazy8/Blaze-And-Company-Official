@@ -92,47 +92,29 @@ class DistanceSensor(SamplePlugin):
         """
         Internal method to read ultrasonic sensor.
         Returns distance in centimeters.
+        
+        NOTE: This is a placeholder implementation. For actual distance readings,
+        Telemetrix should have built-in sonar support. Check your Telemetrix 
+        documentation for the proper sonar implementation for your board.
+        
+        If your board doesn't support sonar mode, you'll need to implement
+        pulse timing measurement on the Arduino side and read the results.
         """
         if trigger_pin not in self._sensors:
             return None
             
         echo_pin = self._sensors[trigger_pin]["echo_pin"]
         
-        try:
-            # Send trigger pulse
-            self._board.digital_write(trigger_pin, 0)
-            time.sleep(0.000002)  # 2 microseconds
-            self._board.digital_write(trigger_pin, 1)
-            time.sleep(0.00001)  # 10 microseconds
-            self._board.digital_write(trigger_pin, 0)
-            
-            # Measure echo pulse duration
-            # Note: This is a simplified implementation
-            # For accurate readings, Telemetrix should have built-in sonar support
-            # or we need to use sonar mode if available
-            
-            # Try to use sonar mode if available
-            try:
-                # Some Telemetrix versions support sonar directly
-                if hasattr(self._board, 'set_pin_mode_sonar'):
-                    self._board.set_pin_mode_sonar(trigger_pin, echo_pin)
-                    # This would typically use a callback, but for simplicity
-                    # we'll use a blocking approach with timeout
-                    time.sleep(0.1)  # Wait for reading
-                    # In real implementation, callback would update _last_readings
-            except AttributeError:
-                pass
-            
-            # For now, return a simulated/estimated value
-            # In production, this would use actual pulse duration measurement
-            # Users should refer to Telemetrix sonar documentation for their board
-            
-            # Return last known value (placeholder for actual implementation)
-            return self._last_readings.get(trigger_pin, 0)
-            
-        except Exception as e:
-            self.eprint(f"Error reading ultrasonic sensor on pin {trigger_pin}: {e}")
-            return None
+        # NOTE: This implementation is incomplete and returns placeholder values.
+        # For actual sensor readings, implement one of these approaches:
+        # 1. Use Telemetrix's built-in sonar support if available
+        # 2. Create custom Arduino firmware that measures pulse duration
+        # 3. Use interrupt-based timing measurement
+        
+        # Return None to indicate no valid reading
+        # Users should implement proper sonar support based on their hardware
+        self.eprint("Warning: Ultrasonic sensor requires proper Telemetrix sonar support")
+        return None
     
     def read_distance(self, trigger_pin, num_samples=1):
         """
