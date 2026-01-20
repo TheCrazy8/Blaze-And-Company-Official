@@ -17,6 +17,11 @@ import shutil
 from pathlib import Path
 import tempfile
 
+# GitHub repository configuration
+GITHUB_REPO_OWNER = "TheCrazy8"
+GITHUB_REPO_NAME = "Blaze-Official"
+GITHUB_REPO = f"{GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}"
+
 
 def get_user_dir():
     """Get the user's home directory"""
@@ -27,7 +32,7 @@ def get_brightos_dir():
     """Get the BrightOS installation directory"""
     userdir = get_user_dir()
     if sys.platform == "win32":  
-        return os.path. join(userdir, "AppData", "Local", "BrightOS")
+        return os.path.join(userdir, "AppData", "Local", "BrightOS")
     else:
         # For other platforms, use a hidden directory in home
         return os.path.join(userdir, ".brightos")
@@ -36,9 +41,22 @@ def get_brightos_dir():
 def get_github_token():
     """Get GitHub token from environment variable or config file"""
     # Try environment variable first
-    token = "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"
+    token = os.environ.get('GITHUB_TOKEN') or os.environ.get('VITE_GITHUB_TOKEN')
     if token:
         return token
+    
+    # Try reading from config file
+    try:
+        token_file = os.path.join(get_brightos_dir(), '.github_token')
+        if os.path.exists(token_file):
+            with open(token_file, 'r') as f:
+                token = f.read().strip()
+                if token:
+                    return token
+    except Exception:
+        pass
+    
+    return None
 
 def create_authenticated_request(url):
     """Create a URL request with GitHub authentication if available"""
@@ -48,7 +66,7 @@ def create_authenticated_request(url):
     # Add authentication if token is available
     token = get_github_token()
     if token:
-        req. add_header('Authorization', f'Bearer {token}')
+        req.add_header('Authorization', f'Bearer {token}')
     
     return req
 
@@ -59,7 +77,7 @@ def create_directories():
     
     directories = [
         brightos_dir,
-        os. path.join(brightos_dir, "Plugins"),
+        os.path.join(brightos_dir, "Plugins"),
         os.path.join(brightos_dir, "Scripts"),
         os.path.join(brightos_dir, "install")
     ]
@@ -73,7 +91,7 @@ def create_directories():
             return False
     
     # Create Importlist.txt if it doesn't exist
-    importlist_path = os.path. join(brightos_dir, "Importlist.txt")
+    importlist_path = os.path.join(brightos_dir, "Importlist.txt")
     if not os.path.exists(importlist_path):
         try:
             with open(importlist_path, 'w') as f:
@@ -116,9 +134,63 @@ def check_rate_limit():
         return True
 
 
+def get_latest_release_from_atom():
+    """Get the latest release information from GitHub Atom feed (no rate limit)"""
+    import xml.etree.ElementTree as ET
+    
+    atom_url = f"https://github.com/{GITHUB_REPO}/releases.atom"
+    
+    try:
+        req = urllib.request.Request(atom_url)
+        req.add_header('User-Agent', 'BrightOS-Launcher')
+        
+        with urllib.request.urlopen(req, timeout=10) as response:
+            atom_data = response.read().decode('utf-8')
+            
+        # Parse the Atom feed
+        root = ET.fromstring(atom_data)
+        
+        # Atom namespace
+        ns = {'atom': 'http://www.w3.org/2005/Atom'}
+        
+        # Get the first entry (latest release)
+        entries = root.findall('atom:entry', ns)
+        if not entries:
+            return None
+        
+        latest_entry = entries[0]
+        
+        # Extract tag name from the link
+        link = latest_entry.find('atom:link', ns)
+        if link is not None:
+            href = link.get('href', '')
+            # Extract tag from URL like https://github.com/{owner}/{repo}/releases/tag/{tag}
+            if '/releases/tag/' in href:
+                tag_name = href.split('/releases/tag/')[-1]
+                # Skip launcher releases (we only want BrightOS releases)
+                if not tag_name.startswith('launcher-'):
+                    return {'tag_name': tag_name, 'from_atom': True}
+        
+        # Try next entry if first was a launcher release
+        for entry in entries[1:]:
+            link = entry.find('atom:link', ns)
+            if link is not None:
+                href = link.get('href', '')
+                if '/releases/tag/' in href:
+                    tag_name = href.split('/releases/tag/')[-1]
+                    if not tag_name.startswith('launcher-'):
+                        return {'tag_name': tag_name, 'from_atom': True}
+        
+        return None
+            
+    except Exception as e:
+        print(f"⚠ Could not fetch from Atom feed: {e}")
+        return None
+
+
 def get_latest_release_info():
     """Get the latest release information from GitHub with authentication"""
-    api_url = "https://api.github.com/repos/TheCrazy8/Blaze-Official/releases/latest"
+    api_url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
     
     try:  
         print("Checking for latest BrightOS version...")
@@ -133,29 +205,22 @@ def get_latest_release_info():
             print("No releases found.  Using repository main branch.")
             return None
         elif e.code == 403:
-            print("⚠ GitHub API rate limit exceeded.")
+            print("⚠ GitHub API rate limit exceeded, trying alternative method...")
             
-            # Try to read rate limit info
-            try:
-                reset = e.headers.get('X-RateLimit-Reset')
-                if reset:
-                    from datetime import datetime
-                    reset_time = datetime.fromtimestamp(int(reset))
-                    print(f"  Rate limit resets at: {reset_time. strftime('%I:%M %p')}")
-            except:
-                pass
+            # Try Atom feed as fallback (doesn't count against rate limit)
+            atom_result = get_latest_release_from_atom()
+            if atom_result:
+                print(f"✓ Found latest release from feed: {atom_result['tag_name']}")
+                return atom_result
             
-            # Check if authenticated
-            if not get_github_token():
-                print("\n💡 To fix this:  Add a GitHub Personal Access Token")
-                print("   1. Go to:  https://github.com/settings/tokens")
-                print("   2. Click 'Generate new token (classic)'")
-                print("   3. Select only 'public_repo' scope")
-                print("   4. Copy the token (starts with ghp_)")
-                print("   5. Save it to: " + os.path. join(get_brightos_dir(), '.github_token'))
-                print("\n   This increases rate limit from 60 to 5,000 requests/hour!")
-            
-            print("\n  Continuing with existing installation...")
+            # If Atom feed also fails, show tips
+            print("\n💡 Tip: Add a GitHub Personal Access Token for faster updates")
+            print("   1. Go to:  https://github.com/settings/tokens")
+            print("   2. Click 'Generate new token (classic)'")
+            print("   3. Select only 'public_repo' scope")
+            print("   4. Copy the token (starts with ghp_)")
+            print("   5. Save it to: " + os.path.join(get_brightos_dir(), '.github_token'))
+            print("\n  Falling back to main branch...")
             return None
         else:  
             print(f"⚠ Error checking for updates: HTTP {e.code}")
@@ -231,26 +296,27 @@ def download_and_extract_release(install_dir):
     
     if release_info:
         # First, try to download files from release assets
-        print(f"Found version: {release_info.get('tag_name', 'unknown')}")
-        print("Attempting to download from release assets...")
-        
-        if download_files_from_release_assets(release_info, install_dir):
-            print("✓ Successfully downloaded files from release assets")
-            return True
-        
-        print("⚠ Release assets not available, falling back to zipball...")
-        
-        # Fallback to zipball if assets aren't available
         tag_name = release_info.get('tag_name', 'latest')
-        zipball_url = release_info.get('zipball_url')
+        print(f"Found version: {tag_name}")
         
-        if not zipball_url:
-            print("No download URL found in release.  Falling back to main branch.")
-            zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
-            tag_name = "main"
+        # Only try assets if this is from the API (not Atom feed)
+        if not release_info.get('from_atom', False):
+            print("Attempting to download from release assets...")
+            
+            if download_files_from_release_assets(release_info, install_dir):
+                print("✓ Successfully downloaded files from release assets")
+                return True
+            
+            print("⚠ Release assets not available, downloading release archive...")
+        else:
+            print("Downloading release archive...")
+        
+        # Use public archive URL (doesn't require authentication)
+        # Format: https://github.com/owner/repo/archive/refs/tags/{tag}.zip
+        zipball_url = f"https://github.com/{GITHUB_REPO}/archive/refs/tags/{tag_name}.zip"
     else:
         # Fallback to main branch
-        zipball_url = "https://github.com/TheCrazy8/Blaze-Official/archive/refs/heads/main.zip"
+        zipball_url = f"https://github.com/{GITHUB_REPO}/archive/refs/heads/main.zip"
         tag_name = "main"
         print("Using main branch")
     
@@ -268,7 +334,7 @@ def download_and_extract_release(install_dir):
                 zip_ref.extractall(temp_dir)
             
             # Find the extracted directory (GitHub zips have a top-level directory)
-            extracted_dirs = [d for d in os. listdir(temp_dir) if os.path.isdir(os. path.join(temp_dir, d))]
+            extracted_dirs = [d for d in os.listdir(temp_dir) if os.path.isdir(os.path.join(temp_dir, d))]
             if not extracted_dirs:
                 print("✗ No directory found in zip file")
                 return False
