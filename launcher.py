@@ -66,7 +66,7 @@ def create_authenticated_request(url):
     # Add authentication if token is available
     token = get_github_token()
     if token:
-        req. add_header('Authorization', f'Bearer {token}')
+        req.add_header('Authorization', f'Bearer {token}')
     
     return req
 
