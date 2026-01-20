@@ -113,7 +113,11 @@ class DistanceSensor(SamplePlugin):
         
         # Return None to indicate no valid reading
         # Users should implement proper sonar support based on their hardware
-        self.eprint("Warning: Ultrasonic sensor requires proper Telemetrix sonar support")
+        self.eprint("Warning: Ultrasonic sensor requires Telemetrix sonar support.")
+        self.eprint("Implementation options:")
+        self.eprint("  1. Use board.set_pin_mode_sonar() if available in your Telemetrix version")
+        self.eprint("  2. Implement pulse timing in Arduino firmware and read via callbacks")
+        self.eprint("  3. Check Telemetrix documentation for your specific board model")
         return None
     
     def read_distance(self, trigger_pin, num_samples=1):

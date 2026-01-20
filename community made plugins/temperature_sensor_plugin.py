@@ -140,7 +140,11 @@ class TemperatureSensor(SamplePlugin):
         
         # Return None to indicate no valid reading
         # Users should implement proper DHT support based on their hardware
-        self.eprint("Warning: DHT sensor requires proper Telemetrix DHT support with callbacks")
+        self.eprint("Warning: DHT sensor requires Telemetrix DHT support with callbacks.")
+        self.eprint("Implementation options:")
+        self.eprint("  1. Use board.set_pin_mode_dht() with callback if available")
+        self.eprint("  2. Implement DHT protocol in Arduino firmware with DHT library")
+        self.eprint("  3. Check Telemetrix documentation for DHT sensor support")
         return None, None
     
     def read_temperature(self, pin):
@@ -293,6 +297,11 @@ class TemperatureSensor(SamplePlugin):
         temp_c, humidity = self.read_temperature_humidity(pin)
         
         if temp_c is None or humidity is None:
+            return None
+        
+        # Validate humidity to prevent math domain error
+        if humidity <= 0 or humidity > 100:
+            self.eprint(f"Invalid humidity value: {humidity}%")
             return None
         
         # Magnus formula for dew point calculation
