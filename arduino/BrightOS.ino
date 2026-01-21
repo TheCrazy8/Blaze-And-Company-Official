@@ -2348,10 +2348,8 @@ void loop() {
         lastBroadcastTime = currentTime;
         
         // Create discovery message: "TELEMETRIX:<IP>:<PORT>"
-        String discoveryMsg = "TELEMETRIX:";
+        String discoveryMsg = "BRIGHTOS_ARDUINO:";
         discoveryMsg += WiFi.localIP().toString();
-        discoveryMsg += ":";
-        discoveryMsg += String(PORT);
         
         // Broadcast to local network
         IPAddress broadcastIP = WiFi.localIP();
