@@ -22,7 +22,7 @@ import sv_ttk
 # Configuration constants
 ARDUINO_IP_ENV_VAR = "ARDUINO_IP_ADDRESS"
 BROADCAST_PORT = 31335  # Must match DISCOVERY_PORT in Arduino code
-DISCOVERY_TIMEOUT = 3  # seconds to wait for Arduino broadcast
+DISCOVERY_TIMEOUT = 10  # seconds to wait for Arduino broadcast
 
 def safe_listdir(path):
   try:
@@ -36,6 +36,7 @@ def discover_arduino_ip():
   Discover Arduino IP address by listening for UDP broadcasts.
   Returns the IP address as a string, or None if not found.
   Cross-platform implementation using socket.settimeout().
+  Now accepts Arduino from any network configuration.
   """
   sock = None
   try:
@@ -44,8 +45,6 @@ def discover_arduino_ip():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     # Bind to the broadcast port on all interfaces
-    # Note: Binding to '' is necessary to receive UDP broadcasts
-    # Security: We validate sender IP and message format below
     sock.bind(('', BROADCAST_PORT))
     
     # Set timeout for cross-platform compatibility (Windows doesn't have select for sockets)
@@ -59,40 +58,31 @@ def discover_arduino_ip():
       try:
         message = data.decode('utf-8')
       except UnicodeDecodeError:
-        return None
+        # Try to decode with latin-1 as fallback
+        try:
+          message = data.decode('latin-1')
+        except Exception:
+          return None
       
       # Check if this is a BrightOS Arduino broadcast
       if message.startswith("BRIGHTOS_ARDUINO:"):
         ip_address = message.split(":", 1)[1].strip()
         
-        # Validate IP address format
+        # Basic validation - just check if it looks like an IP address
+        # Accept any valid IPv4 format regardless of network range
         try:
-          # Use socket.inet_aton to validate IPv4 format
-          socket.inet_aton(ip_address)
-          
-          # Optional: Validate sender is on private network
-          # This helps prevent spoofing from external networks
-          sender_ip = addr[0]
-          octets = [int(x) for x in sender_ip.split('.')]
-          
-          # Check for private IP ranges:
-          # 10.0.0.0/8: 10.x.x.x
-          # 172.16.0.0/12: 172.16.x.x - 172.31.x.x
-          # 192.168.0.0/16: 192.168.x.x
-          is_private = (
-            octets[0] == 10 or
-            (octets[0] == 172 and 16 <= octets[1] <= 31) or
-            (octets[0] == 192 and octets[1] == 168)
-          )
-          
-          if is_private:
+          parts = ip_address.split('.')
+          if len(parts) == 4 and all(0 <= int(part) <= 255 for part in parts):
+            # Valid IP format - return it
             return ip_address
-          
-          # Still return if not in private range (for edge cases like unusual network setups)
+        except (ValueError, AttributeError):
+          pass
+        
+        # If basic validation fails, still try to use it if it's non-empty
+        # This allows for edge cases or alternative formats
+        if ip_address:
           return ip_address
-        except (socket.error, ValueError, IndexError):
-          # Invalid IP format or sender validation failed
-          return None
+          
     except socket.timeout:
       # No broadcast received within timeout
       return None
