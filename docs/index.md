@@ -13,6 +13,9 @@ hero:
       text: View Product List
       link: /products
     - theme: brand
+      text: FAQ - Get Help
+      link: /faq
+    - theme: brand
       text: View Competition Information
       link: /FLARE%20Competition
     - theme: brand
@@ -41,6 +44,7 @@ features:
 ## Quick Links
 - [Key](/key)
 - [Products](/products)
+- [FAQ](/faq) - Frequently Asked Questions
 - [FLARE](/FLARE%20Competition)
 - [BrightOS Web Interface](/brightos-web) - Run BrightOS in your browser
 - [Downloads](/downloads) - Community plugins and scripts

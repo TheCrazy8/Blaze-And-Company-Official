@@ -42,6 +42,7 @@ export default defineConfig({
           { text: '🏡 Home', link: '/' },
           { text: '🔑 Key Resources', link: '/key' },
           { text: '🛠 Products', link: '/products' },
+          { text: '❓ FAQ', link: '/faq' },
         ]
       },
       { 
@@ -85,6 +86,7 @@ export default defineConfig({
           { text: 'Home', link: '/' },
           { text: 'Key Resources', link: '/key' },
           { text: 'Products', link: '/products' },
+          { text: 'FAQ', link: '/faq' },
         ]
       },
       {
