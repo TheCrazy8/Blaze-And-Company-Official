@@ -22,6 +22,9 @@ hero:
       text: Run BrightOS in Browser
       link: /brightos-web
     - theme: brand
+      text: Learn with Tutorials
+      link: /tutorials
+    - theme: brand
       text: Download Plugins & Scripts
       link: /downloads
     - theme: brand
@@ -47,6 +50,7 @@ features:
 - [FAQ](/faq) - Frequently Asked Questions
 - [FLARE](/FLARE%20Competition)
 - [BrightOS Web Interface](/brightos-web) - Run BrightOS in your browser
+- [Tutorials](/tutorials) - Step-by-step learning guides
 - [Downloads](/downloads) - Community plugins and scripts
 - [Development Guide](/development-guide) - Create your own plugins and scripts
 
