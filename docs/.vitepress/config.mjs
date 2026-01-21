@@ -42,12 +42,14 @@ export default defineConfig({
           { text: '🏡 Home', link: '/' },
           { text: '🔑 Key Resources', link: '/key' },
           { text: '🛠 Products', link: '/products' },
+          { text: '❓ FAQ', link: '/faq' },
         ]
       },
       { 
         text: '🔥 BrightOS',
         items:  [
           { text: '🌐 Web Interface', link: '/brightos-web' },
+          { text: '📖 Tutorials', link: '/tutorials' },
           { text:  '📚 Script Examples', link: '/examples' },
           { text: '📥 Downloads', link: '/downloads' },
           { text: '🏗️ Build Guide', link: '/BUILD' },
@@ -64,6 +66,7 @@ export default defineConfig({
         text: '🌟 Community',
         items:  [
           { text: '📝 Blog', link: '/blog/' },
+          { text: '🎨 Community Showcase', link: '/community-showcase' },
           { text: '💬 GitHub Discussions', link: 'https://github.com/TheCrazy8/Blaze-Official/discussions' },
           { text: '📡 RSS Feed', link: '/blog/feed.xml' },
           { text: '⚛️ Atom Feed', link: '/blog/feed.atom' },
@@ -85,6 +88,7 @@ export default defineConfig({
           { text: 'Home', link: '/' },
           { text: 'Key Resources', link: '/key' },
           { text: 'Products', link: '/products' },
+          { text: 'FAQ', link: '/faq' },
         ]
       },
       {
@@ -92,6 +96,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'Web Interface', link: '/brightos-web' },
+          { text: 'Tutorials', link: '/tutorials' },
           { text: 'Script Examples', link: '/examples' },
           { text: 'Downloads', link: '/downloads' },
           { text: 'Build Guide', link: '/BUILD' },
@@ -110,6 +115,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'Blog', link: '/blog/' },
+          { text: 'Community Showcase', link: '/community-showcase' },
         ]
       },
       {
@@ -258,6 +264,13 @@ export default defineConfig({
               short_name: 'Web Interface',
               url: '/Blaze-Official/brightos-web',
               description: 'Run BrightOS in browser',
+              icons: [{ src: '/Blaze-Official/icon-192x192.png', sizes: '192x192' }]
+            },
+            {
+              name: 'Tutorials',
+              short_name: 'Tutorials',
+              url: '/Blaze-Official/tutorials',
+              description: 'Step-by-step guides',
               icons: [{ src: '/Blaze-Official/icon-192x192.png', sizes: '192x192' }]
             },
             {
