@@ -67,7 +67,8 @@ Set up BrightOS on your Windows or Linux computer.
 #### Steps for Windows
 
 1. **Download the Launcher**
-   - Go to [latest launcher release](https://github.com/TheCrazy8/Blaze-Official/releases/tag/launcher-dev-20260113-175555)
+   - Go to the [releases page](https://github.com/TheCrazy8/Blaze-Official/releases)
+   - Find the latest launcher release (look for tags starting with "launcher-")
    - Download `BrightOS-Launcher.exe`
    - Save it to a folder you can easily access
 
@@ -88,7 +89,8 @@ Set up BrightOS on your Windows or Linux computer.
 #### Steps for Linux
 
 1. **Download the Launcher**
-   - Go to [latest launcher release](https://github.com/TheCrazy8/Blaze-Official/releases/tag/launcher-dev-20260113-175555)
+   - Go to the [releases page](https://github.com/TheCrazy8/Blaze-Official/releases)
+   - Find the latest launcher release (look for tags starting with "launcher-")
    - Download `launcher.py`
 
 2. **Make it Executable (Optional)**
@@ -136,7 +138,8 @@ Install BrightOS manually for more control over the setup.
    ```
    
    Option B - Manual Download:
-   - Go to [releases page](https://github.com/TheCrazy8/Blaze-Official/releases)
+   - Go to the [releases page](https://github.com/TheCrazy8/Blaze-Official/releases)
+   - Find the latest BrightOS release
    - Download `BrightOS.py` and `requirements.txt`
    - Save to a folder
 
@@ -452,32 +455,34 @@ Check out the [Examples page](/examples) for more script ideas and templates!
 
 ---
 
-## Advanced Tutorials
+## Advanced Tutorials (Coming Soon)
+
+::: info Under Development
+The following advanced tutorials are currently being developed. Check back soon or subscribe to the [RSS Feed](/blog/feed.xml) for updates when they're published!
+:::
 
 ### Tutorial 8: Using Arduino Sensors
 
-**Difficulty:** Advanced | **Time:** 60 minutes
+**Difficulty:** Advanced | **Time:** 60 minutes | **Status:** 🚧 In Development
 
-Read sensor data from Arduino using BrightOS.
+Learn how to read sensor data from Arduino using BrightOS.
 
 #### What You'll Need
 - Arduino Uno R4 WiFi configured
 - Temperature sensor (e.g., DHT11, DHT22)
 - Breadboard and wires
 
-#### Coming Soon
-This tutorial is under development. Check the [Examples page](/examples) for sensor examples.
+Check the [Examples page](/examples) for sensor examples while this tutorial is being completed.
 
 ---
 
 ### Tutorial 9: Creating a Dashboard Plugin
 
-**Difficulty:** Advanced | **Time:** 90 minutes
+**Difficulty:** Advanced | **Time:** 90 minutes | **Status:** 🚧 In Development
 
 Build a custom dashboard plugin with real-time data visualization.
 
-#### Coming Soon
-This tutorial is under development. Check the [Development Guide](/development-guide) for UI plugin examples.
+Check the [Development Guide](/development-guide) for UI plugin examples while this tutorial is being completed.
 
 ---
 
