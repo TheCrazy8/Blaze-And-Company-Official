@@ -211,6 +211,10 @@ Connect your Arduino Uno R4 WiFi board to BrightOS.
    ```
    - Replace with your actual WiFi credentials
    - Save the file
+   
+   ::: warning Security Note
+   Never commit WiFi credentials to version control! Keep `arduino_secrets.h` in your `.gitignore` file if sharing your project publicly.
+   :::
 
 4. **Load the Auto-Discovery Sketch**
    - Clone or download the Blaze repository
