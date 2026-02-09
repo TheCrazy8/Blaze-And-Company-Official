@@ -13,6 +13,14 @@ Subscribe to our [RSS Feed](/Blaze-And-Company-Official/blog/feed.xml) or [Atom 
 
 ## Recent Posts
 
+### [Plugins Galore!](/blog/posts/2026-02-09-plugins)
+
+**February 9, 2026** • by TheCrazy8
+
+Tags: `plugins` `brightos` `arduino`
+
+[Read more →](/blog/posts/2026-02-09-plugins)
+
 ### [BrightOS v2.0: What's New](/blog/posts/2025-01-13-brightos-v2-release)
 
 **January 13, 2025** • by TheCrazy8 • 5 min read
