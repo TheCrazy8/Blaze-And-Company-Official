@@ -17,6 +17,8 @@ Subscribe to our [RSS Feed](/Blaze-And-Company-Official/blog/feed.xml) or [Atom 
 
 **February 9, 2026** • by TheCrazy8
 
+You should make a plugin!
+
 Tags: `plugins` `brightos` `arduino`
 
 [Read more →](/blog/posts/2026-02-09-plugins)
