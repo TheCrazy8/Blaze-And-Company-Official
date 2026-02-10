@@ -32,6 +32,9 @@ The people behind BrightOS and the Blaze robotics framework.
       <h3>Pumpjack</h3>
       <p class="team-role">Cofounder & Lead Developer</p>
       <p class="team-bio">Placeholder bio for Pumpjack</p>
+      <div class="team-links">
+        <a href="https://github.com/C937-IT-A" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
     </div>
   </div>
 </div>
