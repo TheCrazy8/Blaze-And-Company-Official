@@ -17,7 +17,7 @@ The people behind BrightOS and the Blaze robotics framework.
     </div>
     <div class="team-info">
       <h3>TheCrazy8</h3>
-      <p class="team-role">Creator & Lead Developer</p>
+      <p class="team-role">Founder & Lead Developer</p>
       <p class="team-bio">Creator of BrightOS and the Blaze robotics framework. Passionate about making robotics accessible to everyone.</p>
       <div class="team-links">
         <a href="https://github.com/TheCrazy8" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -31,7 +31,7 @@ The people behind BrightOS and the Blaze robotics framework.
     <div class="team-info">
       <h3>Pumpjack</h3>
       <p class="team-role">Cofounder & Lead Developer</p>
-      <p class="team-bio">Placeholder bio for Pumpjack</p>
+      <p class="team-bio">TheCrazy8's partner in crime, and original coder for Blaze before the transition from VEX to a custom framework.</p>
       <div class="team-links">
         <a href="https://github.com/C937-IT-A" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
