@@ -71,3 +71,6 @@ features:
 2. Check the **Key** page for essential resources.
 3. Try the **BrightOS Web Interface** to run scripts in your browser.
 4. Star the repo on GitHub to stay notified.
+
+## [Meet the Team](/team)
+Thank you for choosing Blaze!
