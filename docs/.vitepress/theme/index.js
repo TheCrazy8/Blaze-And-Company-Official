@@ -33,6 +33,9 @@ import DownloadStats from './components/DownloadStats.vue';
 import GitHubAuthButton from './components/GitHubAuthButton.vue';
 import ReadingTime from './components/ReadingTime.vue';
 import KeyboardShortcuts from './components/KeyboardShortcuts.vue';
+import ScrollProgress from './components/ScrollProgress.vue';
+import ContributorsList from './components/ContributorsList.vue';
+import StatusBadges from './components/StatusBadges.vue';
 
 import './styles/main.css';
 
@@ -60,13 +63,15 @@ export default {
       // Before document content
       'doc-before':   () => [
         h(Breadcrumbs),
-        h(ReadingTime)
+        h(ReadingTime),
+        h(StatusBadges)
       ],
       
       // After document content
       'doc-after': () => [
         h(ShareButtons),
-        h(FeedbackWidget)
+        h(FeedbackWidget),
+        h(ContributorsList)
       ],
       
       // Bottom of page
@@ -76,7 +81,8 @@ export default {
         h(FloatingActionButton),
         h(PWAPrompt),
         h(PWAInstallPrompt),
-        h(KeyboardShortcuts)
+        h(KeyboardShortcuts),
+        h(ScrollProgress)
       ]
     });
   },
