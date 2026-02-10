@@ -5,6 +5,9 @@ import { useRoute } from 'vitepress'
 const route = useRoute()
 const readingTime = ref(0)
 
+// Small delay to wait for VitePress content rendering after route change
+const CONTENT_RENDER_DELAY = 100
+
 function calculateReadingTime() {
   if (typeof document === 'undefined') return
   const content = document.querySelector('.vp-doc')
@@ -19,7 +22,7 @@ onMounted(() => {
 })
 
 watch(() => route.path, () => {
-  setTimeout(calculateReadingTime, 100)
+  setTimeout(calculateReadingTime, CONTENT_RENDER_DELAY)
 })
 </script>
 

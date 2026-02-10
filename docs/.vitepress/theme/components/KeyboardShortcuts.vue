@@ -1,19 +1,28 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const showDialog = ref(false)
 
-const shortcuts = [
-  { keys: ['Ctrl', 'K'], description: 'Open search' },
+const isMac = computed(() => {
+  if (typeof navigator === 'undefined') return false
+  return /Mac|iPhone|iPad|iPod/.test(navigator.userAgent)
+})
+
+const shortcuts = computed(() => [
+  { keys: [isMac.value ? '⌘' : 'Ctrl', 'K'], description: 'Open search' },
   { keys: ['?'], description: 'Show keyboard shortcuts' },
   { keys: ['Esc'], description: 'Close dialog / search' },
   { keys: ['↑', '↓'], description: 'Navigate search results' },
   { keys: ['Enter'], description: 'Select search result' },
   { keys: ['t'], description: 'Scroll to top' },
-]
+])
+
+function isEditableElement(target) {
+  return target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
+}
 
 function handleKeyDown(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+  if (isEditableElement(e.target)) {
     return
   }
 
