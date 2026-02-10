@@ -60,6 +60,7 @@ export default defineConfig({
         items: [
           { text: '📖 Development Guide', link: '/development-guide' },
           { text:  '📜 Changelog', link: '/changelog' },
+          { text: '👥 Team', link: '/team' },
         ]
       },
       { 
@@ -108,6 +109,7 @@ export default defineConfig({
         items: [
           { text: 'Development Guide', link:  '/development-guide' },
           { text: 'Changelog', link: '/changelog' },
+          { text: 'Team', link: '/team' },
         ]
       },
       {
