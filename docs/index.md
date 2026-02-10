@@ -34,12 +34,24 @@ hero:
       text: GitHub Repo
       link: https://github.com/TheCrazy8/Blaze-Official
 features:
-  - title: Quick Links
-    details: Jump straight to the most important resources and docs.
-  - title: Official Updates
-    details: Keep track of announcements and changelogs as they ship.
-  - title: Community
-    details: Connect with the team and contribute to the project.
+  - title: 🔑 Quick Links
+    details: Jump straight to the most important resources and docs for BrightOS.
+  - title: 📢 Official Updates
+    details: Keep track of announcements, release notes, and changelogs as they ship.
+  - title: 👥 Community
+    details: Connect with the team, share your projects, and contribute to the framework.
+  - title: 🌐 Web Interface
+    details: Run BrightOS directly in your browser — no installation required.
+    link: /brightos-web
+    linkText: Try it now
+  - title: 🔌 Plugin Marketplace
+    details: Discover, download, and rate community-created plugins to extend BrightOS.
+    link: /downloads
+    linkText: Browse plugins
+  - title: 📖 Tutorials
+    details: Step-by-step guides from beginner to advanced to help you master BrightOS.
+    link: /tutorials
+    linkText: Start learning
 ---
 
 <!-- You can add more sections below if desired -->

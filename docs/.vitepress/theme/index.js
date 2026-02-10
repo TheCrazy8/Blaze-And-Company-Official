@@ -31,6 +31,8 @@ import PluginCard from './components/PluginCard.vue';
 import LoadingSpinner from './components/LoadingSpinner.vue';
 import DownloadStats from './components/DownloadStats.vue';
 import GitHubAuthButton from './components/GitHubAuthButton.vue';
+import ReadingTime from './components/ReadingTime.vue';
+import KeyboardShortcuts from './components/KeyboardShortcuts.vue';
 
 import './styles/main.css';
 
@@ -56,7 +58,10 @@ export default {
       'nav-screen-content-after': () => h(NolebaseEnhancedReadabilitiesScreenMenu),
       
       // Before document content
-      'doc-before':   () => h(Breadcrumbs),
+      'doc-before':   () => [
+        h(Breadcrumbs),
+        h(ReadingTime)
+      ],
       
       // After document content
       'doc-after': () => [
@@ -70,7 +75,8 @@ export default {
         h(CursorTrail),
         h(FloatingActionButton),
         h(PWAPrompt),
-        h(PWAInstallPrompt)
+        h(PWAInstallPrompt),
+        h(KeyboardShortcuts)
       ]
     });
   },
