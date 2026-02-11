@@ -12,7 +12,7 @@ const actions = [
 </script>
 
 <template>
-  <div class="fab-container">
+  <div class="fab-container" role="navigation" aria-label="Quick links">
     <transition-group name="fab-menu">
       <button
         v-for="(action, index) in actions"
@@ -21,14 +21,15 @@ const actions = [
         class="fab-action"
         :style="{ transitionDelay: `${index * 50}ms` }"
         @click="() => window.location.href = action.link"
+        :aria-label="action.label"
       >
-        <span class="fab-icon">{{ action.icon }}</span>
+        <span class="fab-icon" aria-hidden="true">{{ action.icon }}</span>
         <span class="fab-label">{{ action.label }}</span>
       </button>
     </transition-group>
     
-    <button class="fab-main" @click="isOpen = !isOpen">
-      <span class="fab-icon">{{ isOpen ? '✕' :  '🔥' }}</span>
+    <button class="fab-main" @click="isOpen = !isOpen" :aria-expanded="isOpen" aria-label="Quick navigation menu">
+      <span class="fab-icon" aria-hidden="true">{{ isOpen ? '✕' :  '🔥' }}</span>
     </button>
   </div>
 </template>

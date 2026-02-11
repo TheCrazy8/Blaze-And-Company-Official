@@ -3,6 +3,7 @@ __pycache__/
 node_modules
 docs/.vitepress/dist
 docs/.vitepress/cache
+docs/.vitepress/search-index.json
 docs/dev-dist
 
 # PyInstaller build artifacts

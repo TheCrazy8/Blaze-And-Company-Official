@@ -52,10 +52,10 @@ onUnmounted(() => {
 <template>
   <Teleport to="body">
     <Transition name="shortcuts-fade">
-      <div v-if="showDialog" class="shortcuts-overlay" @click.self="showDialog = false">
+      <div v-if="showDialog" class="shortcuts-overlay" @click.self="showDialog = false" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
         <div class="shortcuts-dialog">
           <div class="shortcuts-header">
-            <h3>⌨️ Keyboard Shortcuts</h3>
+            <h3 id="shortcuts-title">⌨️ Keyboard Shortcuts</h3>
             <button class="shortcuts-close" @click="showDialog = false" aria-label="Close">✕</button>
           </div>
           <div class="shortcuts-list">

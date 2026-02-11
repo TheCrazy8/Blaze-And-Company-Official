@@ -1,6 +1,7 @@
 import footnote from 'markdown-it-footnote'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
+import { MCPPlugin } from 'vitepress-plugin-mcp'
 import { generateFeeds } from './theme/rss.js'  // ✅ FIXED:  Removed space
 
 export default defineConfig({
@@ -190,6 +191,7 @@ export default defineConfig({
   
   vite: {
     plugins: [
+      MCPPlugin({ port: 4000 }),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', '*.png'],
