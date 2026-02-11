@@ -1,4 +1,5 @@
 import footnote from 'markdown-it-footnote'
+import taskLists from '@hackmd/markdown-it-task-lists'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
 import { MCPPlugin } from 'vitepress-plugin-mcp'
@@ -8,6 +9,7 @@ import {
   GitChangelog,
   GitChangelogMarkdownSection,
 } from '@nolebase/vitepress-plugin-git-changelog/vite'
+import { InlineLinkPreviewElementTransform } from '@nolebase/vitepress-plugin-inline-link-preview/markdown-it'
 import { generateFeeds } from './theme/rss.js'  // ✅ FIXED:  Removed space
 
 export default defineConfig({
@@ -20,6 +22,8 @@ export default defineConfig({
       md.use(footnote)
       md.use(tabsMarkdownPlugin)
       md.use(groupIconMdPlugin)
+      md.use(taskLists)
+      md.use(InlineLinkPreviewElementTransform)
     }
   },
   title: "Blaze Official",
@@ -386,6 +390,8 @@ export default defineConfig({
       exclude: [ 
         '@nolebase/vitepress-plugin-enhanced-readabilities/client', 
         '@nolebase/vitepress-plugin-git-changelog/client',
+        '@nolebase/vitepress-plugin-highlight-targeted-heading/client',
+        '@nolebase/vitepress-plugin-inline-link-preview/client',
         'vitepress', 
         '@nolebase/ui',
       ]
@@ -395,7 +401,11 @@ export default defineConfig({
         '@lando/vitepress-theme-default-plus',
         '@nolebase/vitepress-plugin-enhanced-readabilities', 
         '@nolebase/vitepress-plugin-git-changelog',
+        '@nolebase/vitepress-plugin-highlight-targeted-heading',
+        '@nolebase/vitepress-plugin-inline-link-preview',
         '@nolebase/ui',
+        'vitepress-plugin-nprogress',
+        'vitepress-plugin-codeblocks-fold',
       ]
     },
     css: {
