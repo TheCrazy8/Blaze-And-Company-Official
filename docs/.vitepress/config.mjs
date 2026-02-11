@@ -60,6 +60,7 @@ export default defineConfig({
         text:  '👨‍💻 Development',
         items: [
           { text: '📖 Development Guide', link: '/development-guide' },
+          { text: '🤖 MCP Server Setup', link: '/MCP_SETUP' },
           { text:  '📜 Changelog', link: '/changelog' },
           { text: '👥 Team', link: '/team' },
         ]
@@ -109,6 +110,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'Development Guide', link:  '/development-guide' },
+          { text: 'MCP Server Setup', link: '/MCP_SETUP' },
           { text: 'Changelog', link: '/changelog' },
           { text: 'Team', link: '/team' },
         ]
