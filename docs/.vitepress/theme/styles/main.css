@@ -871,49 +871,4 @@ a:focus-visible,
   }
 }
 
-/* ===== USER-TOGGLED ACCESSIBILITY CLASSES ===== */
 
-/* Reduced motion - applied via AccessibilityPanel */
-.a11y-reduced-motion *,
-.a11y-reduced-motion *::before,
-.a11y-reduced-motion *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-}
-
-/* High contrast - applied via AccessibilityPanel */
-.a11y-high-contrast {
-  --vp-c-text-1: #000000;
-  --vp-c-text-2: #1a1a1a;
-  --vp-c-text-3: #333333;
-  --vp-c-bg: #ffffff;
-  --vp-c-bg-soft: #f5f5f5;
-  --vp-c-border: #000000;
-  --vp-c-divider: #666666;
-}
-
-.a11y-high-contrast.dark {
-  --vp-c-text-1: #ffffff;
-  --vp-c-text-2: #e0e0e0;
-  --vp-c-text-3: #cccccc;
-  --vp-c-bg: #000000;
-  --vp-c-bg-soft: #111111;
-  --vp-c-border: #ffffff;
-  --vp-c-divider: #999999;
-}
-
-/* Underline links - applied via AccessibilityPanel */
-.a11y-underline-links .vp-doc a {
-  text-decoration: underline !important;
-  text-underline-offset: 3px;
-}
-
-/* Large text - applied via AccessibilityPanel */
-.a11y-large-text {
-  font-size: 120% !important;
-}
-
-.a11y-large-text .vp-doc {
-  font-size: 1.1em;
-}
