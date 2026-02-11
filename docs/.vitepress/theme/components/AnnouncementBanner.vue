@@ -15,10 +15,10 @@ const dismiss = () => {
 </script>
 
 <template>
-  <div v-if="show" class="announcement-banner">
+  <div v-if="show" class="announcement-banner" role="banner" aria-label="Site announcement">
     <div class="announcement-content">
       <span>🔥 Welcome to Blaze & Company! Check out our latest BrightOS features →</span>
-      <button @click="dismiss" class="dismiss-btn">✕</button>
+      <button @click="dismiss" class="dismiss-btn" aria-label="Dismiss announcement">✕</button>
     </div>
   </div>
 </template>

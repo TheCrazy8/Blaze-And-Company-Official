@@ -30,8 +30,8 @@ function cycleTheme() {
 </script>
 
 <template>
-  <button class="theme-switcher" @click="cycleTheme" :title="`Theme: ${themes[currentTheme].name}`">
-    🎨
+  <button class="theme-switcher" @click="cycleTheme" :title="`Theme: ${themes[currentTheme].name}`" :aria-label="`Change color theme. Current: ${themes[currentTheme].name}`">
+    <span aria-hidden="true">🎨</span>
   </button>
 </template>
 
