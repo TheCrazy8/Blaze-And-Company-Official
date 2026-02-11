@@ -12,6 +12,10 @@ import {
   NolebaseEnhancedReadabilitiesScreenMenu,
 } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
 import { NolebaseEnhancedReadabilitiesPlugin } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
+import { NolebaseGitChangelogPlugin } from '@nolebase/vitepress-plugin-git-changelog/client';
+import '@nolebase/vitepress-plugin-git-changelog/client/style.css';
+import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client';
+import 'virtual:group-icons.css';
 
 // Custom layout that properly forwards all slots
 import CustomLayout from './components/CustomLayout.vue';
@@ -91,6 +95,8 @@ export default {
 
   enhanceApp(ctx) {
     ctx.app.use(NolebaseEnhancedReadabilitiesPlugin);
+    ctx.app.use(NolebaseGitChangelogPlugin);
+    enhanceAppWithTabs(ctx.app);
     
     if (VPLTheme.enhanceApp) {
       VPLTheme.enhanceApp(ctx);
