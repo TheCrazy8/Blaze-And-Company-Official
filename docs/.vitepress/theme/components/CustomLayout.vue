@@ -104,10 +104,10 @@ const mailchimp = computed(() => frontmatter.value?.mailchimp?.action ? frontmat
 const sidebarEnder = computed(() => theme.value.sidebarEnder ?? false);
 
 watch(() => page.value.relativePath, () => {
-  alertKey = page.value.relativePath;
-  jobsKey = page.value.relativePath;
-  sponsorsKey = page.value.relativePath;
-  tagsKey = page.value.relativePath;
+  alertKey.value = page.value.relativePath;
+  jobsKey.value = page.value.relativePath;
+  sponsorsKey.value = page.value.relativePath;
+  tagsKey.value = page.value.relativePath;
 });
 </script>
 

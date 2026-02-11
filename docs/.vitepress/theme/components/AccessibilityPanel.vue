@@ -19,7 +19,7 @@ function loadPrefs() {
     highContrast.value = saved.highContrast ?? false
     underlineLinks.value = saved.underlineLinks ?? false
     largeText.value = saved.largeText ?? false
-  } catch { /* ignore parse errors */ }
+  } catch (e) { console.warn('Failed to load accessibility preferences:', e) }
 }
 
 function savePrefs() {
