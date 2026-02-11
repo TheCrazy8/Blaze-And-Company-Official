@@ -18,19 +18,19 @@ const handleFeedback = (isHelpful) => {
 </script>
 
 <template>
-  <div class="feedback-widget">
+  <div class="feedback-widget" role="region" aria-label="Page feedback">
     <div v-if="! showThankYou" class="feedback-question">
-      <p>Was this page helpful?</p>
-      <div class="feedback-buttons">
-        <button @click="handleFeedback(true)" class="feedback-btn">
+      <p id="feedback-label">Was this page helpful?</p>
+      <div class="feedback-buttons" role="group" aria-labelledby="feedback-label">
+        <button @click="handleFeedback(true)" class="feedback-btn" aria-label="Yes, this page was helpful">
           👍 Yes
         </button>
-        <button @click="handleFeedback(false)" class="feedback-btn">
+        <button @click="handleFeedback(false)" class="feedback-btn" aria-label="No, this page was not helpful">
           👎 No
         </button>
       </div>
     </div>
-    <div v-else class="feedback-thanks">
+    <div v-else class="feedback-thanks" aria-live="polite">
       <p>✨ Thanks for your feedback! </p>
     </div>
   </div>

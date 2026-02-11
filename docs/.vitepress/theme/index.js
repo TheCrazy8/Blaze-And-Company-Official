@@ -36,6 +36,8 @@ import KeyboardShortcuts from './components/KeyboardShortcuts.vue';
 import ScrollProgress from './components/ScrollProgress.vue';
 import ContributorsList from './components/ContributorsList.vue';
 import StatusBadges from './components/StatusBadges.vue';
+import SkipToContent from './components/SkipToContent.vue';
+import FontSizeAdjuster from './components/FontSizeAdjuster.vue';
 
 import './styles/main.css';
 
@@ -46,6 +48,7 @@ export default {
     return h(VPLTheme.Layout, null, {
       // Top of page
       'layout-top': () => [
+        h(SkipToContent),
         h(AnnouncementBanner),
         h(ProgressBar),
         h(ToastNotification) // NEW - Add toast system
@@ -54,6 +57,7 @@ export default {
       // Navbar additions
       'nav-bar-content-after': () => [
         h(NolebaseEnhancedReadabilitiesMenu),
+        h(FontSizeAdjuster),
         h(ThemeSwitcher)
       ],
       

@@ -30,15 +30,15 @@ const copyLink = () => {
 </script>
 
 <template>
-  <div class="share-buttons">
+  <div class="share-buttons" role="group" aria-label="Share this page">
     <span class="share-label">Share: </span>
-    <button @click="shareTwitter" class="share-btn" title="Share on Twitter">
+    <button @click="shareTwitter" class="share-btn" aria-label="Share on X (Twitter)">
       𝕏
     </button>
-    <button @click="shareLinkedIn" class="share-btn" title="Share on LinkedIn">
+    <button @click="shareLinkedIn" class="share-btn" aria-label="Share on LinkedIn">
       in
     </button>
-    <button @click="copyLink" class="share-btn" title="Copy link">
+    <button @click="copyLink" class="share-btn" aria-label="Copy link to clipboard">
       🔗
     </button>
   </div>
