@@ -41,6 +41,16 @@ Use the MCP server URL in your agent configuration (see below for specific agent
 
 ## GitHub Copilot Coding Agent Setup
 
+### Automatic Setup (Copilot Coding Agent)
+
+The repository includes a `.github/copilot-setup-steps.yml` file that automatically starts the VitePress dev server (and MCP server) before the Copilot coding agent begins working. This means the agent can use the `search_vitepress_docs` MCP tool out of the box — no manual server startup required.
+
+The setup steps:
+
+1. Install Node.js and project dependencies
+2. Start the dev server in the background (`npm run dev`)
+3. Wait for the MCP server on port 4000 to be ready
+
 ### VS Code User Settings (Alternative)
 
 You can also add the MCP server to your VS Code user settings (`Ctrl+Shift+P` → "Preferences: Open User Settings (JSON)"):
