@@ -3,7 +3,7 @@ import VPLTheme from '@lando/vitepress-theme-default-plus';
 import 'viewerjs/dist/viewer.min.css';
 import imageViewer from 'vitepress-plugin-image-viewer';
 import vImageViewer from 'vitepress-plugin-image-viewer/lib/vImageViewer.vue';
-import { useRoute } from 'vitepress';
+import { useData, useRoute } from 'vitepress';
 import vitepressBackToTop from 'vitepress-plugin-back-to-top';
 import 'vitepress-plugin-back-to-top/dist/style.css';
 import '@nolebase/vitepress-plugin-enhanced-readabilities/client/style.css';
@@ -14,8 +14,16 @@ import {
 import { NolebaseEnhancedReadabilitiesPlugin } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
 import { NolebaseGitChangelogPlugin } from '@nolebase/vitepress-plugin-git-changelog/client';
 import '@nolebase/vitepress-plugin-git-changelog/client/style.css';
+import { NolebaseHighlightTargetedHeading } from '@nolebase/vitepress-plugin-highlight-targeted-heading/client';
+import '@nolebase/vitepress-plugin-highlight-targeted-heading/client/style.css';
+import { NolebaseInlineLinkPreviewPlugin } from '@nolebase/vitepress-plugin-inline-link-preview/client';
+import '@nolebase/vitepress-plugin-inline-link-preview/client/style.css';
 import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client';
 import 'virtual:group-icons.css';
+import vitepressNprogress from 'vitepress-plugin-nprogress';
+import 'vitepress-plugin-nprogress/lib/css/index.css';
+import codeblocksFold from 'vitepress-plugin-codeblocks-fold';
+import 'vitepress-plugin-codeblocks-fold/style/index.css';
 
 // Custom layout that properly forwards all slots
 import CustomLayout from './components/CustomLayout.vue';
@@ -53,6 +61,7 @@ export default {
     return h(CustomLayout, null, {
       // Top of page
       'layout-top': () => [
+        h(NolebaseHighlightTargetedHeading),
         h(AnnouncementBanner),
         h(ProgressBar),
         h(ToastNotification)
@@ -96,7 +105,9 @@ export default {
   enhanceApp(ctx) {
     ctx.app.use(NolebaseEnhancedReadabilitiesPlugin);
     ctx.app.use(NolebaseGitChangelogPlugin);
+    ctx.app.use(NolebaseInlineLinkPreviewPlugin);
     enhanceAppWithTabs(ctx.app);
+    vitepressNprogress(ctx);
     
     if (VPLTheme.enhanceApp) {
       VPLTheme.enhanceApp(ctx);
@@ -115,6 +126,8 @@ export default {
 
   setup() {
     const route = useRoute();
+    const { frontmatter } = useData();
     imageViewer(route);
+    codeblocksFold({ route, frontmatter });
   },
 };

@@ -18,15 +18,20 @@
     "vue": "^3.5.18"
   },
   "dependencies": {
+    "@hackmd/markdown-it-task-lists": "^2.1.4",
     "@lando/vitepress-theme-default-plus": "^1.1.1",
     "@nolebase/vitepress-plugin-enhanced-readabilities": "^2.18.2",
     "@nolebase/vitepress-plugin-git-changelog": "^2.18.2",
+    "@nolebase/vitepress-plugin-highlight-targeted-heading": "^2.18.2",
+    "@nolebase/vitepress-plugin-inline-link-preview": "^2.18.2",
     "@supabase/supabase-js": "^2.90.1",
     "markdown-it-footnote": "^4.0.0",
     "viewerjs": "^1.11.7",
     "vitepress-plugin-back-to-top": "^1.0.1",
+    "vitepress-plugin-codeblocks-fold": "^1.2.35",
     "vitepress-plugin-group-icons": "^1.7.1",
     "vitepress-plugin-image-viewer": "^1.1.6",
+    "vitepress-plugin-nprogress": "^0.1.1",
     "vitepress-plugin-tabs": "^0.7.3"
   }
 }
