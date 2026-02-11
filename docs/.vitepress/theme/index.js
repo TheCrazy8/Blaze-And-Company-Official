@@ -22,7 +22,6 @@ import PWAInstallPrompt from './components/PWAInstallPrompt.vue';
 import FireParticles from './components/FireParticles.vue';
 import CursorTrail from './components/CursorTrail.vue';
 import FloatingActionButton from './components/FloatingActionButton.vue';
-import ThemeSwitcher from './components/ThemeSwitcher.vue';
 import AnnouncementBanner from './components/AnnouncementBanner.vue';
 import ProgressBar from './components/ProgressBar.vue';
 import Breadcrumbs from './components/Breadcrumbs.vue';
@@ -39,9 +38,7 @@ import KeyboardShortcuts from './components/KeyboardShortcuts.vue';
 import ScrollProgress from './components/ScrollProgress.vue';
 import ContributorsList from './components/ContributorsList.vue';
 import StatusBadges from './components/StatusBadges.vue';
-import SkipToContent from './components/SkipToContent.vue';
-import FontSizeAdjuster from './components/FontSizeAdjuster.vue';
-import AccessibilityPanel from './components/AccessibilityPanel.vue';
+
 
 import './styles/main.css';
 
@@ -52,7 +49,6 @@ export default {
     return h(CustomLayout, null, {
       // Top of page
       'layout-top': () => [
-        h(SkipToContent),
         h(AnnouncementBanner),
         h(ProgressBar),
         h(ToastNotification)
@@ -60,10 +56,7 @@ export default {
       
       // Navbar additions
       'nav-bar-content-after': () => [
-        h(NolebaseEnhancedReadabilitiesMenu),
-        h(FontSizeAdjuster),
-        h(AccessibilityPanel),
-        h(ThemeSwitcher)
+        h(NolebaseEnhancedReadabilitiesMenu)
       ],
       
       // Mobile menu
