@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isDocPage" class="scroll-progress-bar" :style="{ width: progress + '%' }"></div>
+  <div v-if="isDocPage" class="scroll-progress-bar" :style="{ width: progress + '%' }" role="progressbar" :aria-valuenow="Math.round(progress)" aria-valuemin="0" aria-valuemax="100" aria-label="Reading progress"></div>
 </template>
 
 <script setup>

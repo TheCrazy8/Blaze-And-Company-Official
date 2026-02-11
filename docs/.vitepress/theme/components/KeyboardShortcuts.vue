@@ -1,7 +1,16 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 
 const showDialog = ref(false)
+const dialogRef = ref(null)
+const closeButtonRef = ref(null)
+
+watch(showDialog, async (val) => {
+  if (val) {
+    await nextTick()
+    closeButtonRef.value?.focus()
+  }
+})
 
 const isMac = computed(() => {
   if (typeof navigator === 'undefined') return false
@@ -56,7 +65,7 @@ onUnmounted(() => {
         <div class="shortcuts-dialog">
           <div class="shortcuts-header">
             <h3 id="shortcuts-title">⌨️ Keyboard Shortcuts</h3>
-            <button class="shortcuts-close" @click="showDialog = false" aria-label="Close">✕</button>
+            <button ref="closeButtonRef" class="shortcuts-close" @click="showDialog = false" aria-label="Close">✕</button>
           </div>
           <div class="shortcuts-list">
             <div v-for="shortcut in shortcuts" :key="shortcut.description" class="shortcut-item">

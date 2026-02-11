@@ -22,7 +22,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="progress-bar-container">
+  <div class="progress-bar-container" role="progressbar" :aria-valuenow="Math.round(progress)" aria-valuemin="0" aria-valuemax="100" aria-label="Page scroll progress">
     <div class="progress-bar" :style="{ width: progress + '%' }"></div>
   </div>
 </template>

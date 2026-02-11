@@ -13,6 +13,9 @@ import {
 } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
 import { NolebaseEnhancedReadabilitiesPlugin } from '@nolebase/vitepress-plugin-enhanced-readabilities/client';
 
+// Custom layout that properly forwards all slots
+import CustomLayout from './components/CustomLayout.vue';
+
 // Import all custom components
 import PWAPrompt from './components/PWAPrompt.vue';
 import PWAInstallPrompt from './components/PWAInstallPrompt.vue';
@@ -38,6 +41,7 @@ import ContributorsList from './components/ContributorsList.vue';
 import StatusBadges from './components/StatusBadges.vue';
 import SkipToContent from './components/SkipToContent.vue';
 import FontSizeAdjuster from './components/FontSizeAdjuster.vue';
+import AccessibilityPanel from './components/AccessibilityPanel.vue';
 
 import './styles/main.css';
 
@@ -45,19 +49,20 @@ export default {
   extends: VPLTheme,
 
   Layout: () => {
-    return h(VPLTheme.Layout, null, {
+    return h(CustomLayout, null, {
       // Top of page
       'layout-top': () => [
         h(SkipToContent),
         h(AnnouncementBanner),
         h(ProgressBar),
-        h(ToastNotification) // NEW - Add toast system
+        h(ToastNotification)
       ],
       
       // Navbar additions
       'nav-bar-content-after': () => [
         h(NolebaseEnhancedReadabilitiesMenu),
         h(FontSizeAdjuster),
+        h(AccessibilityPanel),
         h(ThemeSwitcher)
       ],
       
@@ -65,7 +70,7 @@ export default {
       'nav-screen-content-after': () => h(NolebaseEnhancedReadabilitiesScreenMenu),
       
       // Before document content
-      'doc-before':   () => [
+      'doc-before': () => [
         h(Breadcrumbs),
         h(ReadingTime),
         h(StatusBadges)
