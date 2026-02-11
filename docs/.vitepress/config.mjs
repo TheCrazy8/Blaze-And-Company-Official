@@ -2,6 +2,12 @@ import footnote from 'markdown-it-footnote'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
 import { MCPPlugin } from 'vitepress-plugin-mcp'
+import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
+import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons'
+import {
+  GitChangelog,
+  GitChangelogMarkdownSection,
+} from '@nolebase/vitepress-plugin-git-changelog/vite'
 import { generateFeeds } from './theme/rss.js'  // ✅ FIXED:  Removed space
 
 export default defineConfig({
@@ -12,6 +18,8 @@ export default defineConfig({
     lineNumbers: true,
     config(md) {
       md.use(footnote)
+      md.use(tabsMarkdownPlugin)
+      md.use(groupIconMdPlugin)
     }
   },
   title: "Blaze Official",
@@ -193,6 +201,11 @@ export default defineConfig({
   
   vite: {
     plugins: [
+      GitChangelog({
+        repoURL: () => 'https://github.com/TheCrazy8/Blaze-Official',
+      }),
+      GitChangelogMarkdownSection(),
+      groupIconVitePlugin(),
       MCPPlugin({ port: 4000 }),
       VitePWA({
         registerType: 'autoUpdate',
@@ -372,6 +385,7 @@ export default defineConfig({
     optimizeDeps: { 
       exclude: [ 
         '@nolebase/vitepress-plugin-enhanced-readabilities/client', 
+        '@nolebase/vitepress-plugin-git-changelog/client',
         'vitepress', 
         '@nolebase/ui',
       ]
@@ -380,6 +394,7 @@ export default defineConfig({
       noExternal: [
         '@lando/vitepress-theme-default-plus',
         '@nolebase/vitepress-plugin-enhanced-readabilities', 
+        '@nolebase/vitepress-plugin-git-changelog',
         '@nolebase/ui',
       ]
     },
