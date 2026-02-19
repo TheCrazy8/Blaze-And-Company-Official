@@ -1,5 +1,7 @@
 import footnote from 'markdown-it-footnote'
 import taskLists from '@hackmd/markdown-it-task-lists'
+import sub from 'markdown-it-sub'
+import sup from 'markdown-it-sup'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
 import { MCPPlugin } from 'vitepress-plugin-mcp'
@@ -10,9 +12,10 @@ import {
   GitChangelogMarkdownSection,
 } from '@nolebase/vitepress-plugin-git-changelog/vite'
 import { InlineLinkPreviewElementTransform } from '@nolebase/vitepress-plugin-inline-link-preview/markdown-it'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 import { generateFeeds } from './theme/rss.js'  // ✅ FIXED:  Removed space
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   ignoreDeadLinks: [
     /\/blog\/feed\.(xml|atom)$/
   ],
@@ -23,6 +26,8 @@ export default defineConfig({
       md.use(tabsMarkdownPlugin)
       md.use(groupIconMdPlugin)
       md.use(taskLists)
+      md.use(sub)
+      md.use(sup)
       md.use(InlineLinkPreviewElementTransform)
     }
   },
@@ -406,6 +411,7 @@ export default defineConfig({
         '@nolebase/ui',
         'vitepress-plugin-nprogress',
         'vitepress-plugin-codeblocks-fold',
+        'vitepress-plugin-comment-with-giscus',
       ]
     },
     css: {
@@ -413,5 +419,11 @@ export default defineConfig({
         scss: {}
       }
     }
-  }
-})
+  },
+  mermaid: {
+    // Mermaid config: https://mermaid.js.org/config/schema-docs/config.html
+  },
+  mermaidPlugin: {
+    class: 'mermaid',
+  },
+}))

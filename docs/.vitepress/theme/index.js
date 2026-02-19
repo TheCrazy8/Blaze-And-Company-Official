@@ -24,6 +24,8 @@ import vitepressNprogress from 'vitepress-plugin-nprogress';
 import 'vitepress-plugin-nprogress/lib/css/index.css';
 import codeblocksFold from 'vitepress-plugin-codeblocks-fold';
 import 'vitepress-plugin-codeblocks-fold/style/index.css';
+import giscusTalk from 'vitepress-plugin-comment-with-giscus';
+import { toRefs } from 'vue';
 
 // Custom layout that properly forwards all slots
 import CustomLayout from './components/CustomLayout.vue';
@@ -129,5 +131,17 @@ export default {
     const { frontmatter } = useData();
     imageViewer(route);
     codeblocksFold({ route, frontmatter });
+    giscusTalk({
+      repo: 'TheCrazy8/Blaze-Official',
+      repoId: 'YOUR_REPO_ID',           // Get from https://giscus.app/
+      category: 'General',
+      categoryId: 'YOUR_CATEGORY_ID',    // Get from https://giscus.app/
+      mapping: 'pathname',
+      inputPosition: 'top',
+      lang: 'en',
+      homePageShowComment: false,
+      lightTheme: 'light',
+      darkTheme: 'transparent_dark',
+    }, { frontmatter: toRefs(useData()).frontmatter, route }, true);
   },
 };
