@@ -133,9 +133,9 @@ export default {
     codeblocksFold({ route, frontmatter });
     giscusTalk({
       repo: 'TheCrazy8/Blaze-Official',
-      repoId: 'YOUR_REPO_ID',           // Get from https://giscus.app/
+      repoId: 'R_kgDOQnFglg',           // Get from https://giscus.app/
       category: 'General',
-      categoryId: 'YOUR_CATEGORY_ID',    // Get from https://giscus.app/
+      categoryId: 'DIC_kwDOQnFgls4C062n',    // Get from https://giscus.app/
       mapping: 'pathname',
       inputPosition: 'top',
       lang: 'en',
