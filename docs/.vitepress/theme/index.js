@@ -24,6 +24,7 @@ import vitepressNprogress from 'vitepress-plugin-nprogress';
 import 'vitepress-plugin-nprogress/lib/css/index.css';
 import codeblocksFold from 'vitepress-plugin-codeblocks-fold';
 import 'vitepress-plugin-codeblocks-fold/style/index.css';
+import 'vitepress-markdown-timeline/dist/theme/index.css';
 import giscusTalk from 'vitepress-plugin-comment-with-giscus';
 import { toRefs } from 'vue';
 

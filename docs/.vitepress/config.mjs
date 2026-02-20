@@ -2,6 +2,11 @@ import footnote from 'markdown-it-footnote'
 import taskLists from '@hackmd/markdown-it-task-lists'
 import sub from 'markdown-it-sub'
 import sup from 'markdown-it-sup'
+import mark from 'markdown-it-mark'
+import abbr from 'markdown-it-abbr'
+import ins from 'markdown-it-ins'
+import deflist from 'markdown-it-deflist'
+import timeline from 'vitepress-markdown-timeline'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
 import { MCPPlugin } from 'vitepress-plugin-mcp'
@@ -28,6 +33,11 @@ export default withMermaid(defineConfig({
       md.use(taskLists)
       md.use(sub)
       md.use(sup)
+      md.use(mark)
+      md.use(abbr)
+      md.use(ins)
+      md.use(deflist)
+      md.use(timeline)
       md.use(InlineLinkPreviewElementTransform)
     }
   },
