@@ -180,42 +180,21 @@ Infinite \- Next to unobtainable.
 
 Unobtainable \- Consists of parts no longer available or nonexistent.
 
-**Titles:**  
-
-MDPT: Child organization of Blaze & Co., distributes and produces modules/integrations to all interested teams. Not responsible for designs. Head of Department: UNKNOWN  
-(N/A)  
-
-Bennett Bashford: Head Engineer and Leader of B\&C, was on the VEX Robotics Executive Council, and was the standing Inventorial Manager. Has extensive coding expertise but prefers engineering. Lead journalist and author of the Blaze & Company Engineering Documentation. Reachable at:[BENNETT BASHFORD](mailto:s977168@student.knoxschools.org) & [bennettbashford@gmail.com](mailto:bennettbashford@gmail.com)   
-(Pending)  
-
-Benjamin Green: Head Programmer of B\&C, formerly on the Vex Robotics Executive Council. Capable of extensive physical engineering, but preferred digital work. Reachable at:[s981822@student.knoxschools.org](mailto:s981822@student.knoxschools.org) & [aetsofficialact@gmail.com](mailto:aetsofficialact@gmail.com)  
-(Pending)
-
-**Past Member Titles:**  
-
-!!Woody Hezel!!: **NO LONGER AT BMS | ATTENDING ?????? HIGH SCHOOL** Former Head Engineer and Leader of Team B\&C, MDPT Chief Resident, assistant software engineer, and engineering director. Was present every morning. Reachable at: \[REMOVED\]  
-(Unavailable)  
-
-!!Spencer (Von) Decker!!: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former Staff Engineer and Former MDPT Head of Department. Was also known as The Punisher. Reachable at: \[REMOVED\]   
-(Unavailable)  
-
-!!Ian DiGonzaga!!: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former gigachad mascot and mentor. Formerly MDPT Distributor Intern, MDPTD[^13] Director (Appointed by S. Decker) 
-
 **Protocols:**  
 
 New modules and integrations must follow the established format.  
 The image and properly formatted text must be on the same page.  
 Roles given are guidelines, not restrictions. Ex. Engineers are not restricted to engineering, even if expressly not enrolled in any other branch  
-MDPT is the only part of Blaze & Co. authorized to manufacture and distribute established designs. Manufacturing is qualified as the assemblage of established modules without modification. Distribution is classified as the premeditatedly permanent distribution of modules to another team or teams  
-Major Changes to the document or any change to parts of the document owned by others must be written in commenter mode until approved by Benjamin Green, Bennett Bashford, or the established owner (The exception being Benjamin Green/Bennett Bashford/established owner themselves).  
-All members of Blaze & Co. are commenters on this document until they have reached the ranks:  
+MDPT is the only part of Blaze authorized to manufacture and distribute established designs. Manufacturing is qualified as the assemblage of established modules without modification. Distribution is classified as the premeditatedly permanent distribution of modules to another team or teams  
+Major Changes to the document or any change to parts of the document owned by others must be written in commenter mode until approved by Pumpjack, TheCrazy8, or the established owner (The exception being Pumpjack/TheCrazy8/established owner themselves).  
+All members of Blaze are commenters on this document until they have reached the ranks:  
 Engineering \- **DIRECTOR** or higher  
 Programming \- **DIRECTOR** or higher  
 MDPT \- **FELLOW** or higher  
 Driving \- **DIRECTOR** or higher.  
-Non-members of Blaze & Co. are viewers if they are invited to the document, with exceptions for trusted personnel[^14]  
+Non-members of Blaze are viewers if they are invited to the document, with exceptions for trusted personnel[^14]  
 Rankings for departments can be found at: [Engineering/Programming Ranks](https://www.thomasnet.com/articles/engineering-consulting/common-engineering-grades/), [MDPT Ranks](https://www.medsmarter.com/blog/hospital-hierarchy-every-pre-med-should-understand/). The latter (MDPT Ranks) must be changed to fit better the MDPT (ex. Pre-Med Student → MDPT Pre-Distributor in Training)  
-Rejoining Blaze & Co. is possible unless fired, and your rankings are held for 2 months if you decide to rejoin. After that time, rejoining will lead to ranks being reset.  
+Rejoining Blaze is possible unless fired, and your rankings are held for 2 months if you decide to rejoin. After that time, rejoining will lead to ranks being reset.  
 Lack of consent from a head of a department (See promotion/approval protocols) can be overruled via unanimous consent of all others involved  
 Driving ranks are as follows: Driver in Training, Junior Driver, Driver, Senior Driver, Helmsman, Driving instructor, Director
 
@@ -228,32 +207,18 @@ Arduino Uno R4 Wifi
 Device running Windows/Linux  
 Python 3.11^
 
-**Availability:**  
-Available at all times \- Always available for VEX-related interaction  
-Available during meeting \- Available during VEX meetings for VEX-related interaction  
-Available outside of meeting \- Available out-of-meeting for VEX-related interaction  
-Unavailable \- Not available for an undisclosed reason  
-Incapacitated \- Incapable of interaction. Likely ill, nullifies Does not Attend  
-Does not attend \- Has failed to participate in any meeting for over 3 days  
-Pending \- Awaiting further information  
-N/A \- Does not apply; likely a group of people or company or no longer attending VEX robotics
-
-**Links:**  
-[Head of Department Shared Documentation](https://docs.google.com/document/d/1fy-6lhLMgROelG0ZKV5gnEH-WW32iuL8-6aVTd9Gpm4/edit?usp=sharing) (Heads of Departments only)  
-[Entrustment Document](https://docs.google.com/document/d/1oXiE_8zf2ugR3B-A09xLa1sqJFGa8LPLWNbA3kUpwGg/edit?usp=sharing)
-
 **Departments:**  
 **![][image1]**  
 *Engineering Department*  
-Head: Bennett Bashford  
+Head: TheCrazy8  
 Purpose: Phys. Eng  
 Members: 1
 
 *![][image2]*  
 *Programming Department*  
-Head: Benjamin Green  
+Head: TheCrazy8  
 Purpose: Software Eng  
-Members: 1
+Members: 2
 
 *![][image3]*  
 *Modular Distribution & Production Team*  
