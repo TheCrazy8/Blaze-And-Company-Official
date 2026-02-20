@@ -6,6 +6,7 @@ import mark from 'markdown-it-mark'
 import abbr from 'markdown-it-abbr'
 import ins from 'markdown-it-ins'
 import deflist from 'markdown-it-deflist'
+import spoiler from 'markdown-it-spoiler'
 import timeline from 'vitepress-markdown-timeline'
 import { defineConfig } from 'vitepress'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -36,6 +37,7 @@ export default withMermaid(defineConfig({
       md.use(mark)
       md.use(abbr)
       md.use(ins)
+      md.use(spoiler)
       md.use(deflist)
       md.use(timeline)
       md.use(InlineLinkPreviewElementTransform)
