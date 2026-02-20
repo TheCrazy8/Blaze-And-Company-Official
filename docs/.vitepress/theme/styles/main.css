@@ -681,6 +681,24 @@ div[class*='language-']:hover .copy {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ===== SPOILER TEXT ===== */
+
+.vp-doc .spoiler {
+  background-color: var(--vp-c-text-1);
+  color: transparent;
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+}
+
+.vp-doc .spoiler:hover,
+.vp-doc .spoiler:focus {
+  background-color: var(--vp-c-brand-soft);
+  color: var(--vp-c-text-1);
+}
+
 /* ===== LOADING SKELETON ===== */
 
 .skeleton {
