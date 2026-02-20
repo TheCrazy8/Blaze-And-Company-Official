@@ -36,7 +36,6 @@ import PWAPrompt from './components/PWAPrompt.vue';
 import PWAInstallPrompt from './components/PWAInstallPrompt.vue';
 import FireParticles from './components/FireParticles.vue';
 import CursorTrail from './components/CursorTrail.vue';
-import FloatingActionButton from './components/FloatingActionButton.vue';
 import AnnouncementBanner from './components/AnnouncementBanner.vue';
 import ProgressBar from './components/ProgressBar.vue';
 import Breadcrumbs from './components/Breadcrumbs.vue';
@@ -96,7 +95,6 @@ export default {
       'layout-bottom': () => [
         h(FireParticles),
         h(CursorTrail),
-        h(FloatingActionButton),
         h(PWAPrompt),
         h(PWAInstallPrompt),
         h(KeyboardShortcuts),
