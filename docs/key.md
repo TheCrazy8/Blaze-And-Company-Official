@@ -193,13 +193,13 @@ Benjamin Green: Head Programmer of B\&C, formerly on the Vex Robotics Executive 
 
 **Past Member Titles:**  
 
-Woody Hezel: **NO LONGER AT BMS | ATTENDING ?????? HIGH SCHOOL** Former Head Engineer and Leader of Team B\&C, MDPT Chief Resident, assistant software engineer, and engineering director. Was present every morning. Reachable at: \[REMOVED\]  
+!!Woody Hezel!!: **NO LONGER AT BMS | ATTENDING ?????? HIGH SCHOOL** Former Head Engineer and Leader of Team B\&C, MDPT Chief Resident, assistant software engineer, and engineering director. Was present every morning. Reachable at: \[REMOVED\]  
 (Unavailable)  
 
-Spencer (Von) Decker: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former Staff Engineer and Former MDPT Head of Department. Was also known as The Punisher. Reachable at: \[REMOVED\]   
+!!Spencer (Von) Decker!!: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former Staff Engineer and Former MDPT Head of Department. Was also known as The Punisher. Reachable at: \[REMOVED\]   
 (Unavailable)  
 
-Ian DiGonzaga: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former gigachad mascot and mentor. Formerly MDPT Distributor Intern, MDPTD[^13] Director (Appointed by S. Decker) 
+!!Ian DiGonzaga!!: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former gigachad mascot and mentor. Formerly MDPT Distributor Intern, MDPTD[^13] Director (Appointed by S. Decker) 
 
 **Protocols:**  
 
