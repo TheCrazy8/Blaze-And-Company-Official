@@ -199,7 +199,7 @@ Woody Hezel: **NO LONGER AT BMS | ATTENDING ?????? HIGH SCHOOL** Former Head Eng
 Spencer (Von) Decker: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former Staff Engineer and Former MDPT Head of Department. Was also known as The Punisher. Reachable at: \[REMOVED\]   
 (Unavailable)  
 
-Ian DiGonzaga: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former gigachad mascot and mentor. Formerly MDPT Distributor Intern, MDPT:D[^13] Director (Appointed by S. Decker) 
+Ian DiGonzaga: **NO LONGER AT BMS | ATTENDING WEST HIGH SCHOOL** Former gigachad mascot and mentor. Formerly MDPT Distributor Intern, MDPTD[^13] Director (Appointed by S. Decker) 
 
 **Protocols:**  
 
